@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<link type="text/css" rel="stylesheet" href="/mvdstyle.css"/>
+<title>Raspberry Pi as a USB to Ethernet Gateway</title>
+</head>
+
+<body>
+  <div id="content">
+    <style>img.latex-inline { vertical-align: middle; }</style>
+<h1>Raspberry Pi as a USB to Ethernet Gateway</h1>
+<h2>Introduction</h2>
+<p>One of the most convenient ways of communicating with experimental
+devices (such as oscilloscopes, frequency generators, pulse
+generators, etc.) is via ethernet. The advantages of this over other
+forms of communication such as GPIB, RS-232 serial ports, etc., is
+that, provided the device receives a fixed IP address, it doesn't
+matter where it is located and specialty cabling can be kept to a
+minimum. Luckily, most of these devices, even if they are not equipped
+with ethernet capability, can be made to work over ethernet with some
+sort of device server (e.g., there are device servers such as those
+made by <a href="http://www.moxa.com/product/Serial_Device_Servers.htm">Moxa</a> which can "convert" RS-232 serial port communications
+to ethernet).</p>
+<p>A lot of modern devices come equipped with a USB port on the back
+which complies with the <a href="http://www.usb.org/developers/devclass_docs">USBTMC</a> (USB test and measurement class)
+specifications. Even fairly inexpensive equipment which lacks an
+ethernet port are likely to have a USB port for USBTMC communications
+(e.g., the popular and inexpensive <a href="http://www.rigolna.com/products/digital-oscilloscopes/ds1000d/">Rigol DS1000D series</a>
+digital oscilloscopes). There exists a USBTMC Linux
+<a href="http://www.home.agilent.com/upload/cmc_upload/All/usbtmc.html">kernel module</a> which allows for communication with
+USBTMC devices via /dev/usbtmcNNN device files. This module, coupled
+with the versatile <code>socat</code> command, can thus allow for transparent
+communications over ethernet with a USBTMC device as if it were
+connected via ethernet itself. The rest of this note describes the
+process for using a Raspberry Pi as a USBTMC to ethernet adapter.</p>
+<h2>Compiling the RPi kernel</h2>
+<p>The RPi's default kernel does not include USBTMC support as a module
+or built into the kernel. This requires building from scratch, the
+full details of which can be found <a href="http://elinux.org/RPi_Kernel_Compilation">here</a>. The basic idea
+is to grab the RPi kernel source on a fast computer and cross compile
+it with the USBTMC kernel module [1][] (or build into the kernel if
+you prefer).</p>
+<h2>Other notes</h2>
+<p>It turns out that it is not necessary to use the kernel module to talk
+to USBTMC devices. So And So </p>
+<h3>Footnotes</h3>
+<p>[1] In the <code>make menuconfig</code> configuration menus, the option can be
+    found under <code>Device Drivers &gt; USB support &gt; USB Test and
+    Measurement Class support</code>.</p>
+  </div>
+</body>
+
+</html>

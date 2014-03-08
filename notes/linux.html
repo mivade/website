@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<link type="text/css" rel="stylesheet" href="/mvdstyle.css"/>
+<title>Linux Notes</title>
+</head>
+
+<body>
+  <div id="content">
+    <style>img.latex-inline { vertical-align: middle; }</style>
+<h1>Linux Notes</h1>
+<h2>Git</h2>
+<p>To produce colored diff output in HTML form:</p>
+<div class="codehilite"><pre><span class="n">git</span> <span class="n">diff</span> <span class="o">--</span><span class="n">color</span><span class="o">-</span><span class="n">words</span> <span class="o">&lt;</span><span class="n">commit</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">commit</span><span class="o">&gt;</span> <span class="o">|</span> <span class="n">aha</span>
+</pre></div>
+
+
+<p><code>aha</code> is a simple program (packaged in <a href="http://www.debian.org/">Debian</a>) for converting ANSI
+terminal output to HTML.</p>
+<h2>Gnome 3</h2>
+<p>A lot of people seem to greatly dislike <a href="http://www.gnome.org">Gnome 3</a>. At first, I fell
+in that camp, but after getting a new laptop and doing a fresh Debian_
+installation, I decided to play around with it a bit. Its default
+configuration leaves something to be desired, but it doesn't take too
+much tweaking (mostly involving installation of some extensions) to
+become extremely nice. Here are some helpful notes.</p>
+<ul>
+<li>Disable built-in shortcuts such as C-` (annoying for us emacs users)</li>
+</ul>
+<p>Use <code>dconf-editor</code> to edit window manager keybindings: Look under
+<code>org-&gt;gnome-&gt;desktop-&gt;wm-&gt;keybindings</code> for the appropriate shortcut to
+disable. <a href="http://askubuntu.com/questions/175369/how-do-i-disable-ctrl-alt-d-in-gnome-shell">Source</a>.</p>
+  </div>
+</body>
+
+</html>

@@ -7,3 +7,4 @@ all: $(shell find . -name "*.md" | sed 's/md/html/')
 
 clean:
 	rm *.html
+	rm notes/*.html

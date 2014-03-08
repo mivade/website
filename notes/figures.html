@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<link type="text/css" rel="stylesheet" href="/mvdstyle.css"/>
+<title>Scientific Figures</title>
+</head>
+
+<body>
+  <div id="content">
+    <style>img.latex-inline { vertical-align: middle; }</style>
+<h1>Scientific Figures</h1>
+<p>This page contains a collection of notes on ways I've found to make
+good publication quality figures using a variety of open source
+tools. I've gone back and forth between several different plotting
+tools, but have now settled on <a href="http://matplotlib.org/">Matplotlib</a>.</p>
+<h2>General Considerations</h2>
+<p>Figures should be sized to match the width of the text. This is
+particularly important in two column formats, though I sometimes find
+with single columns, having a figure a little bit smaller than the
+text width can look nicer. To get a pleasing looking figure, the
+height should be the an integer times the width divided by the
+<a href="http://en.wikipedia.org/wiki/Golden_ratio">golden ratio</a>.</p>
+<p>The font face and size should match the text of the document. For
+journals using standard LaTeX fonts, this is generally pretty easy,
+though exactly how to do this depends on what tool is being used (see
+notes below for specifics).</p>
+<h2>Matplotlib</h2>
+<p>I have developed a lot of this from following <a href="http://www.scipy.org/Cookbook/Matplotlib/LaTeX_Examples">1</a> as well as several
+other sources that I don't recall now.</p>
+<p>Getting figures sized correctly with Matplotlib used to be a huge
+pain. More recent versions have simplified things significantly,
+though it still is not as easy as it should be. This is because figure
+size and margins have to be set separately. In versions past, this was
+a pretty tedious process of trial and error until it looked good
+enough. Now you can use the <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.tight_layout">tight_layout</a> function to adjust the
+margins (mostly) automatically for you.</p>
+<p>In principle, you can write common settings to the <code>matplotlibrc</code>
+file. However, since things like figure sizes, font faces, font sizes,
+etc. may change depending on your target, I find the best way to deal
+with things is have a simple template file which contains all commonly
+used settings.</p>
+<h2>Gnuplot</h2>
+<p><a href="http://gnuplot.info/">Gnuplot</a> used to be my primary plotting tool. Several reasons why I
+no longer use it for publication quality output:</p>
+<ol>
+<li>Although it's possible to do some simple data processing with it,
+   anything more complex really requires doing it externally and
+   saving to an intermediate data file from which Gnuplot can do it's
+   thing.</li>
+<li>The output terminals will all produce different results. The easy
+   way to get around this is pick an output format to always use and
+   convert to whatever else you need later.</li>
+<li>There is an annoying bug that I found involving misalignment of
+   tick labels (I believe in the <code>epslatex</code> terminal, but I'm not
+   completely sure now). I filed a bug report with a workaround, but
+   the bug report was closed. The workaround was too annoying for me
+   to want to deal with it. If I can find the details on what I had to
+   do, I'll post it here later.</li>
+</ol>
+<p>I should note that Gnuplot is still a great tool, and there are plenty
+of reasons you might still want to use it:</p>
+<ol>
+<li>It's really easy for making quick plots.</li>
+<li>Output quality can be very good without too much work.</li>
+<li>A lot of its plot commands have really natural syntax that is easy
+   to remember.</li>
+<li>Its nonlinear least squares fitting routine works really well and
+   is very easy to use.</li>
+</ol>
+<p>To summarize: Gnuplot has its issues (but so does everything else). If
+you're willing to deal with its slight quirks, it can be an excellent
+tool.</p>
+<p>Some helpful links:</p>
+<ul>
+<li><a href="http://gnuplot.info/screenshots/index.html#demos">Gnuplot demos</a>: This is pretty exhaustive if you need to figure
+  out how to do something.</li>
+<li><a href="http://security.riit.tsinghua.edu.cn/~bhyang/ref/gnuplot/index-e.html">Gnuplot not so Frequently Asked Questions</a></li>
+</ul>
+<h2>Inkscape</h2>
+<p><a href="http://inkscape.org/">Inkscape</a> is a wonderful vector graphics editor. It can be useful
+for making 2-D diagrams, sophisticated illustrations, or annotating
+plots. I prefer TikZ (see below) for a lot of my drawings, but it's
+not always suitable.</p>
+<h2>TikZ</h2>
+<p>Lots of examples <a href="http://www.texample.net/tikz/">here</a>.</p>
+<p>Scaling is pretty easy with TikZ, since font sizes stay the same and
+only the drawing portion is scaled with the scale option of the
+<code>tikzpicture</code> environment. Often the diagrams I make with TikZ are
+combined with other figures externally with Inkscape, so scaling to
+the text width is not generally necessary. However, when it is,
+<a href="http://tex.stackexchange.com/a/6391">this</a> method works well.</p>
+<h3>References</h3>
+  </div>
+</body>
+
+</html>
