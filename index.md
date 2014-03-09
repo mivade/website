@@ -20,12 +20,8 @@ research can be found [here](research.html).
 [ChapmanLab]: http://chapmanlabs.gatech.edu
 
 In my spare time, I enjoy [photography](photography.html), playing
-soccer and basketball, bicycling, reading, and working on various
-small projects. I am an enthusiastic user of [Debian][] and
-[Emacs][].
-
-[Debian]: http://www.debian.org
-[Emacs]: http://www.gnu.org/software/emacs/
+soccer and basketball, bicycling, reading, and working on various open
+source projects.
 
 Contact
 -------
@@ -58,8 +54,11 @@ Links
 
 * [Debian][]
 * [DebianScience][]
+* [Emacs][]
 
+[Debian]: http://www.debian.org
 [DebianScience]: http://wiki.debian.org/DebianScience/
+[Emacs]: http://www.gnu.org/software/emacs/
 
 Friends
 -------
