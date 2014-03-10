@@ -4,25 +4,24 @@ Photography
 Galleries
 ---------
 
-* http://gallery.depalatis.net
+* [http://gallery.depalatis.net][gallery]
 * [Flickr](http://www.flickr.com/photos/16805364@N00/)
+
+[gallery]: http://gallery.depalatis.net
 
 Gear
 ----
 
 * Cameras
-
-  * Canon Digital Rebel XTi [EOS 400D] (digital SLR)
-  * Canon Elan IIe (film SLR)
-  * Canon PowerShot SD1100 IS (digital point and shoot)
-
+    * Canon Digital Rebel XTi [EOS 400D] (digital SLR)
+    * Canon Elan IIe (film SLR)
+    * Canon PowerShot SD1100 IS (digital point and shoot)
 * SLR lenses
-
-  * Canon EF-S 10-22mm f/3.5-4.5
-  * Tamron 17-50mm f/2.8
-  * Canon EF 35mm f/2
-  * Sigma 50mm f/2.8 Macro
-  * Canon EF 70-200mm f/4L
+    * Canon EF-S 10-22mm f/3.5-4.5
+    * Tamron 17-50mm f/2.8
+    * Canon EF 35mm f/2
+    * Sigma 50mm f/2.8 Macro
+    * Canon EF 70-200mm f/4L
 
 Gimp Resources
 --------------
