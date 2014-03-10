@@ -1,7 +1,9 @@
 Code
 ====
 
-See also my repositories on [GitHub][].
+This page has a few pieces of code in it. Many links are currently
+broken as I continue to transition to a new system. For a more
+complete list, see also my repositories on [GitHub][].
 
 [GitHub]: https://github.com/mivade
 
