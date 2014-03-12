@@ -5,10 +5,10 @@ Barium Ion Trapping
 -------------------
 
 In recent years, much progress has been made in extending laser
-cooling techniques to both neutral molecules [^1], [^2] and molecular
-ions [^3], [^4]. One particularly promising class of molecular ions
-for cooling and precision spectroscopy are alkaline earth monohalide
-ions [^5]. To produce translationally cold BaF<sup>+</sup> and
+cooling techniques to both neutral molecules[^1],[^2] and molecular
+ions[^3],[^4]. One particularly promising class of molecular ions for
+cooling and precision spectroscopy are alkaline earth monohalide
+ions[^5]. To produce translationally cold BaF<sup>+</sup> and
 BaCl<sup>+</sup> ions, we react Ba<sup>+</sup> ions at mK temperatures
 with neutral gases at room temperature. To this end, we have performed
 experiments measuring reaction rates and characterizing reaction
@@ -50,15 +50,15 @@ Thorium Ion Trapping
 To excite most nuclei above the ground isomeric state, energies of
 order keV to MeV are required. The <sup>229</sup>Th isotope, on the
 other hand, is believed to possess an energy splitting of only 7.6(5)
-eV, putting it in reach of tabletop UV lasers [^6]. Along with the
+eV, putting it in reach of tabletop UV lasers[^6]. Along with the
 exceptional isolation of the nucleus from the outside environment, the
 narrow linewidth of this transition could be exploited for a new
-generation of high precision clocks [^7]. Further applications of this
+generation of high precision clocks[^7]. Further applications of this
 nuclear transition could include enhanced sensitivity to variations in
-the fine structure constant [^8].
+the fine structure constant[^8].
 
 Recently, our collaborators in the Kuzmich lab succeeded in directly
-laser cooling <sup>229</sup>Th<sup>3+</sup> [^9].
+laser cooling <sup>229</sup>Th<sup>3+</sup>[^9].
 
 Publications/Conferences
 ------------------------
@@ -70,13 +70,16 @@ Publications/Conferences
   (2013). ([Link][BaRxn] | PDF)
 1. "Charge exchange and chemical reactions with trapped
   Th<sup>3+</sup>," L. R. Churchill, M. V. DePalatis, and
-  M. S. Chapman, Phys. Rev. A **83**, 012710 (2011). (Link | PDF)
+  M. S. Chapman, Phys. Rev. A **83**, 012710 (2011). ([Link][ThRxn] |
+  PDF)
 1. "Multiply Charged Thorium Crystals for Nuclear Laser Spectroscopy,"
   C. J. Campbell, A. V. Steele, L. R. Churchill, M. V. DePalatis,
   D. E. Naylor, D. N. Matsukevich, A. Kuzmich, and M. S. Chapman,
-  Phys. Rev. Lett. **102**, 233004 (2009). (Link | PDF)
+  Phys. Rev. Lett. **102**, 233004 (2009). ([Link][Th232] | PDF)
   
-[BaRxn]: http://pra.aps.org/abstract/PRA/v88/i2/e023403
+[BaRxn]: http://journals.aps.org/pra/abstract/10.1103/PhysRevA.88.023403
+[ThRxn]: http://journals.aps.org/pra/abstract/10.1103/PhysRevA.83.012710
+[Th232]: http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.102.233004
 
 <!--
 .. __: papers/ThRxn.pdf
