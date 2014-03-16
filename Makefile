@@ -7,7 +7,7 @@ all: $(shell find . -name "*.md" | sed 's/md/html/')
 
 publish:
 	git push
-	git push depalatis master
+	git push ssh://depalati@depalatis.net/~depalati/git/mike/ master
 
 clean:
 	rm *.html
