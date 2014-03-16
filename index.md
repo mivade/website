@@ -34,27 +34,31 @@ Contact
 [gpg key]: http://pgp.mit.edu:11371/pks/lookup?op=vindex&search=0x551C8F12F2342725>
 [map]: http://www.au.dk/om/organisation/find-au/bygningskort/?b=1522
 
-Stuff
------
+Stuff that's here
+-----------------
 
 * [Research](research.html)
 * [Code](code.html)
 * [Documents](docs.html)
 * [Photos](photography.html)
 * [Useful Resources](resources.html)
+* [Ion Periodic Table][ionptable]
 * [LaTeX Beamer themes gallery][beamer themes] | [Python script to generate
   images][beamer script] | [A better implementation of this][better beamer]
 
-[beamer themes]: beamerthemes/
+[ionptable]: http://mivade.github.io/ionptable/
+[beamer themes]: beamerthemes/index.html
 [beamer script]: beamerthemes/beamerthemes.py
 [better beamer]: http://www.hartwork.org/beamer-theme-matrix/
 
-Links
------
+Quick links
+-----------
 
 * [Debian][]
 * [DebianScience][]
 * [Emacs][]
+
+More [here](resources.html).
 
 [Debian]: http://www.debian.org
 [DebianScience]: http://wiki.debian.org/DebianScience/

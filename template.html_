@@ -9,9 +9,20 @@
 </head>
 
 <body>
+  <div id="topmenu">
+    <a href="$ROOT/index.html">Home</a> |
+    <a href="$ROOT/research.html">Science</a> |
+    <a href="$ROOT/code.html">Code</a> |
+    <a href="$ROOT/photography.html">Photos</a> |
+    <a href="$ROOT/docs.html">Docs</a> |
+    <a href="$ROOT/resources.html">Links</a>
+  </div>
+
   <div id="content">
     $CONTENT
   </div>
+
+  <!--<div id="footer"></div>-->
 </body>
 
 </html>
