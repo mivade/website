@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# gengallery - Generates a static gallery using imageindex
+# Version 0.2.0.
+
+# The main purpose of this script is to generate a gallery with
+# resized full size images so as to not take up way too much
+# space. Most of the options passed to imageindex must still be stored
+# in your $HOME/.imageindexrc file. As a general rule, I only use this
+# script when I actually want resized image files -- if there aren't
+# many photos in a particular gallery, then I will just leave them as
+# is.
+
+# Last modified 1 January 2007 by Michael V. De Palatis <mvd AT gatech
+# DOT edu>
+
+# Revision History:
+# 0.2.0 - Use convert to resize images and imageindex to generate
+# galleries.
+# 0.1.0 - Use jigl to generate galleries
+
+# Usage: gengallery "<gallery title>"
+
+WIDTH=1024
+
+echo "About to generate gallery..."
+echo
+echo "Note that right now, only files ending in JPG (case insensitive)
+will be processed. This will be fixed later."
+echo
+
+mkdir gengallery-tmp
+find . -maxdepth 1 -iname "*.jpg" -exec convert -verbose -resize $WIDTH {} gengallery-tmp/{} \;
+
+cd gengallery-tmp
+
+echo "$#"
+if [[ $# < 1 ]]; then
+    echo "No title specified, using default..."
+    imageindex -destdir ../gallery -nomedium
+else
+    echo "Generating gallery with title '$1'..."
+    imageindex -title "$1" -destdir ../gallery -nomedium
+fi
+
+echo; echo "Done!"
+
+cd ..
+rm -r gengallery-tmp
