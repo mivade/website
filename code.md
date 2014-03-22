@@ -18,7 +18,7 @@ Web stuff
 * [genfeed.py][] - A script to generate an atom feed from a directory
   containing text files.
 
-[mdscript.py]: old/mdscript.html
+[mdscript.py]: code/mdscript.py
 [Sphinx]: http://sphinx-doc.org/
 [Python Markdown]: http://pythonhosted.org/Markdown/
 [genfeed.py]: code/genfeed.py
