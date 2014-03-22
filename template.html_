@@ -10,7 +10,7 @@
 
 <body>
   <div id="topmenu">
-    <a href="$ROOT/index.html">Home</a> |
+    <a href="$ROOT/index.html">About</a> |
     <a href="$ROOT/research.html">Science</a> |
     <a href="$ROOT/code.html">Code</a> |
     <a href="$ROOT/photography.html">Photos</a> |
