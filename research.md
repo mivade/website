@@ -89,8 +89,8 @@ Publications/Conferences
 ### Conferences ###
 
 1. "Lifetime Measurements of Trapped <sup>232</sup>Th<sup>3+</sup>,"
-   M. V. DePalatis and M. S. Chapman, DAMOP 2012] County, CA, June
-   2012. ([DAMOP abstract][damop2012])
+   M. V. DePalatis and M. S. Chapman, DAMOP 2012] County, CA, June 2012.
+   ([DAMOP abstract][damop2012])
 1. "Charge exchange and chemical reactions with trapped thorium ions,"
    M. V. DePalatis, L. R. Churchill, and M. S. Chapman, DAMOP 2011,
    Atlanta, GA, June 2011. ([DAMOP abstract][damop2011])
