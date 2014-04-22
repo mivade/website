@@ -88,6 +88,9 @@ Publications/Conferences
 
 ### Conferences ###
 
+1. "Optical frequency comb Raman spectroscopy of trapped calcium
+   ions," M. V. DePalatis, Gregers Poulsen, and Michael Drewsen,
+   557<sup>th</sup> WE Heraues-Seminar, Bad Honnef, Germany, March 2014.
 1. "Lifetime Measurements of Trapped <sup>232</sup>Th<sup>3+</sup>,"
    M. V. DePalatis and M. S. Chapman, DAMOP 2012] County, CA, June 2012.
    ([DAMOP abstract][damop2012])
