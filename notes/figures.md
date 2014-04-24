@@ -28,7 +28,7 @@ notes below for specifics).
 Matplotlib
 ----------
 
-I have developed a lot of this from following [1][] as well as several
+I have developed a lot of this from following [^1] as well as several
 other sources that I don't recall now.
 
 Getting figures sized correctly with Matplotlib used to be a huge
@@ -116,6 +116,7 @@ the text width is not generally necessary. However, when it is,
 [texample]: http://www.texample.net/tikz/
 [tikz scaling]: http://tex.stackexchange.com/a/6391
 
-### References ###
+<!-- References -->
 
-[1]: http://www.scipy.org/Cookbook/Matplotlib/LaTeX_Examples
+[^1]: 
+  [Scipy Cookbook/Matplotlib/ LaTeX Examples](http://www.scipy.org/Cookbook/Matplotlib/LaTeX_Examples)
