@@ -20,8 +20,12 @@ research can be found [here](research.html).
 [ChapmanLab]: http://chapmanlabs.gatech.edu
 
 In my spare time, I enjoy [photography](photography.html), playing
-soccer and basketball, bicycling, reading, and working on various open
-source projects.
+soccer and basketball, bicycling, reading, and working on various
+projects related to [Arduino][], [Raspbery Pi][RPi], and open source
+software.
+
+[Arduino]: http://arduino.cc/
+[RPi]: http://www.raspberrypi.org/
 
 Contact
 -------
