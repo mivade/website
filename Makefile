@@ -12,7 +12,7 @@ local: $(MDFILES) templates/main.html
 
 publish:
 	git push
-	git push ssh://depalati@depalatis.net/~depalati/git/mike/ master
+	git push depalatis
 
 clean:
 	rm *.html
