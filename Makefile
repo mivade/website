@@ -1,11 +1,11 @@
-CC = ~/src/md2web/md2web.py --template template.html_
+CC = ~/src/md2web/md2web.py --template 'templates/main.html'
 CFLAGS = 
 MDFILES = $(shell find . -name "*.md" | sed 's/md/html/')
 
-all: $(MDFILES) template.html_
+all: $(MDFILES) templates/main.html
 
 local: CFLAGS = --base-url '/home/mvd/src/www'
-local: $(MDFILES) template.html_
+local: $(MDFILES) templates/main.html
 
 %.html: %.md
 	$(CC) $(CFLAGS) $<

@@ -1,3 +1,5 @@
+title: Research
+
 Research
 ========
 
@@ -24,26 +26,6 @@ compared to many conventional traps, making it capable of supporting
 anything from a single ion to extremely large Coulomb crystals
 composed of thousands of ions. Some examples are shown below.
 
-<!--
-.. figure:: images/HappyBa.png
-   :alt: Several Ba+ ions happy to be confined in a Paul trap.
-   :align: center
-
-   Several |Ba+| ions happy to be confined in a Paul trap.
-
-.. figure:: images/BaChain.png
-   :alt: A chain of Ba+ ions.
-   :align: center
-
-   A chain of 22 |138Ba+| ions and 4 other |Ba+| isotopes.
-
-.. figure:: images/O2Rxn.gif
-   :alt: Reaction between O2 and Ba+
-   :align: center
-
-   |Ba+| ions undergoing reactions with |O2| leaving |BaO+|.
--->
-
 Thorium Ion Trapping
 --------------------
 
@@ -66,25 +48,19 @@ Publications/Conferences
 ### Papers ###
 
 1. "Production of translationally cold barium monohalide ions,"
-  M. V. DePalatis and M. S. Chapman, Phys. Rev. A **88**, 023403
-  (2013). ([Link][BaRxn] | PDF)
+   M. V. DePalatis and M. S. Chapman, Phys. Rev. A **88**, 023403
+   (2013). ([Link][BaRxn])
 1. "Charge exchange and chemical reactions with trapped
-  Th<sup>3+</sup>," L. R. Churchill, M. V. DePalatis, and
-  M. S. Chapman, Phys. Rev. A **83**, 012710 (2011). ([Link][ThRxn] |
-  PDF)
+   Th<sup>3+</sup>," L. R. Churchill, M. V. DePalatis, and
+   M. S. Chapman, Phys. Rev. A **83**, 012710 (2011). ([Link][ThRxn])
 1. "Multiply Charged Thorium Crystals for Nuclear Laser Spectroscopy,"
-  C. J. Campbell, A. V. Steele, L. R. Churchill, M. V. DePalatis,
-  D. E. Naylor, D. N. Matsukevich, A. Kuzmich, and M. S. Chapman,
-  Phys. Rev. Lett. **102**, 233004 (2009). ([Link][Th232] | PDF)
+   C. J. Campbell, A. V. Steele, L. R. Churchill, M. V. DePalatis,
+   D. E. Naylor, D. N. Matsukevich, A. Kuzmich, and M. S. Chapman,
+   Phys. Rev. Lett. **102**, 233004 (2009). ([Link][Th232])
   
 [BaRxn]: http://journals.aps.org/pra/abstract/10.1103/PhysRevA.88.023403
 [ThRxn]: http://journals.aps.org/pra/abstract/10.1103/PhysRevA.83.012710
 [Th232]: http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.102.233004
-
-<!--
-.. __: papers/ThRxn.pdf
-.. __: papers/Th232.pdf
--->
 
 ### Conferences ###
 
@@ -108,11 +84,6 @@ Publications/Conferences
 [damop2011]: http://meetings.aps.org/Meeting/DAMOP11/Event/147872)).
 [damop2010]: http://meetings.aps.org/Meeting/DAMOP10
 [damop2009]: http://meetings.aps.org/Meeting/DAMOP09/Event/103512
-
-<!--
-.. __: papers/damop2011.pdf
-.. __: papers/damop2010.pdf
--->
 
 ### References ###
 

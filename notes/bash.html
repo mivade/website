@@ -1,30 +1,31 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
-	  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Homepage">
+    <meta name="author" content="Michael V. DePalatis <depalatis@phys.au.dk>">
+    <link type="text/css" rel="stylesheet" href="/home/mvd/src/www/mvdstyle.css">
+    <title>Bash Cheat Sheet</title>
+  </head>
+  <body>
+    <div id="topmenu">
+      <a href="/home/mvd/src/www/index.html">About</a> |
+      <a href="/home/mvd/src/www/research.html">Science</a> |
+      <a href="/home/mvd/src/www/code.html">Code</a> |
+      <a href="/home/mvd/src/www/photography.html">Photos</a> |
+      <a href="/home/mvd/src/www/docs.html">Docs</a> |
+      <a href="/home/mvd/src/www/resources.html">Links</a>
+    </div>
 
-<head>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<link type="text/css" rel="stylesheet" href="/mvdstyle.css"/>
-<title>Bash Cheat Sheet</title>
-</head>
-
-<body>
-  <div id="topmenu">
-    <a href="/index.html">About</a> |
-    <a href="/research.html">Science</a> |
-    <a href="/code.html">Code</a> |
-    <a href="/photography.html">Photos</a> |
-    <a href="/docs.html">Docs</a> |
-    <a href="/resources.html">Links</a>
-  </div>
-
-  <div id="content">
-    <h1>Bash Cheat Sheet</h1>
+    <div id="content">
+      <h1>Bash Cheat Sheet</h1>
 <p>This file contains a list of useful tips when using the <a href="http://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash</a>
 shell.</p>
 <ul>
 <li>Redirection<ul>
-<li><code>STDERR</code> redirected to <code>STDOUT</code>: <code>&lt;command&gt; 2&gt;&amp;1</code><ul>
+<li><code>STDERR</code> redirected to <code>STDOUT</code>: <code><command> 2&gt;&amp;1</code><ul>
 <li>Example: Output make commands both to the terminal and to a
   log file using <code>tee</code>. <code>make 2&gt;&amp;1 | tee make.log</code></li>
 </ul>
@@ -32,9 +33,7 @@ shell.</p>
 </ul>
 </li>
 </ul>
-  </div>
-
+    </div>
   <!--<div id="footer"></div>-->
-</body>
-
+  </body>
 </html>

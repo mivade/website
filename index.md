@@ -51,24 +51,27 @@ Stuff that's here
 [beamer script]: beamerthemes/beamerthemes.py
 [better beamer]: http://www.hartwork.org/beamer-theme-matrix/
 
-Quick links
------------
+Things I'm interested in
+------------------------
 
 * [Debian][]
 * [DebianScience][]
 * [Emacs][]
+* [OpenStreetMap][OSM] | [OSM Wiki][]
 
-More [here](resources.html).
+Other links can be found [here](resources.html).
 
 [Debian]: http://www.debian.org
 [DebianScience]: http://wiki.debian.org/DebianScience/
 [Emacs]: http://www.gnu.org/software/emacs/
+[OSM]: http://www.openstreetmap.org
+[OSM Wiki]: http://wiki.openstreetmap.org/wiki/Main_Page
 
-Friends
--------
+People
+------
 
-This is not an exhaustive list. It only lists people who have web
-sites that I know about.
+This is not an exhaustive list. It only lists people I know who have
+web sites that I know about.
 
 * [Richard Darst][]
 * [John Dowdle][]
