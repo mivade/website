@@ -14,7 +14,8 @@ DEFAULT_LANG = u'en'
 
 MD_EXTENSIONS = [
     'codehilite(css_class=highlight)',
-    'extra'
+    'extra',
+    'footnotes'
 ]
 
 # Feed generation is usually not desired when developing
