@@ -4,7 +4,8 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Michael V. DePalatis'
 SITENAME = u'mike.depalatis.net'
-SITEURL = ''
+SITEURL = 'http://mike.depalatis.net'
+#THEME = 'themes/mvd'
 
 PATH = 'content'
 
@@ -32,4 +33,5 @@ TRANSLATION_FEED_ATOM = None
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+RELATIVE_URLS = True
+
