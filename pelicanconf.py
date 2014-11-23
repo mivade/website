@@ -5,9 +5,10 @@ from __future__ import unicode_literals
 AUTHOR = u'Michael V. DePalatis'
 SITENAME = u'mike.depalatis.net'
 SITEURL = 'http://mike.depalatis.net'
-#THEME = 'themes/mvd'
-
 PATH = 'content'
+
+THEME = 'themes/mvd'
+THEME_STATIC_DIR = 'static'
 
 TIMEZONE = 'Europe/Copenhagen'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
