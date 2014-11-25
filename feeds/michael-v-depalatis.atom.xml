@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2014-06-10T10:59:00+02:00</updated><entry><title>Raspberry Pi as a USB to Ethernet Gateway</title><link href="http://mike.depalatis.net/raspberry-pi-as-a-usb-to-ethernet-gateway.html" rel="alternate"></link><updated>2014-06-10T10:59:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-03-08:raspberry-pi-as-a-usb-to-ethernet-gateway.html</id><summary type="html">&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;One of the most convenient ways of communicating with experimental
+devices (such as oscilloscopes, frequency generators, pulse
+generators, etc.) is via ethernet. The advantages of this over other
+forms of communication such as GPIB, RS-232 serial ports, etc., is
+that, provided the device receives a fixed IP address or some sort of
+dynamic DNS service is used, it doesn't matter where it is located and
+specialty cabling can be kept to a minimum. Luckily, most of these
+devices, even if they are not equipped with ethernet capability, can
+be made to work over ethernet with some sort of device server (e.g.,
+there are device servers such as those made by &lt;a href="http://www.moxa.com/product/Serial_Device_Servers.htm"&gt;Moxa&lt;/a&gt; which can
+"convert" RS-232 serial port communications to ethernet).&lt;/p&gt;
+&lt;p&gt;A lot of modern devices come equipped with a USB port on the back
+which complies with the &lt;a href="http://www.usb.org/developers/devclass_docs"&gt;USBTMC&lt;/a&gt; (USB test and measurement class)
+specifications. Even fairly inexpensive equipment which lacks an
+ethernet port are likely to have a USB port for USBTMC communications
+(e.g., the popular and inexpensive &lt;a href="http://www.rigolna.com/products/digital-oscilloscopes/ds1000d/"&gt;Rigol DS1000D series&lt;/a&gt;
+digital oscilloscopes). There exists a USBTMC Linux
+&lt;a href="http://www.home.agilent.com/upload/cmc_upload/All/usbtmc.html"&gt;kernel module&lt;/a&gt; which allows for communication with
+USBTMC devices via /dev/usbtmcNNN device files. This module, coupled
+with the versatile &lt;code&gt;socat&lt;/code&gt; command, can thus allow for transparent
+communications over ethernet with a USBTMC device as if it were
+connected via ethernet itself. The rest of this note describes the
+process for using a Raspberry Pi as a USBTMC to ethernet adapter.&lt;/p&gt;
+&lt;h2&gt;Compiling the RPi kernel&lt;/h2&gt;
+&lt;p&gt;The RPi's default kernel does not include USBTMC support as a module
+or built into the kernel. This requires building from scratch, the
+full details of which can be found &lt;a href="http://elinux.org/RPi_Kernel_Compilation"&gt;here&lt;/a&gt;. The basic idea
+is to grab the RPi kernel source on a fast computer and cross compile
+it with the USBTMC kernel module&lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt; (or build into the kernel if
+you prefer).&lt;/p&gt;
+&lt;p&gt;There are a few caveats and pitfalls, so the following provides the
+step-by-step approach that worked for me. To get started on a 64-bit
+Linux machine, make sure you have the 32-bit libraries
+installed. &lt;a href="https://groups.google.com/d/msg/comp.sys.raspberry-pi/ONzkoIV9ab8/E4wejOI51WwJ"&gt;On Debian and derivatives&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sudo  dpkg  --add-architecture  i386 # enable multi-arch
+sudo  apt-get  update
+sudo  apt-get  install  ia32-libs
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Once this is done, the following steps will get things working:&lt;/p&gt;
+&lt;h3&gt;Get the RPi kernel source:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;git init
+git clone --depth 1 git://github.com/raspberrypi/linux.git
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Get the compiler for cross-compiling:&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;git clone git://github.com/raspberrypi/tools.git&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Compile the kernel&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the kernel source directory, do:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;make mrproper&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Next, copy the default configuration file:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cp arch/arm/configs/bcmrpi_defconfig .config&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Select the appropriate compiler to use by defining an environment
+variable that points to the right place (TODO: put the right thing
+here): &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;export CCPREFIX=/path/to/your/compiler/binary/prefix-of-binary-&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Pre-configure everything and &lt;a href="http://serverfault.com/a/116317"&gt;accept the defaults&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;yes "" | make oldconfig&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now we can enable building of the usbtmc kernel module. Run &lt;code&gt;make
+menuconfig&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Navigate to &lt;code&gt;Device Drivers &amp;gt; USB support &amp;gt; USB Test and Measurement
+Class support&lt;/code&gt; and make sure it is marked &lt;code&gt;M&lt;/code&gt; to build a module. Save
+the configuration file, then exit. Now build the kernel:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;make ARCH=arm CROSS_COMPILE=${CCPREFIX} -jN&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;code&gt;N&lt;/code&gt; is the number of CPU cores + 1 (e.g., if there are 4 cores,
+N = 5). This step will take several minutes on a reasonably fast
+computer. Next build the modules:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;make ARCH=arm CROSS_COMPILE=${CCPREFIX} modules&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;Transferring the kernel:&lt;/h3&gt;
+&lt;p&gt;First copy to the RPi: &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;scp arch/arm/boot/Image pi@yourpi:kernel_someuniqueid.img&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then on the RPi, copy this over to &lt;code&gt;/boot&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cp kernel_someuniqueid.img /boot&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Edit the bootloader configuration file to use the new kernel by making
+sure the following line appears:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kernel=kernel_someuniqueid.img&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and comment out any other &lt;code&gt;kernel=...&lt;/code&gt; lines.&lt;/p&gt;
+&lt;h3&gt;Transferring the kernel modules:&lt;/h3&gt;
+&lt;p&gt;On the build machine, make a temporary directory to install modules
+to: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mkdir ~/modules
+export MODULES_TEMP=~/modules
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In the build directory:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;make ARCH=arm CROSS_COMPILE=${CCPREFIX}
+INSTALL_MOD_PATH=${MODULES_TEMP} modules_install&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now in the temporary directory, there should be a &lt;code&gt;lib&lt;/code&gt; directory. We
+don't need the source/headers, so remove them (otherwise you might run
+out of space on the RPi SD card!). Transfer these over to the RPi:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;scp -r lib pi@yourpi:&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;On the RPi, copy and overwrite the contents of &lt;code&gt;lib&lt;/code&gt; into &lt;code&gt;/lib&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cp -f lib/* /lib&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Only do this step while running a different version of the kernel
+ than what you compiled!&lt;/em&gt;&lt;/p&gt;
+&lt;h3&gt;Reboot.&lt;/h3&gt;
+&lt;h3&gt;Load the module:&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;sudo modprobe usbtmc&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;Connect the USB device.&lt;/h3&gt;
+&lt;p&gt;There should now be a device named &lt;code&gt;/dev/usbtmc0&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Talking to the device&lt;/h2&gt;
+&lt;p&gt;A Python script for piping data to and from a USBTMC device can be
+found &lt;a href="https://gist.github.com/mivade/112ef2087238662441ab"&gt;here&lt;/a&gt;. It
+should be run through &lt;code&gt;socat&lt;/code&gt; which does the more difficult work of
+properly transferring packets. The &lt;code&gt;socat&lt;/code&gt; command I use is&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;socat tcp-listen:5025,fork,reuseaddr,crnl,tcpwrap=script\
+    EXEC:&amp;quot;python usbtmc_pipe.py&amp;quot;,su-d=pi,pty,echo=0
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Other notes&lt;/h2&gt;
+&lt;p&gt;It turns out that it is not necessary to use the kernel module to talk
+to USBTMC devices. A &lt;a href="http://alexforencich.com/wiki/en/python-usbtmc/start"&gt;pure Python&lt;/a&gt; implementation of using the
+USBTMC protocol also exists. This has the advantage of not requiring a
+custom kernel for the RPi, but it adds the slight complexity of
+needing to specify vendor and product IDs.&lt;/p&gt;
+&lt;h3&gt;Footnotes&lt;/h3&gt;
+&lt;div class="footnote"&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;In the &lt;code&gt;make menuconfig&lt;/code&gt; configuration menus, the option can be
+  found under &lt;code&gt;Device Drivers &amp;gt; USB support &amp;gt; USB Test and
+  Measurement Class support&lt;/code&gt;.&amp;#160;&lt;a class="footnote-backref" href="#fnref:1" rev="footnote" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</summary><category term="raspberrypi"></category><category term="python"></category></entry></feed>
