@@ -1,8 +1,8 @@
 title: Research
 URL: research.html
 save_as: research.html
-Tags: research, science
-Author: Michael V. DePalatis
+tags: research, science
+author: Michael V. DePalatis
 
 Barium Ion Trapping
 -------------------

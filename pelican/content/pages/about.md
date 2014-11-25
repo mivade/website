@@ -20,13 +20,14 @@ research can be found [here](research.html).
 [GT]: http://www.gatech.edu
 [ChapmanLab]: http://chapmanlabs.gatech.edu
 
-In my spare time, I enjoy [photography](photography.html), playing
-soccer and basketball, bicycling, reading, and working on various
-projects related to [Arduino][], [Raspbery Pi][RPi], and open source
-software.
+In my spare time, I enjoy [photography](photography.html), various
+outdoor activities, reading, and working on various projects related
+to [Arduino][], [Raspberry Pi][RPi], and open source software. Most of
+my projects can be found on [GitHub][].
 
 [Arduino]: http://arduino.cc/
 [RPi]: http://www.raspberrypi.org/
+[GitHub]: https://github.com/mivade
 
 ## Contact ##
 
@@ -38,19 +39,14 @@ software.
 [gpg key]: http://pgp.mit.edu:11371/pks/lookup?op=vindex&search=0x551C8F12F2342725>
 [map]: http://www.au.dk/om/organisation/find-au/bygningskort/?b=1522
 
-## Stuff that's here ##
+## Stuff ##
 
 * [Research](research.html)
 * [Photos](photography.html)
 * [Useful Resources](resources.html)
 * [Ion Periodic Table][ionptable]
-* [LaTeX Beamer themes gallery][beamer themes] | [Python script to generate
-  images][beamer script] | [A better implementation of this][better beamer]
 
 [ionptable]: http://mivade.github.io/ionptable/
-[beamer themes]: beamerthemes/index.html
-[beamer script]: beamerthemes/beamerthemes.py
-[better beamer]: http://www.hartwork.org/beamer-theme-matrix/
 
 ## Quick links ##
 

@@ -1,8 +1,8 @@
 title: Links
 URL: resources.html
 save_as: resources.html
-Tags: links
-Author: Michael V. DePalatis
+tags: links
+author: Michael V. DePalatis
 
 Physics and Math
 ----------------
@@ -35,7 +35,7 @@ Python
 * [Numpy](http://www.numpy.org)
 * [Scipy](http://www.scipy.org/)
 * [Matplotlib](http://matplotlib.org/)
-* [PyVISA](http://pyvisa.sourceforge.net/)
+* [Tornado](http://www.tornadoweb.org/en/stable/)
 
 reStructuredText
 ----------------
