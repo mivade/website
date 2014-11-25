@@ -1,10 +1,10 @@
-Title: About
-URL:
+title: About
+url:
 save_as: index.html
-Tags: about
-Author: Michael V. DePalatis
+tags: about
+author: Michael V. DePalatis
 
-I am a physics postdoc at [Aarhus University][AU] working in
+I am a postdoc in physics at [Aarhus University][AU] working in
 [the ion trap group][group] of Prof. [Michael Drewsen][Drewsen]. My
 current research activities involve state preparation and precision
 spectroscopy of cold molecular ions as part of the [COMIQ][]
@@ -13,7 +13,7 @@ network. Previously, I was a graduate student in
 trapped Th<sup>3+</sup> and Ba<sup>+</sup> ions. More details on my
 research can be found [here](research.html).
 
-[AU]: http://www.au.dk
+[AU]: http://www.au.dk/en
 [group]: http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/
 [Drewsen]: http://pure.au.dk/portal/da/persons/id(871a704b-943d-4f99-b29d-07bea1bbab80).html
 [COMIQ]: http://itn-comiq.eu/welcome-to-comiq/
@@ -28,8 +28,7 @@ software.
 [Arduino]: http://arduino.cc/
 [RPi]: http://www.raspberrypi.org/
 
-Contact
--------
+## Contact ##
 
 * **Office**: [1522-424][map]
 * **Email 1**: (my last name in lower case) at phys.au.dk
@@ -39,12 +38,9 @@ Contact
 [gpg key]: http://pgp.mit.edu:11371/pks/lookup?op=vindex&search=0x551C8F12F2342725>
 [map]: http://www.au.dk/om/organisation/find-au/bygningskort/?b=1522
 
-Stuff that's here
------------------
+## Stuff that's here ##
 
 * [Research](research.html)
-* [Code](code.html)
-* [Documents](docs.html)
 * [Photos](photography.html)
 * [Useful Resources](resources.html)
 * [Ion Periodic Table][ionptable]
@@ -56,8 +52,7 @@ Stuff that's here
 [beamer script]: beamerthemes/beamerthemes.py
 [better beamer]: http://www.hartwork.org/beamer-theme-matrix/
 
-Quick links
------------
+## Quick links ##
 
 * [Debian][]
 * [DebianScience][]
@@ -69,8 +64,7 @@ More [here](resources.html).
 [DebianScience]: http://wiki.debian.org/DebianScience/
 [Emacs]: http://www.gnu.org/software/emacs/
 
-Friends
--------
+## Friends ##
 
 This is not an exhaustive list. It only lists people who have web
 sites that I know about.
