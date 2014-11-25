@@ -8,7 +8,7 @@ SITEURL = 'http://mike.depalatis.net'
 PATH = 'content'
 
 THEME = 'themes/mvd'
-THEME_STATIC_DIR = 'static'
+THEME_STATIC_DIR = 'theme'
 THEME_STATIC_PATHS = ['theme', 'static']
 
 # pelican-bootstrap3 theme options
