@@ -4,8 +4,7 @@ save_as: resources.html
 tags: links
 author: Michael V. DePalatis
 
-Physics and Math
-----------------
+## Physics and Math ##
 
 * [MathWorld][] - An excellent resource for looking up math concepts.
 * [Eric Weisstein's World of Physics][Physics World] - Similar to
@@ -29,16 +28,14 @@ Physics and Math
 [Orfanidi]: http://www.ece.rutgers.edu/~orfanidi/ewa/
 [RPELPT]: http://www.rp-photonics.com/encyclopedia.html
 
-Python
-------
+## Python ##
 
 * [Numpy](http://www.numpy.org)
 * [Scipy](http://www.scipy.org/)
 * [Matplotlib](http://matplotlib.org/)
 * [Tornado](http://www.tornadoweb.org/en/stable/)
 
-reStructuredText
-----------------
+## reStructuredText ##
 
 I previously used reST for notes and as a plaintext format. I've now
 switched over mostly to [Markdown][markdown], but since reST is used
@@ -55,8 +52,7 @@ heavily for Pythonic documentation, it's still good to know.
 [rst directives]: http://docutils.sourceforge.net/docs/ref/rst/directives.html
 [rst tips]: http://www.programmerq.net/rsttricks.html
 
-LaTeX
------
+## LaTeX ##
 
 * [Getting to grips with Latex][latex1] - An excellent introduction to
   LaTeX.
@@ -74,8 +70,7 @@ LaTeX
 [latex4]: http://www.personal.ceu.hu/tex/letters.htm
 [latex5]: http://www.biochem.ucl.ac.uk/~james/latex/
 
-Linux
------
+## Linux ##
 
 * [Debian][] - The best Linux distribution out there.
 * [autotut][] - A guide to using the GNU autotools (autoconf,
@@ -92,3 +87,15 @@ Linux
 [gpnfaq]: http://t16web.lanl.gov/Kawano/gnuplot/index-e.html
 [bash]: http://www.tldp.org/LDP/abs/html
 [fhs]: http://www.pathname.com/fhs/pub/fhs-2.3.html
+
+## Electronics ##
+
+* [Dangerous Prototypes][] - Many interesting open source hardware
+  projects
+* [dirtypcbs.com][] - Cheap PCB service (China)
+* [Seeed Studio][] - Electronics components and cheap PCB fabrication
+  (China)
+
+[Dangerous Prototypes]: http://dangerousprototypes.com/
+[dirtypcbs.com]: http://dirtypcbs.com/
+[Seeed Studio]: http://www.seeedstudio.com
