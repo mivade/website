@@ -10,12 +10,8 @@ import sys
 sys.path.append(os.curdir)
 from pelicanconf import *
 
-#SITEURL = ''
-
-# TODO: fix this hack. The problem is I want this to be mirrorable on
-# github pages as well as on depalatis.net. But things seem to break
-# then.
-RELATIVE_URLS = True
+SITEURL = 'mike.depalatis.net'
+#RELATIVE_URLS = True
 
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'

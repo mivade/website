@@ -7,10 +7,8 @@ author: Michael V. DePalatis
 Galleries
 ---------
 
-* [http://gallery.depalatis.net][gallery]
+* http://gallery.depalatis.net (temporarily down)
 * [Flickr](http://www.flickr.com/photos/16805364@N00/)
-
-[gallery]: http://gallery.depalatis.net
 
 Gear
 ----

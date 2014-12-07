@@ -1,5 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 10 Jun 2014 10:59:00 +0200</lastBuildDate><item><title>Raspberry Pi as a USB to Ethernet Gateway</title><link>http://mike.depalatis.net/raspberry-pi-as-a-usb-to-ethernet-gateway.html</link><description>&lt;h2&gt;Introduction&lt;/h2&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 07 Dec 2014 15:25:00 +0100</lastBuildDate><item><title>ssh-agent for sudo authentication with a passwordless account</title><link>http://mike.depalatis.net/ssh-agent-for-sudo-authentication-with-a-passwordless-account.html</link><description>&lt;p&gt;For best security on a public system, it is generally best to disable
+password-based logins with ssh and instead require authorized
+keys. However, this complicates things if you want to use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;
+with a regular user account, since by default it uses the standard
+system password to verify the user is authorized to run commands as
+root.&lt;/p&gt;
+&lt;p&gt;Enter &lt;a class="reference external" href="http://pamsshagentauth.sourceforge.net/"&gt;pam_ssh_agent_auth&lt;/a&gt;. This module allows using regular ssh keys
+and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt; to verify the user has the proper authorization to
+use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;.&lt;/p&gt;
+&lt;div class="section" id="prerequisites"&gt;
+&lt;h2&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;You'll want to start by ensuring you have generated ssh keys for your
+user and are using &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt;. To generate the keys:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;$ ssh-keygen&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then just accept the defaults, but make sure to set a password for
+your new key pair. Add the public key to
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.ssh/authorized_keys&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="installation"&gt;
+&lt;h2&gt;Installation&lt;/h2&gt;
+&lt;p&gt;Since the PAM module isn't in Debian, first grab the build
+dependencies:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;# apt-get install build-essential checkinstall libssl-dev libpam0g-dev&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="note"&gt;
+&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
+&lt;p class="last"&gt;I had never heard about &lt;tt class="docutils literal"&gt;checkinstall&lt;/tt&gt; until reading the
+references to figure out how to do this. Although I rarely
+have the need to install things from source, it seems like a
+very nice utility!&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Next, grab the source and build:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;# wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2&lt;/span&gt;
+&lt;span class="go"&gt;# tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2&lt;/span&gt;
+&lt;span class="go"&gt;# cd pam_ssh_agent_auth-0.10.2&lt;/span&gt;
+&lt;span class="go"&gt;# ./configure --libexecdir=/lib/security --with-mantype=man&lt;/span&gt;
+&lt;span class="go"&gt;# make&lt;/span&gt;
+&lt;span class="go"&gt;# checkinstall&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="note"&gt;
+&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
+&lt;p class="last"&gt;The &lt;tt class="docutils literal"&gt;libexecdir&lt;/tt&gt; option to the &lt;tt class="docutils literal"&gt;configure&lt;/tt&gt; script is set
+since apparently Debian keeps PAM modules in a different
+place than &lt;tt class="docutils literal"&gt;pam_ssh_agent_auth&lt;/tt&gt; expects by default.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="warning"&gt;
+&lt;p class="first admonition-title"&gt;Warning&lt;/p&gt;
+&lt;p class="last"&gt;The preceding commands are run as root simply because as
+I was setting this up, the regular user had no password
+set and so could not use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;. You may wish to only
+install as root!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="configuration"&gt;
+&lt;h2&gt;Configuration&lt;/h2&gt;
+&lt;p&gt;Edit the file &lt;tt class="docutils literal"&gt;/etc/pam.d/sudo&lt;/tt&gt; and add the following line &lt;em&gt;before&lt;/em&gt;
+any other &lt;tt class="docutils literal"&gt;auth&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;&amp;#64;include&lt;/tt&gt; commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;auth sufficient pam_ssh_agent_auth.so file&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;~/.ssh/authorized_keys&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Run &lt;tt class="docutils literal"&gt;visudo&lt;/tt&gt; to edit &lt;tt class="docutils literal"&gt;/etc/sudoers&lt;/tt&gt; and add this line before any
+other &lt;tt class="docutils literal"&gt;Defaults&lt;/tt&gt; lines:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;Defaults env_keep +&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;SSH_AUTH_SOCK&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="invoking-sudo"&gt;
+&lt;h2&gt;Invoking &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;&lt;/h2&gt;
+&lt;p&gt;To actually be able to use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt; now, run &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt; like so:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;$ eval `ssh-agent`&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and add the key:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;$ ssh-add -t 600&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This will set the keys to timeout in 10 minutes (600 seconds).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="todo"&gt;
+&lt;h2&gt;TODO&lt;/h2&gt;
+&lt;p&gt;A more elegant way of adding keys and running &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt;, including
+checking to see if a process is already running!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="references"&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://unix.stackexchange.com/a/158452"&gt;How to allow authentication with sudo using an alternate password?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://www.evans.io/posts/ssh-agent-for-sudo-authentication/"&gt;Using SSH agent for sudo authentication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://mah.everybody.org/docs/ssh"&gt;Using ssh-agent with ssh&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michael V. DePalatis</dc:creator><pubDate>Sun, 07 Dec 2014 15:25:00 +0100</pubDate><guid>tag:mike.depalatis.net,2014-12-07:ssh-agent-for-sudo-authentication-with-a-passwordless-account.html</guid><category>debian</category><category>ssh</category><category>sudo</category><category>linux</category></item><item><title>Raspberry Pi as a USB to Ethernet Gateway</title><link>http://mike.depalatis.net/raspberry-pi-as-a-usb-to-ethernet-gateway.html</link><description>&lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;One of the most convenient ways of communicating with experimental
 devices (such as oscilloscopes, frequency generators, pulse
 generators, etc.) is via ethernet. The advantages of this over other
