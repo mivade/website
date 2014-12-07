@@ -23,11 +23,12 @@ research can be found [here](research.html).
 In my spare time, I enjoy [photography](photography.html), various
 outdoor activities, reading, and working on various projects related
 to [Arduino][], [Raspberry Pi][RPi], and open source software. Most of
-my projects can be found on [GitHub][].
+my projects can be found on [GitHub][] (see also [my Gists][]).
 
 [Arduino]: http://arduino.cc/
 [RPi]: http://www.raspberrypi.org/
 [GitHub]: https://github.com/mivade
+[my Gists]: https://gist.github.com/mivade
 
 ## Contact ##
 
