@@ -7,7 +7,7 @@ author: Michael V. DePalatis
 Galleries
 ---------
 
-* http://gallery.depalatis.net (temporarily down)
+* [gallery.depalatis.net](http://gallery.depalatis.net)
 * [Flickr](http://www.flickr.com/photos/16805364@N00/)
 
 Gear
