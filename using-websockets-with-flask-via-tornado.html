@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en"
+>
+<head>
+    <title>Using websockets with Flask via Tornado - mike.depalatis.net</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="./using-websockets-with-flask-via-tornado.html">
+
+        <meta name="author" content="Michael V. DePalatis" />
+        <meta name="keywords" content="python,flask,tornado,javascript,websockets" />
+        <meta name="description" content="I&#39;ve been working on some projects for the lab that involve remotely controlling hardware to perform various tasks. Since the hardware in question is shared between different experiments, some sort of asynchronous solution is needed, and a web-based client coupled with websockets seemed to be the best bet (this ..." />
+
+    <!-- Enable latex plugin -->
+
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="./theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="./theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="./theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="./theme/css/style.css" type="text/css"/>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="./" class="navbar-brand">
+mike.depalatis.net            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="./">
+                             About
+                          </a></li>
+                         <li><a href="./photography.html">
+                             Photography
+                          </a></li>
+                         <li><a href="./research.html">
+                             Research
+                          </a></li>
+                         <li><a href="./resources.html">
+                             Links
+                          </a></li>
+                        <li class="active">
+                            <a href="./category/blog.html">Blog</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="./archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="./using-websockets-with-flask-via-tornado.html"
+                       rel="bookmark"
+                       title="Permalink to Using websockets with Flask via Tornado">
+                        Using websockets with Flask via Tornado
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-12-15T19:44:00+01:00"> 2014-12-15</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="./tag/python.html">python</a>
+        /
+	<a href="./tag/flask.html">flask</a>
+        /
+	<a href="./tag/tornado.html">tornado</a>
+        /
+	<a href="./tag/javascript.html">javascript</a>
+        /
+	<a href="./tag/websockets.html">websockets</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>I've been working on some projects for the lab that involve remotely
+controlling hardware to perform various tasks. Since the hardware in
+question is shared between different experiments, some sort of
+asynchronous solution is needed, and a web-based client coupled with
+<a href="https://en.wikipedia.org/wiki/WebSocket">websockets</a> seemed to be the best bet (this also leaves the option
+open in the future to write a standalone client that is not
+browser-based if desired).</p>
+<p>There is no shortage of web frameworks for Python. Some of the more
+popular ones are <a href="https://www.djangoproject.com/">Django</a>, <a href="http://flask.pocoo.org/">Flask</a>, <a href="http://tornadoweb.org/">Tornado</a>, and
+<a href="http://www.pylonsproject.org/">Pyramid</a>. Of these, I greatly prefer Flask for a number of reasons:</p>
+<ul>
+<li>Very thorough and easy to read documentation, including "snippets"
+  with helpful tips and a very helpful community.</li>
+<li>Extreme ease of use for both small and large projects.</li>
+<li>Great use of decorators to further ease development.</li>
+<li>A large number of extensions to build up a complex project without
+  requiring overhead for simple projects.</li>
+</ul>
+<p>This is not to say that the other options are bad, but having looked
+at all of them, Flask suits me best. The one problem: only Tornado
+directly supports websockets since it is both an HTTP server and a web
+framework in one, whereas the others utilize <a href="https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface">WSGI</a> for deployment.</p>
+<p>Luckily, it is possible to leverage both the excellent asynchronous
+features of Tornado and the power and ease of use of Flask through
+Tornado's ability to serve WSGI apps with
+<code>tornado.wsgi.WSGIContainer</code>. The Flask documentation shows a very
+simple
+<a href="http://flask.pocoo.org/docs/0.10/deploying/wsgi-standalone/#tornado">example</a>
+on how to do just that.</p>
+<p>Integrating websockets into a Flask app is now pretty easy. Here's an
+example on the server side:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span>
+<span class="kn">from</span> <span class="nn">tornado.wsgi</span> <span class="kn">import</span> <span class="n">WSGIContainer</span>
+<span class="kn">from</span> <span class="nn">tornado.web</span> <span class="kn">import</span> <span class="n">Application</span><span class="p">,</span> <span class="n">FallbackHandler</span>
+<span class="kn">from</span> <span class="nn">tornado.websocket</span> <span class="kn">import</span> <span class="n">WebSocketHandler</span>
+<span class="kn">from</span> <span class="nn">tornado.ioloop</span> <span class="kn">import</span> <span class="n">IOLoop</span>
+
+<span class="k">class</span> <span class="nc">WebSocket</span><span class="p">(</span><span class="n">WebSocketHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Socket opened.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_message</span><span class="p">(</span><span class="s">&quot;Received: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Received message: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Socket closed.&quot;</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="s">&#39;flasknado&#39;</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">container</span> <span class="o">=</span> <span class="n">WSGIContainer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">Application</span><span class="p">([</span>
+        <span class="p">(</span><span class="s">r&#39;/websocket/&#39;</span><span class="p">,</span> <span class="n">WebSocket</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">r&#39;.*&#39;</span><span class="p">,</span> <span class="n">FallbackHandler</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fallback</span><span class="o">=</span><span class="n">container</span><span class="p">))</span>
+    <span class="p">])</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">8080</span><span class="p">)</span>
+    <span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+
+
+<p>The client-side Javascript is simple as well:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="s2">&quot;ws://&quot;</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">domain</span> <span class="o">+</span> <span class="s2">&quot;:8080/websocket/&quot;</span><span class="p">);</span>
+
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">onopen</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s2">&quot;Joined&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">txt</span> <span class="o">=</span> <span class="nx">message</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.container&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;&lt;p&gt;&quot;</span> <span class="o">+</span> <span class="nx">txt</span> <span class="o">+</span> <span class="s2">&quot;&lt;/p&gt;&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">function</span> <span class="nx">submit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;input#message&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">();</span>
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;input#message&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The full demo example can be found
+<a href="https://github.com/mivade/flasknado">here</a>.</p>
+<h2>Additional notes</h2>
+<p>There already exist at least two extensions for Flask to use
+websockets:</p>
+<ul>
+<li><a href="https://github.com/kennethreitz/flask-sockets">Flask-Sockets</a></li>
+<li><a href="https://github.com/miguelgrinberg/Flask-SocketIO">Flask-SocketIO</a></li>
+</ul>
+<p>However, both of these are based on
+<a href="http://gevent.org/">gevent</a>. While gevent is nice, it still has
+limited Python 3 support and does not work on Windows (sadly, a
+requirement for some hardware drivers).</p>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2014 Michael V. DePalatis
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="./theme/js/jquery.min.js"></script>
+<script src="./theme/js/bootstrap.min.js"></script>
+<script src="./theme/js/respond.min.js"></script>
+<script src="./theme/js/admonitions.js"></script>
+
+</body>
+</html>
