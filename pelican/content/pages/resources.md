@@ -99,3 +99,9 @@ heavily for Pythonic documentation, it's still good to know.
 [Dangerous Prototypes]: http://dangerousprototypes.com/
 [dirtypcbs.com]: http://dirtypcbs.com/
 [Seeed Studio]: http://www.seeedstudio.com
+
+### Arduino ###
+
+* Ethernet
+    * [DIY link 1](http://www.instructables.com/id/Add-Ethernet-to-any-Arduino-project-for-less-than-/)
+	* [DIY link 2](http://www.instructables.com/id/A-credit-card-sized-Ethernet-Arduino-compatable-co/)
