@@ -100,6 +100,10 @@ heavily for Pythonic documentation, it's still good to know.
 [dirtypcbs.com]: http://dirtypcbs.com/
 [Seeed Studio]: http://www.seeedstudio.com
 
+### KiCAD ###
+
+* [Making New Components and Modules (Footprints) in KiCAD](http://store.curiousinventor.com/guides/kicad/new_components/)
+
 ### Arduino ###
 
 * Ethernet
