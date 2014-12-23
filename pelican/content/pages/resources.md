@@ -102,6 +102,13 @@ heavily for Pythonic documentation, it's still good to know.
 
 ### KiCAD ###
 
+#### Libraries and modules ####
+
+* [kicadlib.org](http://kicadlib.org/)
+* [KiCAD libraries converted from Eagle](http://library.oshec.org/)
+
+#### HOWTOs ####
+
 * [Making New Components and Modules (Footprints) in KiCAD](http://store.curiousinventor.com/guides/kicad/new_components/)
 
 ### Arduino ###
