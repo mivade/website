@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 15 Dec 2014 19:44:00 +0100</lastBuildDate><item><title>Using websockets with Flask via Tornado</title><link>http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html</link><description>&lt;p&gt;I've been working on some projects for the lab that involve remotely
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 14 Feb 2015 13:34:00 +0100</lastBuildDate><item><title>Flask and server-sent events</title><link>http://mike.depalatis.net/flask-and-server-sent-events.html</link><description>&lt;p&gt;I recently discovered the existence of the HTML5
+&lt;a href="https://en.wikipedia.org/wiki/Server-sent_events"&gt;server-sent events&lt;/a&gt; standard. Although it lacks the
+bidirectional communications of a websocket, SSE is perfect for the
+publish-subscribe networking pattern. This pattern just so happens to
+fit in conveniently with writing software to remotely monitor hardware
+that many people might want to check in on at the same time.&lt;/p&gt;
+&lt;p&gt;In order to try SSE out within a &lt;a href="http://flask.pocoo.org/"&gt;Flask&lt;/a&gt; framework, I put together a
+simple &lt;a href="https://github.com/mivade/flask-sse-demo"&gt;demo app&lt;/a&gt; using &lt;a href="http://gevent.org/"&gt;gevent&lt;/a&gt;. The core of the demo on the
+Python side looks like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;event&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;data: &amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dumps&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rand&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tolist&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;/span&gt;
+        &lt;span class="n"&gt;gevent&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;0.2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;index&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/stream/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;methods&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;stream&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;mimetype&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;text/event-stream&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This can be run either using gevent's WSGI server or &lt;a href="http://gunicorn.org/"&gt;gunicorn&lt;/a&gt;
+using gevent workers.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michael V. DePalatis</dc:creator><pubDate>Sat, 14 Feb 2015 13:34:00 +0100</pubDate><guid>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</guid><category>python</category><category>flask</category><category>javascript</category><category>sse</category><category>gevent</category></item><item><title>Using websockets with Flask via Tornado</title><link>http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html</link><description>&lt;p&gt;I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with
