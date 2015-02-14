@@ -99,3 +99,20 @@ heavily for Pythonic documentation, it's still good to know.
 [Dangerous Prototypes]: http://dangerousprototypes.com/
 [dirtypcbs.com]: http://dirtypcbs.com/
 [Seeed Studio]: http://www.seeedstudio.com
+
+### KiCAD ###
+
+#### Libraries and modules ####
+
+* [kicadlib.org](http://kicadlib.org/)
+* [KiCAD libraries converted from Eagle](http://library.oshec.org/)
+
+#### HOWTOs ####
+
+* [Making New Components and Modules (Footprints) in KiCAD](http://store.curiousinventor.com/guides/kicad/new_components/)
+
+### Arduino ###
+
+* Ethernet
+    * [DIY link 1](http://www.instructables.com/id/Add-Ethernet-to-any-Arduino-project-for-less-than-/)
+	* [DIY link 2](http://www.instructables.com/id/A-credit-card-sized-Ethernet-Arduino-compatable-co/)
