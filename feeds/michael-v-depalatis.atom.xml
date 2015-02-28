@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2014-12-15T19:44:00+01:00</updated><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><updated>2014-12-15T19:44:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;p&gt;I've been working on some projects for the lab that involve remotely
+<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2015-02-28T14:32:00+01:00</updated><entry><title>Background tasks with Tornado</title><link href="http://mike.depalatis.net/background-tasks-with-tornado.html" rel="alternate"></link><updated>2015-02-28T14:32:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-28:background-tasks-with-tornado.html</id><summary type="html">&lt;p&gt;I have been using &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; lately for distributed control of
+devices in the lab where an asynchronous framework is advantageous. In
+particular, we have a &lt;a href="http://www.highfinesse.com/"&gt;HighFinesse&lt;/a&gt; &lt;a href="http://www.highfinesse.com/en/wavelengthmeter/"&gt;wavelength meter&lt;/a&gt;
+which we use to monitor and stabilize several lasers (up to 14 at a
+time). Previously, a custom server for controlling this wavemeter was
+written using &lt;a href="https://twistedmatrix.com/trac/"&gt;Twisted&lt;/a&gt;, but that has proven difficult to upgrade,
+distribute, and maintain.&lt;/p&gt;
+&lt;p&gt;One thing that is common for such a control scenario is that data
+needs to be refreshed continuously while still allowing incoming
+connections from clients and appropriately executing remote procedure
+calls. One method would be to periodically interrupt the Tornado IO
+loop to refresh data (and in fact, Tornado has a class to make this
+easy for you in &lt;code&gt;tornado.ioloop.PeriodicCallback&lt;/code&gt;). This can be fine
+if the data refreshing does not take too much time, but all other
+operations will be blocked until the callback is finished, which can
+be a problem if the refreshing operation is slow. Another option is to
+have an additional thread separate from the Tornado IO loop that
+handles refreshing data. This certainly works, but adds the complexity
+of needing to use thread-safe communications to stop the thread when
+the main application is shut down or when other tasks depend on the
+successful completion of the refresh.&lt;/p&gt;
+&lt;p&gt;Luckily, Tornado also includes a decorator,
+&lt;code&gt;tornado.concurrent.run_on_executor&lt;/code&gt;, to run things in the background
+for you using Python's &lt;code&gt;concurrent.futures&lt;/code&gt; module (which is standard
+starting in Python 3.3 and backported for other versions). Then
+instead of writing the refresh function as a loop that runs in the
+background, you instead have its final call be to add itself back as a
+callback on the IO loop. This makes shutdown trivial since only the IO
+loop needs to be stopped when the program is closed. A refresh
+function could thus look something like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nd"&gt;@tornado.concurrent.run_on_executor&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;refresh&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;do_something_that_takes_a_while&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;tornado&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ioloop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_callback&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;task&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now after &lt;code&gt;refresh&lt;/code&gt; is called once, it will continuously run until the
+IO loop is stopped.&lt;/p&gt;
+&lt;p&gt;For a more complete example, I have written a small &lt;a href="https://gist.github.com/mivade/421c427db75c8c5fa1d1"&gt;demo&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="lab"></category></entry><entry><title>Creating a custom Raspbian disk image with raspbian-ua-netinst</title><link href="http://mike.depalatis.net/creating-a-custom-raspbian-disk-image-with-raspbian-ua-netinst.html" rel="alternate"></link><updated>2015-01-18T00:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-01-18:creating-a-custom-raspbian-disk-image-with-raspbian-ua-netinst.html</id><summary type="html"></summary><category term="raspberrypi"></category><category term="linux"></category></entry><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><updated>2014-12-15T19:44:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;p&gt;I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with
