@@ -39,7 +39,7 @@ function could thus look something like this:
 	@tornado.concurrent.run_on_executor
 	def refresh():
 	    do_something_that_takes_a_while()
-		tornado.ioloop.IOLoop.instance().add_callback(self.task)
+		tornado.ioloop.IOLoop.instance().add_callback(self.refresh)
 
 Now after `refresh` is called once, it will continuously run until the
 IO loop is stopped.
