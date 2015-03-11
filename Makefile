@@ -2,7 +2,7 @@ html:
 	cd pelican; pelican content
 
 serve:
-	python -m SimpleHTTPServer
+	python -m http.server 8000
 
 clean:
 	rm -f *.html
