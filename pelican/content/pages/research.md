@@ -4,8 +4,7 @@ save_as: research.html
 tags: research, science
 author: Michael V. DePalatis
 
-Barium Ion Trapping
--------------------
+## Chemical reactions with Doppler cooled ions ##
 
 In recent years, much progress has been made in extending laser
 cooling techniques to both neutral molecules[^1],[^2] and molecular
@@ -21,14 +20,7 @@ products between neutral molecules, such as [SF<sub>6</sub>][SF6] and
 [SF6]: http://en.wikipedia.org/wiki/Sulfur_hexafluoride
 [CH3Cl]: http://en.wikipedia.org/wiki/Chloromethane
 
-The linear Paul trap currently used was originally developed for
-trapping Th<sup>3+</sup> ions. As a consequence, it is very large
-compared to many conventional traps, making it capable of supporting
-anything from a single ion to extremely large Coulomb crystals
-composed of thousands of ions. Some examples are shown below.
-
-Thorium Ion Trapping
---------------------
+## Nuclear isomer transition in <sup>229</sup>Th<sup>3+</sup> ##
 
 To excite most nuclei above the ground isomeric state, energies of
 order keV to MeV are required. The <sup>229</sup>Th isotope, on the

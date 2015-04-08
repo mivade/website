@@ -22,32 +22,29 @@ research can be found [here](research.html).
 
 In my spare time, I enjoy [photography](photography.html), various
 outdoor activities, reading, and working on various projects related
-to [Arduino][], [Raspberry Pi][RPi], and open source software. Most of
-my projects can be found on [GitHub][] (see also [my Gists][]).
+to [Arduino][], [Raspberry Pi][RPi], and open source software. Lately
+I have been particularly interested in interacting with physical
+devices via web-based interfaces. Most of my projects can be found on
+[GitHub][] (see also [my Gists][]).
 
 [Arduino]: http://arduino.cc/
 [RPi]: http://www.raspberrypi.org/
 [GitHub]: https://github.com/mivade
 [my Gists]: https://gist.github.com/mivade
 
+For fun, and as a service to the ion trapping community, I maintain
+the
+[Ion Trapping Periodic Table](http://mike.depalatis.net/ionptable/). This
+aims to be a handy reference for ion trappers with information on
+transition wavelengths, photoionization schemes, and more.
+
 ## Contact ##
 
 * **Office**: [1522-424][map]
-* **Email 1**: (my last name in lower case) at phys.au.dk
-* **Email 2**: (my last name in lower case) at gmail.com
-* **GPG**: [F892 3AB7 541B 7A81 0D4C 8654 551C 8F12 F234 2725][gpg key]
+* **Email**: mike at (my last name in lower case) dot net
+* **GPG**: 9C6E 918F 885D 19AA EC7E  FB76 25A6 CDBF C58D 27A5
 
-[gpg key]: http://pgp.mit.edu:11371/pks/lookup?op=vindex&search=0x551C8F12F2342725>
 [map]: http://www.au.dk/om/organisation/find-au/bygningskort/?b=1522
-
-## Stuff ##
-
-* [Research](research.html)
-* [Photos](photography.html)
-* [Useful Resources](resources.html)
-* [Ion Periodic Table][ionptable]
-
-[ionptable]: http://mivade.github.io/ionptable/
 
 ## Quick links ##
 
