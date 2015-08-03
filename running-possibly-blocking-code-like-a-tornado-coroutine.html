@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en"
+>
+<head>
+    <title>Running (possibly) blocking code like a Tornado coroutine - mike.depalatis.net</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="./running-possibly-blocking-code-like-a-tornado-coroutine.html">
+
+        <meta name="author" content="Michael V. DePalatis" />
+        <meta name="keywords" content="python,tornado,async" />
+        <meta name="description" content="One of the main benefits of using the Tornado web server is that it is (normally) a single-threaded, asynchronous framework that can rely on coroutines for concurrency. Many drivers already exist to provide a client library utilizing the Tornado event loop and coroutines (e.g., the Motor MongoDB driver). To ..." />
+
+    <!-- Enable latex plugin -->
+
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="./theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="./theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="./theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="./theme/css/style.css" type="text/css"/>
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="./" class="navbar-brand">
+mike.depalatis.net            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="./">
+                             About
+                          </a></li>
+                         <li><a href="./photography.html">
+                             Photography
+                          </a></li>
+                         <li><a href="./research.html">
+                             Research
+                          </a></li>
+                         <li><a href="./resources.html">
+                             Links
+                          </a></li>
+                        <li class="active">
+                            <a href="./category/blog.html">Blog</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="./archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="./running-possibly-blocking-code-like-a-tornado-coroutine.html"
+                       rel="bookmark"
+                       title="Permalink to Running (possibly) blocking code like a Tornado coroutine">
+                        Running (possibly) blocking code like a Tornado coroutine
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-08-03T19:54:00+02:00"> 2015-08-03</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="./tag/python.html">python</a>
+        /
+	<a href="./tag/tornado.html">tornado</a>
+        /
+	<a href="./tag/async.html">async</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>One of the main benefits of using the <a class="reference external" href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it
+is (normally) a single-threaded, asynchronous framework that can rely
+on coroutines for concurrency. Many drivers already exist to provide a
+client library utilizing the Tornado event loop and coroutines (e.g.,
+the <a class="reference external" href="https://github.com/mongodb/motor/">Motor</a> <a class="reference external" href="https://www.mongodb.org/">MongoDB</a> driver).</p>
+<p>To write your own coroutine-friendly code for Tornado, there are a few
+different options available, all requiring that you somehow wrap
+blocking calls within a Future so as to allow the event loop to
+continue executing. Here, I demonstrate one recipe to do just this by
+utilizing <tt class="docutils literal">Executor</tt> objects from the <tt class="docutils literal">concurrent.futures</tt>
+module. We start with the imports:</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">tornado</span> <span class="kn">import</span> <span class="n">gen</span>
+<span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span><span class="p">,</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">tornado.ioloop</span> <span class="kn">import</span> <span class="n">IOLoop</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal">concurrent.futures</tt> is standard in Python &gt;= 3.2 and is
+installable via <tt class="docutils literal">pip install futures</tt> for older versions.</p>
+</div>
+<p>We will be using the <tt class="docutils literal">run_on_executor</tt> decorator which requires that
+the class whose methods we decorate have some type of <tt class="docutils literal">Executor</tt>
+attribute (the default is to use the <tt class="docutils literal">executor</tt> attribute, but a
+different <tt class="docutils literal">Executor</tt> can be used with a keyword argument passsed to
+the decorator). We'll create a class to run our asynchronous tasks and
+give it a <tt class="docutils literal">ThreadPoolExecutor</tt> for executing tasks. In this
+contrived example, our long running task just sleeps for a random
+amont of time:</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">TaskRunner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span> <span class="ow">or</span> <span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+    <span class="nd">@run_on_executor</span>
+    <span class="k">def</span> <span class="nf">long_running_task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tau</span>
+</pre></div>
+<p>Now, from within a coroutine, we can let the tasks run as if they were
+normal coroutines:</p>
+<div class="highlight"><pre><span class="n">loop</span> <span class="o">=</span> <span class="n">IOLoop</span><span class="p">()</span> <span class="c"># this is necessary if running as an ipynb!</span>
+<span class="n">tasks</span> <span class="o">=</span> <span class="n">TaskRunner</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+
+<span class="nd">@gen.coroutine</span>
+<span class="k">def</span> <span class="nf">do_stuff</span><span class="p">():</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">tasks</span><span class="o">.</span><span class="n">long_running_task</span><span class="p">()</span>
+    <span class="k">raise</span> <span class="n">gen</span><span class="o">.</span><span class="n">Return</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">do_other_stuff</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+</pre></div>
+<p>Finally, in the main coroutine:</p>
+<div class="highlight"><pre><span class="nd">@gen.coroutine</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">stuff</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">do_stuff</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">stuff</span><span class="p">)</span>
+        <span class="n">do_other_stuff</span><span class="p">()</span>
+
+<span class="n">loop</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
+</pre></div>
+<p>Which produces output like:</p>
+<pre class="literal-block">
+3
+0.6012166386789509
+1
+0.9235652108721132
+0
+0.42316507955015026
+3
+0.9766563871068523
+1
+0.21032495467534018
+2
+0.15572313672917715
+0
+0.8767039780374377
+3
+0.6542727048597389
+2
+0.3623342196737247
+0
+0.30042493880819876
+</pre>
+<p>Using this general pattern, it is rather easy to adapt blocking calls
+to Tornado's coroutines. Note that the example code can be found
+<a class="reference external" href="https://gist.github.com/mivade/5966f1b7a995a50ecc55">here</a>.</p>
+
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Michael V. DePalatis
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="./theme/js/jquery.min.js"></script>
+<script src="./theme/js/bootstrap.min.js"></script>
+<script src="./theme/js/respond.min.js"></script>
+<script src="./theme/js/admonitions.js"></script>
+
+</body>
+</html>

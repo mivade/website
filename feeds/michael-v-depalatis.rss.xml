@@ -1,5 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 28 Feb 2015 14:32:00 +0100</lastBuildDate><item><title>Background tasks with Tornado</title><link>http://mike.depalatis.net/background-tasks-with-tornado.html</link><description>&lt;p&gt;I have been using &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; lately for distributed control of
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 03 Aug 2015 19:54:00 +0200</lastBuildDate><item><title>Running (possibly) blocking code like a Tornado coroutine</title><link>http://mike.depalatis.net/running-possibly-blocking-code-like-a-tornado-coroutine.html</link><description>&lt;p&gt;One of the main benefits of using the &lt;a class="reference external" href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; web server is that it
+is (normally) a single-threaded, asynchronous framework that can rely
+on coroutines for concurrency. Many drivers already exist to provide a
+client library utilizing the Tornado event loop and coroutines (e.g.,
+the &lt;a class="reference external" href="https://github.com/mongodb/motor/"&gt;Motor&lt;/a&gt; &lt;a class="reference external" href="https://www.mongodb.org/"&gt;MongoDB&lt;/a&gt; driver).&lt;/p&gt;
+&lt;p&gt;To write your own coroutine-friendly code for Tornado, there are a few
+different options available, all requiring that you somehow wrap
+blocking calls within a Future so as to allow the event loop to
+continue executing. Here, I demonstrate one recipe to do just this by
+utilizing &lt;tt class="docutils literal"&gt;Executor&lt;/tt&gt; objects from the &lt;tt class="docutils literal"&gt;concurrent.futures&lt;/tt&gt;
+module. We start with the imports:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado.concurrent&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;run_on_executor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;futures&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado.ioloop&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="note"&gt;
+&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
+&lt;p class="last"&gt;&lt;tt class="docutils literal"&gt;concurrent.futures&lt;/tt&gt; is standard in Python &amp;gt;= 3.2 and is
+installable via &lt;tt class="docutils literal"&gt;pip install futures&lt;/tt&gt; for older versions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We will be using the &lt;tt class="docutils literal"&gt;run_on_executor&lt;/tt&gt; decorator which requires that
+the class whose methods we decorate have some type of &lt;tt class="docutils literal"&gt;Executor&lt;/tt&gt;
+attribute (the default is to use the &lt;tt class="docutils literal"&gt;executor&lt;/tt&gt; attribute, but a
+different &lt;tt class="docutils literal"&gt;Executor&lt;/tt&gt; can be used with a keyword argument passsed to
+the decorator). We'll create a class to run our asynchronous tasks and
+give it a &lt;tt class="docutils literal"&gt;ThreadPoolExecutor&lt;/tt&gt; for executing tasks. In this
+contrived example, our long running task just sleeps for a random
+amont of time:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TaskRunner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;executor&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;futures&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ThreadPoolExecutor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+    &lt;span class="nd"&gt;@run_on_executor&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;long_running_task&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;tau&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;randint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tau&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tau&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now, from within a coroutine, we can let the tasks run as if they were
+normal coroutines:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c"&gt;# this is necessary if running as an ipynb!&lt;/span&gt;
+&lt;span class="n"&gt;tasks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;TaskRunner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nd"&gt;@gen.coroutine&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;do_stuff&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;tasks&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;long_running_task&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Return&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;do_other_stuff&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Finally, in the main coroutine:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nd"&gt;@gen.coroutine&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;stuff&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;do_stuff&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stuff&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;do_other_stuff&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run_sync&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Which produces output like:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+3
+0.6012166386789509
+1
+0.9235652108721132
+0
+0.42316507955015026
+3
+0.9766563871068523
+1
+0.21032495467534018
+2
+0.15572313672917715
+0
+0.8767039780374377
+3
+0.6542727048597389
+2
+0.3623342196737247
+0
+0.30042493880819876
+&lt;/pre&gt;
+&lt;p&gt;Using this general pattern, it is rather easy to adapt blocking calls
+to Tornado's coroutines. Note that the example code can be found
+&lt;a class="reference external" href="https://gist.github.com/mivade/5966f1b7a995a50ecc55"&gt;here&lt;/a&gt;.&lt;/p&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michael V. DePalatis</dc:creator><pubDate>Mon, 03 Aug 2015 19:54:00 +0200</pubDate><guid>tag:mike.depalatis.net,2015-08-03:running-possibly-blocking-code-like-a-tornado-coroutine.html</guid><category>python</category><category>tornado</category><category>async</category></item><item><title>Background tasks with Tornado</title><link>http://mike.depalatis.net/background-tasks-with-tornado.html</link><description>&lt;p&gt;I have been using &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a &lt;a href="http://www.highfinesse.com/"&gt;HighFinesse&lt;/a&gt; &lt;a href="http://www.highfinesse.com/en/wavelengthmeter/"&gt;wavelength meter&lt;/a&gt;
 which we use to monitor and stabilize several lasers (up to 14 at a
