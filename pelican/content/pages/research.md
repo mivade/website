@@ -4,6 +4,19 @@ save_as: research.html
 tags: research, science
 author: Michael V. DePalatis
 
+## Sideband cooling of atomic and molecular ions ##
+
+Single trapped ions are a near ideal quantum system that can be
+spectroscopically probed with incredibly high precision. Although
+molecular ions typically lack strong cycling transitions for efficient
+cooling and detection, a single atomic ion can be used to
+sympathetically cool a single molecular ion to the quantum mechanical
+ground state of motion. By using the quantum logic spectroscopy
+scheme, transitions can be probed on the molecular ion and detected
+using the atomic ion. For such experiments, we use
+<sup>40</sup>Ca<sup>+</sup> as the cooling/detection ion and
+MgH<sup>+</sup> as the spectroscopy ion.
+
 ## Chemical reactions with Doppler cooled ions ##
 
 In recent years, much progress has been made in extending laser
