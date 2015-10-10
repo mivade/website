@@ -1,0 +1,24 @@
+{
+  "name": "recoil",
+  "version": "0.1.0",
+  "description": "React-powered static site generator",
+  "main": "src/js/index.js",
+  "scripts": {
+      "test": ""
+  },
+  "author": "Michael V. DePalatis",
+  "license": "MIT",
+  "dependencies": {
+      "react": "^0.14.0",
+      "react-bootstrap": "^0.27.1",
+      "react-dom": "^0.14.0",
+      "react-router": "=1.0.0-rc3"
+  },
+  "devDependencies": {
+      "babel-core": "^5.8.22",
+      "babelify": "^6.2.0",
+      "browserify": "^11.0.1",
+      "gulp": "^3.9.0",
+      "vinyl-source-stream": "^1.1.0"
+  }
+}

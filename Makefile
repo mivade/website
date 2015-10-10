@@ -1,14 +1,22 @@
-html:
-	cd pelican; pelican content
+.PHONY: help clean
 
-serve:
-	python -m http.server 8000
+help:
+	@echo "update - check for new content"
+	@echo "recoil - build the Javascript/CSS for recoil"
+	@echo "clean - remove all built content"
+	@echo "distclean - remove all built and downloaded content"
+
+update: $(wildcard entries/*) $(wildcard pages/*)
+	@echo 'TODO: DTRT'
+
+recoil: $(wildcard recoil/*)
+	cd recoil
+	npm install
+	gulp
 
 clean:
-	rm -f *.html
-	rm -rf author
-	rm -rf category
-	rm -rf drafts
-	rm -rf feeds
-	rm -rf tag
-	rm -rf theme
+	rm -rf index.html
+	@echo 'TODO: delete other stuff'
+
+distclean: clean
+	@echo 'TODO: delete even more other stuff'
