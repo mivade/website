@@ -1,6 +1,4 @@
 title: Research
-URL: research.html
-save_as: research.html
 tags: research, science
 author: Michael V. DePalatis
 
@@ -63,7 +61,7 @@ Publications/Conferences
    C. J. Campbell, A. V. Steele, L. R. Churchill, M. V. DePalatis,
    D. E. Naylor, D. N. Matsukevich, A. Kuzmich, and M. S. Chapman,
    Phys. Rev. Lett. **102**, 233004 (2009). ([Link][Th232])
-  
+
 [BaRxn]: http://journals.aps.org/pra/abstract/10.1103/PhysRevA.88.023403
 [ThRxn]: http://journals.aps.org/pra/abstract/10.1103/PhysRevA.83.012710
 [Th232]: http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.102.233004
@@ -88,7 +86,7 @@ Publications/Conferences
    D.E. Naylor, D. N. Matsukevich, M. S. Chapman, and A. Kuzmich,
    DAMOP 2009 Charlottesville, VA, May 2009.
    ([DAMOP abstract][damop2009])
-  
+
 [damop2012]: http://meetings.aps.org/Meeting/DAMOP12/Event/171304
 [damop2011]: http://meetings.aps.org/Meeting/DAMOP11/Event/147872)).
 [damop2010]: http://meetings.aps.org/Meeting/DAMOP10

@@ -1,6 +1,4 @@
 title: Links
-URL: resources.html
-save_as: resources.html
 tags: links
 author: Michael V. DePalatis
 
@@ -18,7 +16,7 @@ author: Michael V. DePalatis
 * [Electromagnetic Waves and Antennas][Orfanidi] - A freely available
   book (with inidividual chapters in PDF form).
 * [Encyclopedia of Laser Physics and Technology][RPELPT]
-  
+
 [MathWorld]: http://mathworld.wolfram.com
 [Physics World]: http://scienceworld.wolfram.com/physics
 [HyperPhysics]: http://hyperphysics.phy-astr.gsu.edu/hbase
