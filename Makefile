@@ -6,8 +6,10 @@ help:
 	@echo "clean - remove all built content"
 	@echo "distclean - remove all built and downloaded content"
 
-update: $(wildcard entries/*) $(wildcard pages/*)
-	@echo 'TODO: DTRT'
+update: $(wildcard entries/*) $(wildcard pages/*) index.json
+
+index.json:
+	node update.js
 
 recoil: $(wildcard recoil/*)
 	cd recoil
@@ -16,7 +18,7 @@ recoil: $(wildcard recoil/*)
 
 clean:
 	rm -rf index.html
-	@echo 'TODO: delete other stuff'
+	rm -rf index.json
 
 distclean: clean
 	@echo 'TODO: delete even more other stuff'
