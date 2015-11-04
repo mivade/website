@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /** Script to update the site index.json file. */
 
 var fs = require('fs'),
