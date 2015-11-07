@@ -1,5 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 03 Aug 2015 19:54:00 +0200</lastBuildDate><item><title>Running (possibly) blocking code like a Tornado coroutine</title><link>http://mike.depalatis.net/running-possibly-blocking-code-like-a-tornado-coroutine.html</link><description>&lt;p&gt;One of the main benefits of using the &lt;a class="reference external" href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; web server is that it
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 04 Nov 2015 00:00:00 +0100</lastBuildDate><item><title>Importing one Mercurial repository into another</title><link>http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html</link><description>&lt;p&gt;In the
+&lt;a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/"&gt;ion trap group&lt;/a&gt;,
+we usually use &lt;a href="https://www.mercurial-scm.org/"&gt;Mercurial&lt;/a&gt; for version controlling software we write
+for experimental control, data analysis, and so on. This post outlines
+how to import the full history of one repository into another. This
+can be useful for cases where it makes sense to move a sub-project
+directly into its parent, for example.&lt;/p&gt;
+&lt;h2&gt;Convert the soon-to-be child repository&lt;/h2&gt;
+&lt;p&gt;With the Mercurial &lt;code&gt;convert&lt;/code&gt; extension, you can rename branches, move,
+and filter files. As an example, say we have a repo with only the
+&lt;code&gt;default&lt;/code&gt; branch which is to be imported into a super-repository.&lt;/p&gt;
+&lt;p&gt;For starters, we will want all our files in the child repo to be in a
+subdirectory of the parent repo and not include the child's
+&lt;code&gt;.hgignore&lt;/code&gt;. To do this, create a file &lt;code&gt;filemap.txt&lt;/code&gt; with the
+following contents:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;rename . child
+exclude .hgignore
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The first line will move all files in the repo's top level into a
+directory named &lt;code&gt;child&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Next, optionally create a &lt;code&gt;branchmap.txt&lt;/code&gt; file for renaming the
+&lt;code&gt;default&lt;/code&gt; branch to something else:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;default child-repo
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now convert:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Pull in the converted repository&lt;/h2&gt;
+&lt;p&gt;From the parent repo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;hg pull -f ../converted
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ensure the child commits are in the draft phase with:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;hg phase -f --draft -r &amp;lt;first&amp;gt;:&amp;lt;last&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Rebase as appropriate&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;hg rebase -s &amp;lt;child rev&amp;gt; -d &amp;lt;parent rev&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To keep the child's changed branch name, use the &lt;code&gt;--keepbranches&lt;/code&gt;
+option.&lt;/p&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;https://mercurial.selenic.com/wiki/ConvertExtension&lt;/li&gt;
+&lt;li&gt;https://mercurial.selenic.com/wiki/Phases&lt;/li&gt;
+&lt;li&gt;https://mercurial.selenic.com/wiki/RebaseExtension&lt;/li&gt;
+&lt;li&gt;https://stackoverflow.com/questions/3214717/how-can-i-import-a-mercurial-repo-including-history-into-another-mercurial-rep&lt;/li&gt;
+&lt;li&gt;https://stackoverflow.com/questions/3338672/mercurial-convert-clones-to-branches&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michael V. DePalatis</dc:creator><pubDate>Wed, 04 Nov 2015 00:00:00 +0100</pubDate><guid>tag:mike.depalatis.net,2015-11-04:importing-one-mercurial-repository-into-another.html</guid><category>mercurial</category></item><item><title>Running (possibly) blocking code like a Tornado coroutine</title><link>http://mike.depalatis.net/running-possibly-blocking-code-like-a-tornado-coroutine.html</link><description>&lt;p&gt;One of the main benefits of using the &lt;a class="reference external" href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; web server is that it
 is (normally) a single-threaded, asynchronous framework that can rely
 on coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
