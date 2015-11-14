@@ -2,14 +2,6 @@ import React from 'react';
 
 /** Blog entries */
 export class BlogEntry extends React.Component {
-    static propTypes = {
-        title: React.PropTypes.string.isRequired,
-        author: React.PropTypes.string.isRequired,
-        date: React.PropTypes.string.isRequired,
-        lastChangedDate: React.PropTypes.string,  // TODO: use this
-        content: React.PropTypes.string.isRequired
-    };
-
     function render() {
         return (
             <div className="recoil-entry">
@@ -24,3 +16,11 @@ export class BlogEntry extends React.Component {
         );
     }
 }
+
+BlogEntry.propTypes = {
+    title: React.PropTypes.string.isRequired,
+    author: React.PropTypes.string.isRequired,
+    date: React.PropTypes.string.isRequired,
+    lastChangedDate: React.PropTypes.string,  // TODO: use this
+    content: React.PropTypes.string.isRequired
+};

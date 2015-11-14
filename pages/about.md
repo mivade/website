@@ -1,14 +1,13 @@
 title: About
 author: Michael V. DePalatis
 
-I am a postdoc in physics at [Aarhus University][AU] working in
-[the ion trap group][group] of Prof. [Michael Drewsen][Drewsen]. My
-current research activities involve state preparation and precision
-spectroscopy of cold molecular ions as part of the [COMIQ][]
-network. Previously, I was a graduate student in
-[Mike Chapman's lab][ChapmanLab] at [Georgia Tech][GT] working with
-trapped Th<sup>3+</sup> and Ba<sup>+</sup> ions. More details on my
-research can be found [here](research.html).
+I am a postdoc in physics at [Aarhus University][AU] working in [the ion
+trap group][group] of Prof. [Michael Drewsen][Drewsen]. My current
+research activities involve state preparation and precision spectroscopy
+of cold molecular ions as part of the [COMIQ][] network. Previously, I
+was a graduate student in [Mike Chapman's lab][ChapmanLab] at [Georgia
+Tech][GT] working with trapped Th<sup>3+</sup> and Ba<sup>+</sup> ions.
+More details on my research can be found [here](research.html).
 
 [AU]: http://www.au.dk/en
 [group]: http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/
@@ -18,21 +17,20 @@ research can be found [here](research.html).
 [ChapmanLab]: http://chapmanlabs.gatech.edu
 
 In my spare time, I enjoy [photography](photography.html), various
-outdoor activities, reading, and working on various projects related
-to [Arduino][], [Raspberry Pi][RPi], and open source software. Lately
-I have been particularly interested in interacting with physical
-devices via web-based interfaces. Most of my projects can be found on
-[GitHub][] (see also [my Gists][]).
+outdoor activities, reading, and working on various projects related to
+[Arduino][], [Raspberry Pi][RPi], and open source software. Lately I
+have been particularly interested in interacting with physical devices
+via web-based interfaces. Most of my projects can be found on [GitHub][]
+(see also [my Gists][]).
 
 [Arduino]: http://arduino.cc/
 [RPi]: http://www.raspberrypi.org/
 [GitHub]: https://github.com/mivade
 [my Gists]: https://gist.github.com/mivade
 
-For fun, and as a service to the ion trapping community, I maintain
-the
-[Ion Trapping Periodic Table](http://mike.depalatis.net/ionptable/). This
-aims to be a handy reference for ion trappers with information on
+For fun, and as a service to the ion trapping community, I maintain the
+[Ion Trapping Periodic Table](http://mike.depalatis.net/ionptable/).
+This aims to be a handy reference for ion trappers with information on
 transition wavelengths, photoionization schemes, and more.
 
 ## Contact ##
@@ -57,8 +55,8 @@ More [here](resources.html).
 
 ## Friends ##
 
-This is not an exhaustive list. It only lists people who have web
-sites that I know about.
+This is not an exhaustive list. It only lists people who have web sites
+that I know about.
 
 * [Richard Darst][]
 * [John Dowdle][]
