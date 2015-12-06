@@ -13,7 +13,7 @@ THEME_STATIC_DIR = 'theme'
 THEME_STATIC_PATHS = ['theme', 'static']
 
 # pelican-bootstrap3 theme options
-BOOTSTRAP_THEME = 'flatly'
+BOOTSTRAP_THEME = 'yeti'
 BOOTSTRAP_NAVBAR_INVERSE = False
 PYGMENTS_STYLE = 'default'
 HIDE_SIDEBAR = True
