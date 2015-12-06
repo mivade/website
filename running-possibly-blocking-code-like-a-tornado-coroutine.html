@@ -110,36 +110,33 @@ mike.depalatis.net            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>One of the main benefits of using the <a class="reference external" href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it
-is (normally) a single-threaded, asynchronous framework that can rely
-on coroutines for concurrency. Many drivers already exist to provide a
+                <hr />
+<p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
+(normally) a single-threaded, asynchronous framework that can rely on
+coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
-the <a class="reference external" href="https://github.com/mongodb/motor/">Motor</a> <a class="reference external" href="https://www.mongodb.org/">MongoDB</a> driver).</p>
+the <a href="https://github.com/mongodb/motor/">Motor</a> <a href="https://www.mongodb.org/">MongoDB</a> driver).</p>
 <p>To write your own coroutine-friendly code for Tornado, there are a few
 different options available, all requiring that you somehow wrap
-blocking calls within a Future so as to allow the event loop to
-continue executing. Here, I demonstrate one recipe to do just this by
-utilizing <tt class="docutils literal">Executor</tt> objects from the <tt class="docutils literal">concurrent.futures</tt>
-module. We start with the imports:</p>
+blocking calls within a Future so as to allow the event loop to continue
+executing. Here, I demonstrate one recipe to do just this by utilizing
+<code>Executor</code> objects from the <code>concurrent.futures</code> module. We start with
+the imports:</p>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">tornado</span> <span class="kn">import</span> <span class="n">gen</span>
 <span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span><span class="p">,</span> <span class="n">futures</span>
 <span class="kn">from</span> <span class="nn">tornado.ioloop</span> <span class="kn">import</span> <span class="n">IOLoop</span>
 </pre></div>
-<div class="note">
-<p class="first admonition-title">Note</p>
-<p class="last"><tt class="docutils literal">concurrent.futures</tt> is standard in Python &gt;= 3.2 and is
-installable via <tt class="docutils literal">pip install futures</tt> for older versions.</p>
-</div>
-<p>We will be using the <tt class="docutils literal">run_on_executor</tt> decorator which requires that
-the class whose methods we decorate have some type of <tt class="docutils literal">Executor</tt>
-attribute (the default is to use the <tt class="docutils literal">executor</tt> attribute, but a
-different <tt class="docutils literal">Executor</tt> can be used with a keyword argument passsed to
-the decorator). We'll create a class to run our asynchronous tasks and
-give it a <tt class="docutils literal">ThreadPoolExecutor</tt> for executing tasks. In this
-contrived example, our long running task just sleeps for a random
-amont of time:</p>
+
+
+<p>We will be using the <code>run_on_executor</code> decorator which requires that the
+class whose methods we decorate have some type of <code>Executor</code> attribute
+(the default is to use the <code>executor</code> attribute, but a different
+<code>Executor</code> can be used with a keyword argument passed to the decorator).
+We'll create a class to run our asynchronous tasks and give it a
+<code>ThreadPoolExecutor</code> for executing tasks. In this contrived example, our
+long running task just sleeps for a random amount of time:</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">TaskRunner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
@@ -151,6 +148,8 @@ amont of time:</p>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tau</span>
 </pre></div>
+
+
 <p>Now, from within a coroutine, we can let the tasks run as if they were
 normal coroutines:</p>
 <div class="highlight"><pre><span class="n">loop</span> <span class="o">=</span> <span class="n">IOLoop</span><span class="p">()</span> <span class="c"># this is necessary if running as an ipynb!</span>
@@ -164,6 +163,8 @@ normal coroutines:</p>
 <span class="k">def</span> <span class="nf">do_other_stuff</span><span class="p">():</span>
     <span class="k">print</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
 </pre></div>
+
+
 <p>Finally, in the main coroutine:</p>
 <div class="highlight"><pre><span class="nd">@gen.coroutine</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -174,9 +175,10 @@ normal coroutines:</p>
 
 <span class="n">loop</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
 </pre></div>
+
+
 <p>Which produces output like:</p>
-<pre class="literal-block">
-3
+<div class="highlight"><pre>3
 0.6012166386789509
 1
 0.9235652108721132
@@ -196,11 +198,12 @@ normal coroutines:</p>
 0.3623342196737247
 0
 0.30042493880819876
-</pre>
+</pre></div>
+
+
 <p>Using this general pattern, it is rather easy to adapt blocking calls
 to Tornado's coroutines. Note that the example code can be found
-<a class="reference external" href="https://gist.github.com/mivade/5966f1b7a995a50ecc55">here</a>.</p>
-
+<a href="https://gist.github.com/mivade/5966f1b7a995a50ecc55">here</a>.</p>
             </div>
             <!-- /.entry-content -->
         </article>

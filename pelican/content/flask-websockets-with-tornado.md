@@ -1,6 +1,7 @@
 title: Using websockets with Flask via Tornado
 date: 2014-12-15 19:44
 tags: python, flask, tornado, javascript, websockets
+---
 
 I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
@@ -37,62 +38,64 @@ on how to do just that.
 Integrating websockets into a Flask app is now pretty easy. Here's an
 example on the server side:
 
-	:::python
-	from __future__ import print_function
-	from flask import Flask, render_template
-	from tornado.wsgi import WSGIContainer
-	from tornado.web import Application, FallbackHandler
-	from tornado.websocket import WebSocketHandler
-	from tornado.ioloop import IOLoop
-	
-	class WebSocket(WebSocketHandler):
-		def open(self):
-			print("Socket opened.")
-	
-	    def on_message(self, message):
-			self.write_message("Received: " + message)
-			print("Received message: " + message)
-			
-	def on_close(self):
-		print("Socket closed.")
-		
-	app = Flask('flasknado')
+```python
+from __future__ import print_function
+from flask import Flask, render_template
+from tornado.wsgi import WSGIContainer
+from tornado.web import Application, FallbackHandler
+from tornado.websocket import WebSocketHandler
+from tornado.ioloop import IOLoop
 
-	@app.route('/')
-	def index():
-		return render_template('index.html')
-		
-	if __name__ == "__main__":
-		container = WSGIContainer(app)
-		server = Application([
-			(r'/websocket/', WebSocket),
-			(r'.*', FallbackHandler, dict(fallback=container))
-		])
-		server.listen(8080)
-		IOLoop.instance().start()
+class WebSocket(WebSocketHandler):
+	def open(self):
+		print("Socket opened.")
+
+    def on_message(self, message):
+		self.write_message("Received: " + message)
+		print("Received message: " + message)
+
+def on_close(self):
+	print("Socket closed.")
+
+app = Flask('flasknado')
+
+@app.route('/')
+def index():
+	return render_template('index.html')
+
+if __name__ == "__main__":
+	container = WSGIContainer(app)
+	server = Application([
+		(r'/websocket/', WebSocket),
+		(r'.*', FallbackHandler, dict(fallback=container))
+	])
+	server.listen(8080)
+	IOLoop.instance().start()
+```
 
 The client-side Javascript is simple as well:
 
-	:::javascript
-	var socket = null;
-	$(document).ready(function() {
-		socket = new WebSocket("ws://" + document.domain + ":8080/websocket/");
+```javascript
+var socket = null;
+$(document).ready(function() {
+	socket = new WebSocket("ws://" + document.domain + ":8080/websocket/");
 
-	    socket.onopen = function() {
-			socket.send("Joined");
-		}
-		
-		socket.onmessage = function(message) {
-			var txt = message.data;
-			$(".container").append("<p>" + txt + "</p>");
-		}
-	});
-	
-	function submit() {
-		var text = $("input#message").val();
-		socket.send(text);
-		$("input#message").val('');
+    socket.onopen = function() {
+		socket.send("Joined");
 	}
+
+	socket.onmessage = function(message) {
+		var txt = message.data;
+		$(".container").append("<p>" + txt + "</p>");
+	}
+});
+
+function submit() {
+	var text = $("input#message").val();
+	socket.send(text);
+	$("input#message").val('');
+}
+```
 
 The full demo example can be found
 [here](https://github.com/mivade/flasknado).

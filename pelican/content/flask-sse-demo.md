@@ -1,6 +1,7 @@
 title: Flask and server-sent events
 date: 2015-02-14 13:34
 tags: python, flask, javascript, sse, gevent
+---
 
 I recently discovered the existence of the HTML5
 [server-sent events][sse] standard. Although it lacks the
@@ -15,21 +16,22 @@ In order to try SSE out within a [Flask][] framework, I put together a
 simple [demo app][] using [gevent][]. The core of the demo on the
 Python side looks like this:
 
-	:::python
-	app = Flask(__name__)
+```python
+app = Flask(__name__)
 
-	def event():
-		while True:
-			yield 'data: ' + json.dumps(random.rand(1000).tolist()) + '\n\n'
-			gevent.sleep(0.2)
+def event():
+	while True:
+		yield 'data: ' + json.dumps(random.rand(1000).tolist()) + '\n\n'
+		gevent.sleep(0.2)
 
-	@app.route('/')
-	def index():
-		return render_template('index.html')
+@app.route('/')
+def index():
+	return render_template('index.html')
 
-	@app.route('/stream/', methods=['GET', 'POST'])
-	def stream():
-		return Response(event(), mimetype="text/event-stream")
+@app.route('/stream/', methods=['GET', 'POST'])
+def stream():
+	return Response(event(), mimetype="text/event-stream")
+```
 
 This can be run either using gevent's WSGI server or [gunicorn][]
 using gevent workers.

@@ -108,7 +108,8 @@ mike.depalatis.net            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <h2>Introduction</h2>
+                <hr />
+<h2>Introduction</h2>
 <p>One of the most convenient ways of communicating with experimental
 devices (such as oscilloscopes, frequency generators, pulse
 generators, etc.) is via ethernet. The advantages of this over other
@@ -167,7 +168,7 @@ git clone --depth 1 git://github.com/raspberrypi/linux.git
 <p><code>cp arch/arm/configs/bcmrpi_defconfig .config</code></p>
 <p>Select the appropriate compiler to use by defining an environment
 variable that points to the right place (TODO: put the right thing
-here): </p>
+here):</p>
 <p><code>export CCPREFIX=/path/to/your/compiler/binary/prefix-of-binary-</code></p>
 <p>Pre-configure everything and <a href="http://serverfault.com/a/116317">accept the defaults</a>:</p>
 <p><code>yes "" | make oldconfig</code></p>
@@ -182,7 +183,7 @@ N = 5). This step will take several minutes on a reasonably fast
 computer. Next build the modules:</p>
 <p><code>make ARCH=arm CROSS_COMPILE=${CCPREFIX} modules</code></p>
 <h3>Transferring the kernel:</h3>
-<p>First copy to the RPi: </p>
+<p>First copy to the RPi:</p>
 <p><code>scp arch/arm/boot/Image pi@yourpi:kernel_someuniqueid.img</code></p>
 <p>Then on the RPi, copy this over to <code>/boot</code>:</p>
 <p><code>sudo cp kernel_someuniqueid.img /boot</code></p>
@@ -192,7 +193,7 @@ sure the following line appears:</p>
 <p>and comment out any other <code>kernel=...</code> lines.</p>
 <h3>Transferring the kernel modules:</h3>
 <p>On the build machine, make a temporary directory to install modules
-to: </p>
+to:</p>
 <div class="highlight"><pre>mkdir ~/modules
 export MODULES_TEMP=~/modules
 </pre></div>

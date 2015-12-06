@@ -2,6 +2,7 @@ title: Raspberry Pi as a USB to Ethernet Gateway
 date: 2014-03-08 15:32
 modified: 2014-06-10 10:59
 tags: raspberrypi, python
+---
 
 Introduction
 ------------
@@ -86,7 +87,7 @@ Next, copy the default configuration file:
 
 Select the appropriate compiler to use by defining an environment
 variable that points to the right place (TODO: put the right thing
-here): 
+here):
 
 `export CCPREFIX=/path/to/your/compiler/binary/prefix-of-binary-`
 
@@ -113,7 +114,7 @@ computer. Next build the modules:
 
 ### Transferring the kernel:
 
-First copy to the RPi: 
+First copy to the RPi:
 
 `scp arch/arm/boot/Image pi@yourpi:kernel_someuniqueid.img`
 
@@ -131,7 +132,7 @@ and comment out any other `kernel=...` lines.
 ### Transferring the kernel modules:
 
 On the build machine, make a temporary directory to install modules
-to: 
+to:
 
 ```
 mkdir ~/modules

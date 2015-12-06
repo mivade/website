@@ -1,6 +1,7 @@
 title: Background tasks with Tornado
 date: 2015-02-28 14:32
 tags: python, tornado, lab
+---
 
 I have been using [Tornado][] lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
@@ -35,11 +36,12 @@ callback on the IO loop. This makes shutdown trivial since only the IO
 loop needs to be stopped when the program is closed. A refresh
 function could thus look something like this:
 
-	:::python
-	@tornado.concurrent.run_on_executor
-	def refresh():
-	    do_something_that_takes_a_while()
-		tornado.ioloop.IOLoop.instance().add_callback(self.refresh)
+```python
+@tornado.concurrent.run_on_executor
+def refresh():
+    do_something_that_takes_a_while()
+	tornado.ioloop.IOLoop.instance().add_callback(self.refresh)
+```
 
 Now after `refresh` is called once, it will continuously run until the
 IO loop is stopped.

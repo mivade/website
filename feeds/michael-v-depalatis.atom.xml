@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2015-11-04T00:00:00+01:00</updated><entry><title>Importing one Mercurial repository into another</title><link href="http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html" rel="alternate"></link><updated>2015-11-04T00:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-11-04:importing-one-mercurial-repository-into-another.html</id><summary type="html">&lt;p&gt;In the
+<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2015-12-06T15:00:00+01:00</updated><entry><title>Importing one Mercurial repository into another</title><link href="http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html" rel="alternate"></link><updated>2015-11-04T00:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-11-04:importing-one-mercurial-repository-into-another.html</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;In the
 &lt;a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/"&gt;ion trap group&lt;/a&gt;,
 we usually use &lt;a href="https://www.mercurial-scm.org/"&gt;Mercurial&lt;/a&gt; for version controlling software we write
 for experimental control, data analysis, and so on. This post outlines
@@ -57,36 +58,33 @@ option.&lt;/p&gt;
 &lt;li&gt;https://mercurial.selenic.com/wiki/RebaseExtension&lt;/li&gt;
 &lt;li&gt;https://stackoverflow.com/questions/3214717/how-can-i-import-a-mercurial-repo-including-history-into-another-mercurial-rep&lt;/li&gt;
 &lt;li&gt;https://stackoverflow.com/questions/3338672/mercurial-convert-clones-to-branches&lt;/li&gt;
-&lt;/ul&gt;</summary><category term="mercurial"></category></entry><entry><title>Running (possibly) blocking code like a Tornado coroutine</title><link href="http://mike.depalatis.net/running-possibly-blocking-code-like-a-tornado-coroutine.html" rel="alternate"></link><updated>2015-08-03T19:54:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-08-03:running-possibly-blocking-code-like-a-tornado-coroutine.html</id><summary type="html">&lt;p&gt;One of the main benefits of using the &lt;a class="reference external" href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; web server is that it
-is (normally) a single-threaded, asynchronous framework that can rely
-on coroutines for concurrency. Many drivers already exist to provide a
+&lt;/ul&gt;</summary><category term="mercurial"></category></entry><entry><title>Running (possibly) blocking code like a Tornado coroutine</title><link href="http://mike.depalatis.net/running-possibly-blocking-code-like-a-tornado-coroutine.html" rel="alternate"></link><updated>2015-08-03T19:54:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-08-03:running-possibly-blocking-code-like-a-tornado-coroutine.html</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;One of the main benefits of using the &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; web server is that it is
+(normally) a single-threaded, asynchronous framework that can rely on
+coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
-the &lt;a class="reference external" href="https://github.com/mongodb/motor/"&gt;Motor&lt;/a&gt; &lt;a class="reference external" href="https://www.mongodb.org/"&gt;MongoDB&lt;/a&gt; driver).&lt;/p&gt;
+the &lt;a href="https://github.com/mongodb/motor/"&gt;Motor&lt;/a&gt; &lt;a href="https://www.mongodb.org/"&gt;MongoDB&lt;/a&gt; driver).&lt;/p&gt;
 &lt;p&gt;To write your own coroutine-friendly code for Tornado, there are a few
 different options available, all requiring that you somehow wrap
-blocking calls within a Future so as to allow the event loop to
-continue executing. Here, I demonstrate one recipe to do just this by
-utilizing &lt;tt class="docutils literal"&gt;Executor&lt;/tt&gt; objects from the &lt;tt class="docutils literal"&gt;concurrent.futures&lt;/tt&gt;
-module. We start with the imports:&lt;/p&gt;
+blocking calls within a Future so as to allow the event loop to continue
+executing. Here, I demonstrate one recipe to do just this by utilizing
+&lt;code&gt;Executor&lt;/code&gt; objects from the &lt;code&gt;concurrent.futures&lt;/code&gt; module. We start with
+the imports:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado.concurrent&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;run_on_executor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;futures&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado.ioloop&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;div class="note"&gt;
-&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
-&lt;p class="last"&gt;&lt;tt class="docutils literal"&gt;concurrent.futures&lt;/tt&gt; is standard in Python &amp;gt;= 3.2 and is
-installable via &lt;tt class="docutils literal"&gt;pip install futures&lt;/tt&gt; for older versions.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;We will be using the &lt;tt class="docutils literal"&gt;run_on_executor&lt;/tt&gt; decorator which requires that
-the class whose methods we decorate have some type of &lt;tt class="docutils literal"&gt;Executor&lt;/tt&gt;
-attribute (the default is to use the &lt;tt class="docutils literal"&gt;executor&lt;/tt&gt; attribute, but a
-different &lt;tt class="docutils literal"&gt;Executor&lt;/tt&gt; can be used with a keyword argument passsed to
-the decorator). We'll create a class to run our asynchronous tasks and
-give it a &lt;tt class="docutils literal"&gt;ThreadPoolExecutor&lt;/tt&gt; for executing tasks. In this
-contrived example, our long running task just sleeps for a random
-amont of time:&lt;/p&gt;
+
+
+&lt;p&gt;We will be using the &lt;code&gt;run_on_executor&lt;/code&gt; decorator which requires that the
+class whose methods we decorate have some type of &lt;code&gt;Executor&lt;/code&gt; attribute
+(the default is to use the &lt;code&gt;executor&lt;/code&gt; attribute, but a different
+&lt;code&gt;Executor&lt;/code&gt; can be used with a keyword argument passed to the decorator).
+We'll create a class to run our asynchronous tasks and give it a
+&lt;code&gt;ThreadPoolExecutor&lt;/code&gt; for executing tasks. In this contrived example, our
+long running task just sleeps for a random amount of time:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TaskRunner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;executor&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;futures&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ThreadPoolExecutor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -98,6 +96,8 @@ amont of time:&lt;/p&gt;
         &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tau&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
         &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tau&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;Now, from within a coroutine, we can let the tasks run as if they were
 normal coroutines:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c"&gt;# this is necessary if running as an ipynb!&lt;/span&gt;
@@ -111,6 +111,8 @@ normal coroutines:&lt;/p&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;do_other_stuff&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
     &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;Finally, in the main coroutine:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nd"&gt;@gen.coroutine&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
@@ -121,9 +123,10 @@ normal coroutines:&lt;/p&gt;
 
 &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run_sync&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;Which produces output like:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-3
+&lt;div class="highlight"&gt;&lt;pre&gt;3
 0.6012166386789509
 1
 0.9235652108721132
@@ -143,11 +146,13 @@ normal coroutines:&lt;/p&gt;
 0.3623342196737247
 0
 0.30042493880819876
-&lt;/pre&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;Using this general pattern, it is rather easy to adapt blocking calls
 to Tornado's coroutines. Note that the example code can be found
-&lt;a class="reference external" href="https://gist.github.com/mivade/5966f1b7a995a50ecc55"&gt;here&lt;/a&gt;.&lt;/p&gt;
-</summary><category term="python"></category><category term="tornado"></category><category term="async"></category></entry><entry><title>Background tasks with Tornado</title><link href="http://mike.depalatis.net/background-tasks-with-tornado.html" rel="alternate"></link><updated>2015-02-28T14:32:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-28:background-tasks-with-tornado.html</id><summary type="html">&lt;p&gt;I have been using &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; lately for distributed control of
+&lt;a href="https://gist.github.com/mivade/5966f1b7a995a50ecc55"&gt;here&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="async"></category></entry><entry><title>Background tasks with Tornado</title><link href="http://mike.depalatis.net/background-tasks-with-tornado.html" rel="alternate"></link><updated>2015-02-28T14:32:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-28:background-tasks-with-tornado.html</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;I have been using &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a &lt;a href="http://www.highfinesse.com/"&gt;HighFinesse&lt;/a&gt; &lt;a href="http://www.highfinesse.com/en/wavelengthmeter/"&gt;wavelength meter&lt;/a&gt;
 which we use to monitor and stabilize several lasers (up to 14 at a
@@ -186,7 +191,8 @@ function could thus look something like this:&lt;/p&gt;
 
 &lt;p&gt;Now after &lt;code&gt;refresh&lt;/code&gt; is called once, it will continuously run until the
 IO loop is stopped.&lt;/p&gt;
-&lt;p&gt;For a more complete example, I have written a small &lt;a href="https://gist.github.com/mivade/421c427db75c8c5fa1d1"&gt;demo&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="lab"></category></entry><entry><title>Flask and server-sent events</title><link href="http://mike.depalatis.net/flask-and-server-sent-events.html" rel="alternate"></link><updated>2015-02-14T13:34:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</id><summary type="html">&lt;p&gt;I recently discovered the existence of the HTML5
+&lt;p&gt;For a more complete example, I have written a small &lt;a href="https://gist.github.com/mivade/421c427db75c8c5fa1d1"&gt;demo&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="lab"></category></entry><entry><title>Flask and server-sent events</title><link href="http://mike.depalatis.net/flask-and-server-sent-events.html" rel="alternate"></link><updated>2015-02-14T13:34:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;I recently discovered the existence of the HTML5
 &lt;a href="https://en.wikipedia.org/wiki/Server-sent_events"&gt;server-sent events&lt;/a&gt; standard. Although it lacks the
 bidirectional communications of a websocket, SSE is perfect for the
 publish-subscribe networking pattern. This pattern just so happens to
@@ -213,7 +219,8 @@ Python side looks like this:&lt;/p&gt;
 
 
 &lt;p&gt;This can be run either using gevent's WSGI server or &lt;a href="http://gunicorn.org/"&gt;gunicorn&lt;/a&gt;
-using gevent workers.&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="javascript"></category><category term="sse"></category><category term="gevent"></category></entry><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><updated>2014-12-15T19:44:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;p&gt;I've been working on some projects for the lab that involve remotely
+using gevent workers.&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="javascript"></category><category term="sse"></category><category term="gevent"></category></entry><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><updated>2014-12-15T19:44:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with
@@ -314,95 +321,81 @@ websockets:&lt;/p&gt;
 &lt;p&gt;However, both of these are based on
 &lt;a href="http://gevent.org/"&gt;gevent&lt;/a&gt;. While gevent is nice, it still has
 limited Python 3 support and does not work on Windows (sadly, a
-requirement for some hardware drivers).&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="tornado"></category><category term="javascript"></category><category term="websockets"></category></entry><entry><title>ssh-agent for sudo authentication with a passwordless account</title><link href="http://mike.depalatis.net/ssh-agent-for-sudo-authentication-with-a-passwordless-account.html" rel="alternate"></link><updated>2014-12-07T15:25:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-07:ssh-agent-for-sudo-authentication-with-a-passwordless-account.html</id><summary type="html">&lt;p&gt;For best security on a public system, it is generally best to disable
+requirement for some hardware drivers).&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="tornado"></category><category term="javascript"></category><category term="websockets"></category></entry><entry><title>ssh-agent for sudo authentication with a passwordless account</title><link href="http://mike.depalatis.net/ssh-agent-for-sudo-authentication-with-a-passwordless-account.html" rel="alternate"></link><updated>2015-12-06T15:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-07:ssh-agent-for-sudo-authentication-with-a-passwordless-account.html</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;For best security on a public system, it is generally best to disable
 password-based logins with ssh and instead require authorized
-keys. However, this complicates things if you want to use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;
+keys. However, this complicates things if you want to use &lt;code&gt;sudo&lt;/code&gt;
 with a regular user account, since by default it uses the standard
 system password to verify the user is authorized to run commands as
 root.&lt;/p&gt;
-&lt;p&gt;Enter &lt;a class="reference external" href="http://pamsshagentauth.sourceforge.net/"&gt;pam_ssh_agent_auth&lt;/a&gt;. This module allows using regular ssh keys
-and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt; to verify the user has the proper authorization to
-use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;.&lt;/p&gt;
-&lt;div class="section" id="prerequisites"&gt;
+&lt;p&gt;Enter &lt;code&gt;pam_ssh_agent_auth&lt;/code&gt;. This module allows using regular ssh keys
+and &lt;code&gt;ssh-agent&lt;/code&gt; to verify the user has the proper authorization to
+use &lt;code&gt;sudo&lt;/code&gt;.&lt;/p&gt;
 &lt;h2&gt;Prerequisites&lt;/h2&gt;
 &lt;p&gt;You'll want to start by ensuring you have generated ssh keys for your
-user and are using &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt;. To generate the keys:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;$ ssh-keygen&lt;/span&gt;
+user and are using &lt;code&gt;ssh-agent&lt;/code&gt;. To generate the keys:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ssh-keygen
 &lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;Then just accept the defaults, but make sure to set a password for
 your new key pair. Add the public key to
-&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.ssh/authorized_keys&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="installation"&gt;
+&lt;code&gt;$HOME/.ssh/authorized_keys&lt;/code&gt;.&lt;/p&gt;
 &lt;h2&gt;Installation&lt;/h2&gt;
 &lt;p&gt;Since the PAM module isn't in Debian, first grab the build
 dependencies:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;# apt-get install build-essential checkinstall libssl-dev libpam0g-dev&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;# apt-get install build-essential checkinstall libssl-dev libpam0g-dev
 &lt;/pre&gt;&lt;/div&gt;
-&lt;div class="note"&gt;
-&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
-&lt;p class="last"&gt;I had never heard about &lt;tt class="docutils literal"&gt;checkinstall&lt;/tt&gt; until reading the
-references to figure out how to do this. Although I rarely
-have the need to install things from source, it seems like a
-very nice utility!&lt;/p&gt;
-&lt;/div&gt;
+
+
 &lt;p&gt;Next, grab the source and build:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;# wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2&lt;/span&gt;
-&lt;span class="go"&gt;# tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2&lt;/span&gt;
-&lt;span class="go"&gt;# cd pam_ssh_agent_auth-0.10.2&lt;/span&gt;
-&lt;span class="go"&gt;# ./configure --libexecdir=/lib/security --with-mantype=man&lt;/span&gt;
-&lt;span class="go"&gt;# make&lt;/span&gt;
-&lt;span class="go"&gt;# checkinstall&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;# wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
+# tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2
+# cd pam_ssh_agent_auth-0.10.2
+# ./configure --libexecdir=/lib/security --with-mantype=man
+# make
+# checkinstall
 &lt;/pre&gt;&lt;/div&gt;
-&lt;div class="note"&gt;
-&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
-&lt;p class="last"&gt;The &lt;tt class="docutils literal"&gt;libexecdir&lt;/tt&gt; option to the &lt;tt class="docutils literal"&gt;configure&lt;/tt&gt; script is set
-since apparently Debian keeps PAM modules in a different
-place than &lt;tt class="docutils literal"&gt;pam_ssh_agent_auth&lt;/tt&gt; expects by default.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="warning"&gt;
-&lt;p class="first admonition-title"&gt;Warning&lt;/p&gt;
-&lt;p class="last"&gt;The preceding commands are run as root simply because as
-I was setting this up, the regular user had no password
-set and so could not use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;. You may wish to only
-install as root!&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="section" id="configuration"&gt;
+
+
+&lt;p&gt;Note that the &lt;code&gt;libexecdir&lt;/code&gt; option to the &lt;code&gt;configure&lt;/code&gt; script is set
+since apparently Debian keeps PAM modules in a different place than
+&lt;code&gt;pam_ssh_agent_auth&lt;/code&gt; expects by default.&lt;/p&gt;
 &lt;h2&gt;Configuration&lt;/h2&gt;
-&lt;p&gt;Edit the file &lt;tt class="docutils literal"&gt;/etc/pam.d/sudo&lt;/tt&gt; and add the following line &lt;em&gt;before&lt;/em&gt;
-any other &lt;tt class="docutils literal"&gt;auth&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;&amp;#64;include&lt;/tt&gt; commands:&lt;/p&gt;
+&lt;p&gt;Edit the file &lt;code&gt;/etc/pam.d/sudo&lt;/code&gt; and add the following line &lt;em&gt;before&lt;/em&gt;
+any other &lt;code&gt;auth&lt;/code&gt; or &lt;code&gt;@include&lt;/code&gt; commands:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;auth sufficient pam_ssh_agent_auth.so file&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;~/.ssh/authorized_keys&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Run &lt;tt class="docutils literal"&gt;visudo&lt;/tt&gt; to edit &lt;tt class="docutils literal"&gt;/etc/sudoers&lt;/tt&gt; and add this line before any
-other &lt;tt class="docutils literal"&gt;Defaults&lt;/tt&gt; lines:&lt;/p&gt;
+
+
+&lt;p&gt;Run &lt;code&gt;visudo&lt;/code&gt; to edit &lt;code&gt;/etc/sudoers&lt;/code&gt; and add this line before any
+other &lt;code&gt;Defaults&lt;/code&gt; lines:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;Defaults env_keep +&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;SSH_AUTH_SOCK&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="section" id="invoking-sudo"&gt;
-&lt;h2&gt;Invoking &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt;&lt;/h2&gt;
-&lt;p&gt;To actually be able to use &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt; now, run &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt; like so:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;$ eval `ssh-agent`&lt;/span&gt;
+
+
+&lt;h2&gt;Invoking &lt;code&gt;sudo&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;To actually be able to use &lt;code&gt;sudo&lt;/code&gt; now, run &lt;code&gt;ssh-agent&lt;/code&gt; like so:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;eval&lt;/span&gt; &lt;span class="sb"&gt;`&lt;/span&gt;ssh-agent&lt;span class="sb"&gt;`&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;and add the key:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="go"&gt;$ ssh-add -t 600&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ssh-add -t 600
 &lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;This will set the keys to timeout in 10 minutes (600 seconds).&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="todo"&gt;
 &lt;h2&gt;TODO&lt;/h2&gt;
-&lt;p&gt;A more elegant way of adding keys and running &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;ssh-agent&lt;/span&gt;&lt;/tt&gt;, including
+&lt;p&gt;A more elegant way of adding keys and running &lt;code&gt;ssh-agent&lt;/code&gt;, including
 checking to see if a process is already running!&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="references"&gt;
 &lt;h2&gt;References&lt;/h2&gt;
-&lt;ol class="arabic simple"&gt;
-&lt;li&gt;&lt;a class="reference external" href="http://unix.stackexchange.com/a/158452"&gt;How to allow authentication with sudo using an alternate password?&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="reference external" href="http://www.evans.io/posts/ssh-agent-for-sudo-authentication/"&gt;Using SSH agent for sudo authentication&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="reference external" href="http://mah.everybody.org/docs/ssh"&gt;Using ssh-agent with ssh&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-</summary><category term="debian"></category><category term="ssh"></category><category term="sudo"></category><category term="linux"></category></entry><entry><title>Raspberry Pi as a USB to Ethernet Gateway</title><link href="http://mike.depalatis.net/raspberry-pi-as-a-usb-to-ethernet-gateway.html" rel="alternate"></link><updated>2014-06-10T10:59:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-03-08:raspberry-pi-as-a-usb-to-ethernet-gateway.html</id><summary type="html">&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="http://unix.stackexchange.com/a/158452"&gt;How to allow authentication with sudo using an alternate password?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.evans.io/posts/ssh-agent-for-sudo-authentication/"&gt;Using SSH agent for sudo authentication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://mah.everybody.org/docs/ssh"&gt;Using ssh-agent with ssh&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</summary><category term="debian"></category><category term="ssh"></category><category term="sudo"></category><category term="linux"></category></entry><entry><title>Raspberry Pi as a USB to Ethernet Gateway</title><link href="http://mike.depalatis.net/raspberry-pi-as-a-usb-to-ethernet-gateway.html" rel="alternate"></link><updated>2014-06-10T10:59:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-03-08:raspberry-pi-as-a-usb-to-ethernet-gateway.html</id><summary type="html">&lt;hr /&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;One of the most convenient ways of communicating with experimental
 devices (such as oscilloscopes, frequency generators, pulse
 generators, etc.) is via ethernet. The advantages of this over other
@@ -461,7 +454,7 @@ git clone --depth 1 git://github.com/raspberrypi/linux.git
 &lt;p&gt;&lt;code&gt;cp arch/arm/configs/bcmrpi_defconfig .config&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Select the appropriate compiler to use by defining an environment
 variable that points to the right place (TODO: put the right thing
-here): &lt;/p&gt;
+here):&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;export CCPREFIX=/path/to/your/compiler/binary/prefix-of-binary-&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Pre-configure everything and &lt;a href="http://serverfault.com/a/116317"&gt;accept the defaults&lt;/a&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;yes "" | make oldconfig&lt;/code&gt;&lt;/p&gt;
@@ -476,7 +469,7 @@ N = 5). This step will take several minutes on a reasonably fast
 computer. Next build the modules:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;make ARCH=arm CROSS_COMPILE=${CCPREFIX} modules&lt;/code&gt;&lt;/p&gt;
 &lt;h3&gt;Transferring the kernel:&lt;/h3&gt;
-&lt;p&gt;First copy to the RPi: &lt;/p&gt;
+&lt;p&gt;First copy to the RPi:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;scp arch/arm/boot/Image pi@yourpi:kernel_someuniqueid.img&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Then on the RPi, copy this over to &lt;code&gt;/boot&lt;/code&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;sudo cp kernel_someuniqueid.img /boot&lt;/code&gt;&lt;/p&gt;
@@ -486,7 +479,7 @@ sure the following line appears:&lt;/p&gt;
 &lt;p&gt;and comment out any other &lt;code&gt;kernel=...&lt;/code&gt; lines.&lt;/p&gt;
 &lt;h3&gt;Transferring the kernel modules:&lt;/h3&gt;
 &lt;p&gt;On the build machine, make a temporary directory to install modules
-to: &lt;/p&gt;
+to:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;mkdir ~/modules
 export MODULES_TEMP=~/modules
 &lt;/pre&gt;&lt;/div&gt;

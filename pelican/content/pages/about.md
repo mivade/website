@@ -3,6 +3,7 @@ url:
 save_as: index.html
 tags: about
 author: Michael V. DePalatis
+---
 
 I am a postdoc in physics at [Aarhus University][AU] working in
 [the ion trap group][group] of Prof. [Michael Drewsen][Drewsen]. My
