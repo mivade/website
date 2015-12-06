@@ -14,7 +14,7 @@
 
         <meta name="author" content="Michael V. DePalatis" />
         <meta name="keywords" content="python,tornado,async" />
-        <meta name="description" content="One of the main benefits of using the Tornado web server is that it is (normally) a single-threaded, asynchronous framework that can rely on coroutines for concurrency. Many drivers already exist to provide a client library utilizing the Tornado event loop and coroutines (e.g., the Motor MongoDB driver). To ..." />
+        <meta name="description" content="One of the main benefits of using the Tornado web server is that it is (normally) a single-threaded, asynchronous framework that can rely on coroutines for concurrency. Many drivers already exist to provide a client library utilizing the Tornado event loop and coroutines (e.g., the Motor MongoDB driver). To write your own coroutine-friendly code for Tornado, there are a few different options available, all requiring that you somehow wrap blocking calls within a Future so as to allow the event loop to continue executing. Here, I demonstrate one recipe to do just this by utilizing Executor objects from the concurrent.futures module. We start with the imports: import random import time from tornado import gen from tornado.concurrent import run_on_executor, futures from tornado.ioloop import IOLoop We will be using the run_on_executor decorator which requires that the class whose methods we decorate have some type of Executor attribute (the default is to use the executor attribute, but a different Executor can be used with a keyword argument passed to the decorator). We&#39;ll create a class to run our asynchronous tasks and give it a ThreadPoolExecutor for executing tasks. In this contrived example, our long running task just sleeps ..." />
 
     <!-- Enable latex plugin -->
 
@@ -25,7 +25,7 @@
         <link rel="stylesheet" href="./theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="./theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="./theme/css/pygments/native.css" rel="stylesheet">
+    <link href="./theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="./theme/css/style.css" type="text/css"/>
 
 

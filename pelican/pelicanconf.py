@@ -15,8 +15,9 @@ THEME_STATIC_PATHS = ['theme', 'static']
 # pelican-bootstrap3 theme options
 BOOTSTRAP_THEME = 'flatly'
 BOOTSTRAP_NAVBAR_INVERSE = False
-PYGMENTS_STYLE = 'native'
+PYGMENTS_STYLE = 'default'
 HIDE_SIDEBAR = True
+DISPLAY_ARTICLE_INFO_ON_INDEX = True
 
 TIMEZONE = 'Europe/Copenhagen'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
@@ -41,10 +42,11 @@ TRANSLATION_FEED_ATOM = None
 # Social widget
 #SOCIAL = (('github', 'https://github.com/mivade'),)
 
-DEFAULT_PAGINATION = 10
+DEFAULT_PAGINATION = 5
+
+SUMMARY_MAX_LENGTH = 200
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
 
 DEBUG = True
-

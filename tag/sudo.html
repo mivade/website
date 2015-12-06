@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="../theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="../theme/css/pygments/native.css" rel="stylesheet">
+    <link href="../theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
 
 
@@ -82,12 +82,66 @@ mike.depalatis.net            </a>
 
             <article>
                 <h2><a href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">ssh-agent for sudo authentication with a passwordless account</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-12-07T15:25:00+01:00"> 2014-12-07</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/debian.html">debian</a>
+        /
+	<a href="../tag/ssh.html">ssh</a>
+        /
+	<a href="../tag/sudo.html">sudo</a>
+        /
+	<a href="../tag/linux.html">linux</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>For best security on a public system, it is generally best to disable
 password-based logins with ssh and instead require authorized
 keys. However, this complicates things if you want to use <code>sudo</code>
 with a regular user account, since by default it uses the standard
-system password to verify the user ...</p>
+system password to verify the user is authorized to run commands as
+root.</p>
+<p>Enter <code>pam_ssh_agent_auth</code>. This module allows using regular ssh keys
+and <code>ssh-agent</code> to verify the user has the proper authorization to
+use <code>sudo</code>.</p>
+<h2>Prerequisites</h2>
+<p>You'll want to start by ensuring you have generated ssh keys for your
+user and are using <code>ssh-agent</code>. To generate the keys:</p>
+<div class="highlight"><pre><span class="nv">$ </span>ssh-keygen
+</pre></div>
+
+
+<p>Then just accept the defaults, but make sure to set a password for
+your new key pair. Add the public key to
+<code>$HOME/.ssh/authorized_keys</code>.</p>
+<h2>Installation</h2>
+<p>Since the PAM module isn't in Debian, first grab the build
+dependencies:</p>
+<div class="highlight"><pre># apt-get install build-essential checkinstall libssl-dev libpam0g-dev
+</pre></div>
+
+
+<p>Next, grab the source and build:</p>
+<div class="highlight"><pre># wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
+# tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2
+# cd pam_ssh_agent_auth-0.10.2
+# ./configure --libexecdir=/lib/security --with-mantype=man
+# make
+# checkinstall
+</pre></div>
+
+
+<p>Note that the <code>libexecdir</code> option to the <code>configure</code> script is ...</p>
                     <a class="btn btn-default btn-xs" href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">more ...</a>
                 </div>
             </article>

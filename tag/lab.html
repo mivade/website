@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="../theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="../theme/css/pygments/native.css" rel="stylesheet">
+    <link href="../theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
 
 
@@ -82,12 +82,46 @@ mike.depalatis.net            </a>
 
             <article>
                 <h2><a href="../background-tasks-with-tornado.html">Background tasks with Tornado</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-02-28T14:32:00+01:00"> 2015-02-28</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/tornado.html">tornado</a>
+        /
+	<a href="../tag/lab.html">lab</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a <a href="http://www.highfinesse.com/">HighFinesse</a> <a href="http://www.highfinesse.com/en/wavelengthmeter/">wavelength meter</a>
 which we use to monitor and stabilize several lasers (up to 14 at a
-time). Previously, a custom server for controlling this ...</p>
+time). Previously, a custom server for controlling this wavemeter was
+written using <a href="https://twistedmatrix.com/trac/">Twisted</a>, but that has proven difficult to upgrade,
+distribute, and maintain.</p>
+<p>One thing that is common for such a control scenario is that data
+needs to be refreshed continuously while still allowing incoming
+connections from clients and appropriately executing remote procedure
+calls. One method would be to periodically interrupt the Tornado IO
+loop to refresh data (and in fact, Tornado has a class to make this
+easy for you in <code>tornado.ioloop.PeriodicCallback</code>). This can be fine
+if the data refreshing does not take too much time, but all other
+operations will be blocked until the callback is finished, which can
+be a problem if the refreshing operation is slow. Another option is to
+have an additional thread separate from the Tornado IO loop that
+handles refreshing data. This certainly works, but adds the complexity
+of needing to use thread-safe communications to stop the thread when ...</p>
                     <a class="btn btn-default btn-xs" href="../background-tasks-with-tornado.html">more ...</a>
                 </div>
             </article>

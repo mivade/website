@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="../theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="../theme/css/pygments/native.css" rel="stylesheet">
+    <link href="../theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
 
 
@@ -82,13 +82,59 @@ mike.depalatis.net            </a>
 
             <article>
                 <h2><a href="../flask-and-server-sent-events.html">Flask and server-sent events</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-02-14T13:34:00+01:00"> 2015-02-14</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/flask.html">flask</a>
+        /
+	<a href="../tag/javascript.html">javascript</a>
+        /
+	<a href="../tag/sse.html">sse</a>
+        /
+	<a href="../tag/gevent.html">gevent</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>I recently discovered the existence of the HTML5
 <a href="https://en.wikipedia.org/wiki/Server-sent_events">server-sent events</a> standard. Although it lacks the
 bidirectional communications of a websocket, SSE is perfect for the
 publish-subscribe networking pattern. This pattern just so happens to
 fit in conveniently with writing software to remotely monitor hardware
-that many people might want to ...</p>
+that many people might want to check in on at the same time.</p>
+<p>In order to try SSE out within a <a href="http://flask.pocoo.org/">Flask</a> framework, I put together a
+simple <a href="https://github.com/mivade/flask-sse-demo">demo app</a> using <a href="http://gevent.org/">gevent</a>. The core of the demo on the
+Python side looks like this:</p>
+<div class="highlight"><pre><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">event</span><span class="p">():</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="s">&#39;data: &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/stream/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">stream</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">event</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&quot;text/event-stream&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This can be run either using gevent's WSGI server or <a href="http://gunicorn.org/">gunicorn</a>
+using gevent workers.</p>
                     <a class="btn btn-default btn-xs" href="../flask-and-server-sent-events.html">more ...</a>
                 </div>
             </article>

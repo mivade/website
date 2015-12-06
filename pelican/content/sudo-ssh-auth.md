@@ -15,8 +15,7 @@ Enter `pam_ssh_agent_auth`. This module allows using regular ssh keys
 and `ssh-agent` to verify the user has the proper authorization to
 use `sudo`.
 
-Prerequisites
--------------
+## Prerequisites
 
 You'll want to start by ensuring you have generated ssh keys for your
 user and are using `ssh-agent`. To generate the keys:
@@ -29,8 +28,7 @@ Then just accept the defaults, but make sure to set a password for
 your new key pair. Add the public key to
 `$HOME/.ssh/authorized_keys`.
 
-Installation
-------------
+## Installation
 
 Since the PAM module isn't in Debian, first grab the build
 dependencies:
@@ -54,8 +52,7 @@ Note that the `libexecdir` option to the `configure` script is set
 since apparently Debian keeps PAM modules in a different place than
 `pam_ssh_agent_auth` expects by default.
 
-Configuration
--------------
+## Configuration
 
 Edit the file `/etc/pam.d/sudo` and add the following line *before*
 any other `auth` or `@include` commands:
@@ -71,8 +68,7 @@ other `Defaults` lines:
 Defaults env_keep += SSH_AUTH_SOCK
 ```
 
-Invoking `sudo`
----------------
+## Invoking `sudo`
 
 To actually be able to use `sudo` now, run `ssh-agent` like so:
 
@@ -88,14 +84,12 @@ $ ssh-add -t 600
 
 This will set the keys to timeout in 10 minutes (600 seconds).
 
-TODO
-----
+## TODO
 
 A more elegant way of adding keys and running `ssh-agent`, including
 checking to see if a process is already running!
 
-References
-----------
+## References
 
 1. [How to allow authentication with sudo using an alternate password?][Ref1]
 1. [Using SSH agent for sudo authentication][Ref2]

@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="../theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="../theme/css/pygments/native.css" rel="stylesheet">
+    <link href="../theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
 
 
@@ -82,13 +82,59 @@ mike.depalatis.net            </a>
 
             <article>
                 <h2><a href="../importing-one-mercurial-repository-into-another.html">Importing one Mercurial repository into another</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-11-04T00:00:00+01:00"> 2015-11-04</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/mercurial.html">mercurial</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>In the
 <a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/">ion trap group</a>,
 we usually use <a href="https://www.mercurial-scm.org/">Mercurial</a> for version controlling software we write
 for experimental control, data analysis, and so on. This post outlines
 how to import the full history of one repository into another. This
-can be useful for cases where it makes sense to move a ...</p>
+can be useful for cases where it makes sense to move a sub-project
+directly into its parent, for example.</p>
+<h2>Convert the soon-to-be child repository</h2>
+<p>With the Mercurial <code>convert</code> extension, you can rename branches, move,
+and filter files. As an example, say we have a repo with only the
+<code>default</code> branch which is to be imported into a super-repository.</p>
+<p>For starters, we will want all our files in the child repo to be in a
+subdirectory of the parent repo and not include the child's
+<code>.hgignore</code>. To do this, create a file <code>filemap.txt</code> with the
+following contents:</p>
+<div class="highlight"><pre>rename . child
+exclude .hgignore
+</pre></div>
+
+
+<p>The first line will move all files in the repo's top level into a
+directory named <code>child</code>.</p>
+<p>Next, optionally create a <code>branchmap.txt</code> file for renaming the
+<code>default</code> branch to something else:</p>
+<div class="highlight"><pre>default child-repo
+</pre></div>
+
+
+<p>Now convert:</p>
+<div class="highlight"><pre>hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
+</pre></div>
+
+
+<h2>Pull in the converted repository</h2>
+<p>From the parent repo:</p>
+<div class="highlight"><pre>hg pull -f ../converted ...</pre></div>
                     <a class="btn btn-default btn-xs" href="../importing-one-mercurial-repository-into-another.html">more ...</a>
                 </div>
             </article>

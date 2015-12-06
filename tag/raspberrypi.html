@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="../theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="../theme/css/pygments/native.css" rel="stylesheet">
+    <link href="../theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
 
 
@@ -82,13 +82,45 @@ mike.depalatis.net            </a>
 
             <article>
                 <h2><a href="../raspberry-pi-as-a-usb-to-ethernet-gateway.html">Raspberry Pi as a USB to Ethernet Gateway</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-03-08T15:32:00+01:00"> 2014-03-08</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/raspberrypi.html">raspberrypi</a>
+        /
+	<a href="../tag/python.html">python</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <h2>Introduction</h2>
 <p>One of the most convenient ways of communicating with experimental
 devices (such as oscilloscopes, frequency generators, pulse
 generators, etc.) is via ethernet. The advantages of this over other
 forms of communication such as GPIB, RS-232 serial ports, etc., is
-that, provided the device receives a fixed IP address or ...</p>
+that, provided the device receives a fixed IP address or some sort of
+dynamic DNS service is used, it doesn't matter where it is located and
+specialty cabling can be kept to a minimum. Luckily, most of these
+devices, even if they are not equipped with ethernet capability, can
+be made to work over ethernet with some sort of device server (e.g.,
+there are device servers such as those made by <a href="http://www.moxa.com/product/Serial_Device_Servers.htm">Moxa</a> which can
+"convert" RS-232 serial port communications to ethernet).</p>
+<p>A lot of modern devices come equipped with a USB port on the back
+which complies with the <a href="http://www.usb.org/developers/devclass_docs">USBTMC</a> (USB test and measurement class)
+specifications. Even fairly inexpensive equipment which lacks an
+ethernet port are likely to have a USB port for USBTMC communications
+(e.g., the popular and inexpensive <a href="http://www.rigolna.com/products/digital-oscilloscopes/ds1000d/">Rigol DS1000D series</a>
+digital oscilloscopes). There exists a USBTMC Linux
+<a href="http://www.home.agilent.com/upload/cmc_upload/All/usbtmc.html">kernel module</a> which allows for communication with
+USBTMC devices via /dev/usbtmcNNN device files. This module, coupled ...</p>
                     <a class="btn btn-default btn-xs" href="../raspberry-pi-as-a-usb-to-ethernet-gateway.html">more ...</a>
                 </div>
             </article>

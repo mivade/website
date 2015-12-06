@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="../theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="../theme/css/pygments/native.css" rel="stylesheet">
+    <link href="../theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
 
 
@@ -82,93 +82,284 @@ mike.depalatis.net            </a>
 
             <article>
                 <h2><a href="../importing-one-mercurial-repository-into-another.html">Importing one Mercurial repository into another</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-11-04T00:00:00+01:00"> 2015-11-04</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/mercurial.html">mercurial</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>In the
 <a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/">ion trap group</a>,
 we usually use <a href="https://www.mercurial-scm.org/">Mercurial</a> for version controlling software we write
 for experimental control, data analysis, and so on. This post outlines
 how to import the full history of one repository into another. This
-can be useful for cases where it makes sense to move a ...</p>
+can be useful for cases where it makes sense to move a sub-project
+directly into its parent, for example.</p>
+<h2>Convert the soon-to-be child repository</h2>
+<p>With the Mercurial <code>convert</code> extension, you can rename branches, move,
+and filter files. As an example, say we have a repo with only the
+<code>default</code> branch which is to be imported into a super-repository.</p>
+<p>For starters, we will want all our files in the child repo to be in a
+subdirectory of the parent repo and not include the child's
+<code>.hgignore</code>. To do this, create a file <code>filemap.txt</code> with the
+following contents:</p>
+<div class="highlight"><pre>rename . child
+exclude .hgignore
+</pre></div>
+
+
+<p>The first line will move all files in the repo's top level into a
+directory named <code>child</code>.</p>
+<p>Next, optionally create a <code>branchmap.txt</code> file for renaming the
+<code>default</code> branch to something else:</p>
+<div class="highlight"><pre>default child-repo
+</pre></div>
+
+
+<p>Now convert:</p>
+<div class="highlight"><pre>hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
+</pre></div>
+
+
+<h2>Pull in the converted repository</h2>
+<p>From the parent repo:</p>
+<div class="highlight"><pre>hg pull -f ../converted ...</pre></div>
                     <a class="btn btn-default btn-xs" href="../importing-one-mercurial-repository-into-another.html">more ...</a>
                 </div>
             </article>
             <hr/>
             <article>
                 <h2><a href="../running-possibly-blocking-code-like-a-tornado-coroutine.html">Running (possibly) blocking code like a Tornado coroutine</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-08-03T19:54:00+02:00"> 2015-08-03</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/tornado.html">tornado</a>
+        /
+	<a href="../tag/async.html">async</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
 (normally) a single-threaded, asynchronous framework that can rely on
 coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
 the <a href="https://github.com/mongodb/motor/">Motor</a> <a href="https://www.mongodb.org/">MongoDB</a> driver).</p>
-<p>To ...</p>
+<p>To write your own coroutine-friendly code for Tornado, there are a few
+different options available, all requiring that you somehow wrap
+blocking calls within a Future so as to allow the event loop to continue
+executing. Here, I demonstrate one recipe to do just this by utilizing
+<code>Executor</code> objects from the <code>concurrent.futures</code> module. We start with
+the imports:</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">tornado</span> <span class="kn">import</span> <span class="n">gen</span>
+<span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span><span class="p">,</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">tornado.ioloop</span> <span class="kn">import</span> <span class="n">IOLoop</span>
+</pre></div>
+
+
+<p>We will be using the <code>run_on_executor</code> decorator which requires that the
+class whose methods we decorate have some type of <code>Executor</code> attribute
+(the default is to use the <code>executor</code> attribute, but a different
+<code>Executor</code> can be used with a keyword argument passed to the decorator).
+We'll create a class to run our asynchronous tasks and give it a
+<code>ThreadPoolExecutor</code> for executing tasks. In this contrived example, our
+long running task just sleeps ...</p>
                     <a class="btn btn-default btn-xs" href="../running-possibly-blocking-code-like-a-tornado-coroutine.html">more ...</a>
                 </div>
             </article>
             <hr/>
             <article>
                 <h2><a href="../background-tasks-with-tornado.html">Background tasks with Tornado</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-02-28T14:32:00+01:00"> 2015-02-28</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/tornado.html">tornado</a>
+        /
+	<a href="../tag/lab.html">lab</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a <a href="http://www.highfinesse.com/">HighFinesse</a> <a href="http://www.highfinesse.com/en/wavelengthmeter/">wavelength meter</a>
 which we use to monitor and stabilize several lasers (up to 14 at a
-time). Previously, a custom server for controlling this ...</p>
+time). Previously, a custom server for controlling this wavemeter was
+written using <a href="https://twistedmatrix.com/trac/">Twisted</a>, but that has proven difficult to upgrade,
+distribute, and maintain.</p>
+<p>One thing that is common for such a control scenario is that data
+needs to be refreshed continuously while still allowing incoming
+connections from clients and appropriately executing remote procedure
+calls. One method would be to periodically interrupt the Tornado IO
+loop to refresh data (and in fact, Tornado has a class to make this
+easy for you in <code>tornado.ioloop.PeriodicCallback</code>). This can be fine
+if the data refreshing does not take too much time, but all other
+operations will be blocked until the callback is finished, which can
+be a problem if the refreshing operation is slow. Another option is to
+have an additional thread separate from the Tornado IO loop that
+handles refreshing data. This certainly works, but adds the complexity
+of needing to use thread-safe communications to stop the thread when ...</p>
                     <a class="btn btn-default btn-xs" href="../background-tasks-with-tornado.html">more ...</a>
                 </div>
             </article>
             <hr/>
             <article>
                 <h2><a href="../flask-and-server-sent-events.html">Flask and server-sent events</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-02-14T13:34:00+01:00"> 2015-02-14</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/flask.html">flask</a>
+        /
+	<a href="../tag/javascript.html">javascript</a>
+        /
+	<a href="../tag/sse.html">sse</a>
+        /
+	<a href="../tag/gevent.html">gevent</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>I recently discovered the existence of the HTML5
 <a href="https://en.wikipedia.org/wiki/Server-sent_events">server-sent events</a> standard. Although it lacks the
 bidirectional communications of a websocket, SSE is perfect for the
 publish-subscribe networking pattern. This pattern just so happens to
 fit in conveniently with writing software to remotely monitor hardware
-that many people might want to ...</p>
+that many people might want to check in on at the same time.</p>
+<p>In order to try SSE out within a <a href="http://flask.pocoo.org/">Flask</a> framework, I put together a
+simple <a href="https://github.com/mivade/flask-sse-demo">demo app</a> using <a href="http://gevent.org/">gevent</a>. The core of the demo on the
+Python side looks like this:</p>
+<div class="highlight"><pre><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">event</span><span class="p">():</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="s">&#39;data: &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/stream/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">stream</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">event</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&quot;text/event-stream&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This can be run either using gevent's WSGI server or <a href="http://gunicorn.org/">gunicorn</a>
+using gevent workers.</p>
                     <a class="btn btn-default btn-xs" href="../flask-and-server-sent-events.html">more ...</a>
                 </div>
             </article>
             <hr/>
             <article>
                 <h2><a href="../using-websockets-with-flask-via-tornado.html">Using websockets with Flask via Tornado</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-12-15T19:44:00+01:00"> 2014-12-15</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/flask.html">flask</a>
+        /
+	<a href="../tag/tornado.html">tornado</a>
+        /
+	<a href="../tag/javascript.html">javascript</a>
+        /
+	<a href="../tag/websockets.html">websockets</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 <div class="summary"><hr />
 <p>I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with
-<a href="https://en.wikipedia.org/wiki/WebSocket">websockets</a> seemed to be the best bet (this ...</p>
+<a href="https://en.wikipedia.org/wiki/WebSocket">websockets</a> seemed to be the best bet (this also leaves the option
+open in the future to write a standalone client that is not
+browser-based if desired).</p>
+<p>There is no shortage of web frameworks for Python. Some of the more
+popular ones are <a href="https://www.djangoproject.com/">Django</a>, <a href="http://flask.pocoo.org/">Flask</a>, <a href="http://tornadoweb.org/">Tornado</a>, and
+<a href="http://www.pylonsproject.org/">Pyramid</a>. Of these, I greatly prefer Flask for a number of reasons:</p>
+<ul>
+<li>Very thorough and easy to read documentation, including "snippets"
+  with helpful tips and a very helpful community.</li>
+<li>Extreme ease of use for both small and large projects.</li>
+<li>Great use of decorators to further ease development.</li>
+<li>A large number of extensions to build up a complex project without
+  requiring overhead for simple projects.</li>
+</ul>
+<p>This is not to say that the other options are bad, but having looked
+at all of them, Flask suits me best. The one problem: only Tornado
+directly supports websockets since it is both an HTTP server and a web
+framework in one, whereas the others utilize ...</p>
                     <a class="btn btn-default btn-xs" href="../using-websockets-with-flask-via-tornado.html">more ...</a>
                 </div>
             </article>
             <hr/>
-            <article>
-                <h2><a href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">ssh-agent for sudo authentication with a passwordless account</a></h2>
-                <div class="summary"><hr />
-<p>For best security on a public system, it is generally best to disable
-password-based logins with ssh and instead require authorized
-keys. However, this complicates things if you want to use <code>sudo</code>
-with a regular user account, since by default it uses the standard
-system password to verify the user ...</p>
-                    <a class="btn btn-default btn-xs" href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="../raspberry-pi-as-a-usb-to-ethernet-gateway.html">Raspberry Pi as a USB to Ethernet Gateway</a></h2>
-                <div class="summary"><hr />
-<h2>Introduction</h2>
-<p>One of the most convenient ways of communicating with experimental
-devices (such as oscilloscopes, frequency generators, pulse
-generators, etc.) is via ethernet. The advantages of this over other
-forms of communication such as GPIB, RS-232 serial ports, etc., is
-that, provided the device receives a fixed IP address or ...</p>
-                    <a class="btn btn-default btn-xs" href="../raspberry-pi-as-a-usb-to-ethernet-gateway.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
 
+        <ul class="pagination">
+                <li class="prev disabled"><a href="#">&laquo;</a></li>
+                    <li class="active"><a
+                            href="../category/blog.html">1</a></li>
+                    <li class=""><a
+                            href="../category/blog2.html">2</a></li>
+                <li class="next"><a
+                        href="../category/blog2.html">&raquo;</a></li>
+        </ul>
         </div>
     </div>
 </div>

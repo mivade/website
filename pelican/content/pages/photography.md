@@ -3,6 +3,7 @@ URL: photography.html
 save_as: photography.html
 tags: photography
 author: Michael V. DePalatis
+---
 
 Galleries
 ---------
