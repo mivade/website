@@ -14,7 +14,7 @@
 
         <meta name="author" content="Michael V. DePalatis" />
         <meta name="keywords" content="python,flask,javascript,sse,gevent" />
-        <meta name="description" content="I recently discovered the existence of the HTML5 server-sent events standard. Although it lacks the bidirectional communications of a websocket, SSE is perfect for the publish-subscribe networking pattern. This pattern just so happens to fit in conveniently with writing software to remotely monitor hardware that many people might want to check in on at the same time. In order to try SSE out within a Flask framework, I put together a simple demo app using gevent. The core of the demo on the Python side looks like this: app = Flask(__name__) def event(): while True: yield &#39;data: &#39; + json.dumps(random.rand(1000).tolist()) + &#39;\n\n&#39; gevent.sleep(0.2) @app.route(&#39;/&#39;) def index(): return render_template(&#39;index.html&#39;) @app.route(&#39;/stream/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;]) def stream(): return Response(event(), mimetype=&#34;text/event-stream&#34;) This can be run either using gevent&#39;s WSGI server or gunicorn using gevent workers." />
+        <meta name="description" content="I recently discovered the existence of the HTML5 server-sent events standard. Although it lacks the bidirectional communications of a websocket, SSE is perfect for the publish-subscribe networking pattern. This pattern just so happens to fit in conveniently with writing software to remotely monitor hardware that many people might want to check in on at the same time. In order to try SSE out within a Flask framework, I put together a simple demo app using gevent. The core of the demo on the Python side looks like this: app = Flask(__name__) def event(): while True: yield &#39;data: &#39; + json.dumps(random.rand(1000).tolist()) + &#39;\n\n&#39; gevent.sleep(0.2) @app.route(&#39;/&#39;) def index(): return render_template(&#39;index.html&#39;) @app.route(&#39;/stream/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;]) def stream(): return Response(event(), mimetype=&#34;text/event-stream&#34;) This can be run either using gevent&#39;s WSGI server or gunicorn using gevent workers. Update 2016-04-21: There is now a very nice Flask extension called Flask-SSE which handles all of this for you. It additionally supports the concept of channels in order to fine tune what notifications a given client receives." />
 
     <!-- Enable latex plugin -->
 
@@ -143,6 +143,10 @@ Python side looks like this:</p>
 
 <p>This can be run either using gevent's WSGI server or <a href="http://gunicorn.org/">gunicorn</a>
 using gevent workers.</p>
+<p><strong>Update 2016-04-21</strong>: There is now a very nice Flask extension called
+<a href="https://flask-sse.readthedocs.org/en/latest/">Flask-SSE</a> which handles all of this for you. It additionally
+supports the concept of channels in order to fine tune what
+notifications a given client receives.</p>
             </div>
             <!-- /.entry-content -->
         </article>

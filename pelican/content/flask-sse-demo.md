@@ -1,5 +1,6 @@
 title: Flask and server-sent events
 date: 2015-02-14 13:34
+modified: 2016-04-21 12:11
 tags: python, flask, javascript, sse, gevent
 ---
 
@@ -36,7 +37,13 @@ def stream():
 This can be run either using gevent's WSGI server or [gunicorn][]
 using gevent workers.
 
+**Update 2016-04-21**: There is now a very nice Flask extension called
+[Flask-SSE][] which handles all of this for you. It additionally
+supports the concept of channels in order to fine tune what
+notifications a given client receives.
+
 [Flask]: http://flask.pocoo.org/
 [demo app]: https://github.com/mivade/flask-sse-demo
 [gevent]: http://gevent.org/
 [gunicorn]: http://gunicorn.org/
+[Flask-SSE]: https://flask-sse.readthedocs.org/en/latest/

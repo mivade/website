@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 06 Dec 2015 15:00:00 +0100</lastBuildDate><item><title>Importing one Mercurial repository into another</title><link>http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html</link><description>&lt;hr /&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mike.depalatis.net</title><link>http://mike.depalatis.net/</link><description></description><atom:link href="http://mike.depalatis.net/feeds/michael-v-depalatis.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 21 Apr 2016 12:11:00 +0200</lastBuildDate><item><title>Importing one Mercurial repository into another</title><link>http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html</link><description>&lt;hr /&gt;
 &lt;p&gt;In the
 &lt;a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/"&gt;ion trap group&lt;/a&gt;,
 we usually use &lt;a href="https://www.mercurial-scm.org/"&gt;Mercurial&lt;/a&gt; for version controlling software we write
@@ -219,7 +219,11 @@ Python side looks like this:&lt;/p&gt;
 
 
 &lt;p&gt;This can be run either using gevent's WSGI server or &lt;a href="http://gunicorn.org/"&gt;gunicorn&lt;/a&gt;
-using gevent workers.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michael V. DePalatis</dc:creator><pubDate>Sat, 14 Feb 2015 13:34:00 +0100</pubDate><guid>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</guid><category>python</category><category>flask</category><category>javascript</category><category>sse</category><category>gevent</category></item><item><title>Using websockets with Flask via Tornado</title><link>http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html</link><description>&lt;hr /&gt;
+using gevent workers.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update 2016-04-21&lt;/strong&gt;: There is now a very nice Flask extension called
+&lt;a href="https://flask-sse.readthedocs.org/en/latest/"&gt;Flask-SSE&lt;/a&gt; which handles all of this for you. It additionally
+supports the concept of channels in order to fine tune what
+notifications a given client receives.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Michael V. DePalatis</dc:creator><pubDate>Thu, 21 Apr 2016 12:11:00 +0200</pubDate><guid>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</guid><category>python</category><category>flask</category><category>javascript</category><category>sse</category><category>gevent</category></item><item><title>Using websockets with Flask via Tornado</title><link>http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html</link><description>&lt;hr /&gt;
 &lt;p&gt;I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of

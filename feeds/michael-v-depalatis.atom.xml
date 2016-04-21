@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2015-12-06T15:00:00+01:00</updated><entry><title>Importing one Mercurial repository into another</title><link href="http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html" rel="alternate"></link><updated>2015-11-04T00:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-11-04:importing-one-mercurial-repository-into-another.html</id><summary type="html">&lt;hr /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2016-04-21T12:11:00+02:00</updated><entry><title>Importing one Mercurial repository into another</title><link href="http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html" rel="alternate"></link><updated>2015-11-04T00:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-11-04:importing-one-mercurial-repository-into-another.html</id><summary type="html">&lt;hr /&gt;
 &lt;p&gt;In the
 &lt;a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/"&gt;ion trap group&lt;/a&gt;,
 we usually use &lt;a href="https://www.mercurial-scm.org/"&gt;Mercurial&lt;/a&gt; for version controlling software we write
@@ -191,7 +191,7 @@ function could thus look something like this:&lt;/p&gt;
 
 &lt;p&gt;Now after &lt;code&gt;refresh&lt;/code&gt; is called once, it will continuously run until the
 IO loop is stopped.&lt;/p&gt;
-&lt;p&gt;For a more complete example, I have written a small &lt;a href="https://gist.github.com/mivade/421c427db75c8c5fa1d1"&gt;demo&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="lab"></category></entry><entry><title>Flask and server-sent events</title><link href="http://mike.depalatis.net/flask-and-server-sent-events.html" rel="alternate"></link><updated>2015-02-14T13:34:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;For a more complete example, I have written a small &lt;a href="https://gist.github.com/mivade/421c427db75c8c5fa1d1"&gt;demo&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="lab"></category></entry><entry><title>Flask and server-sent events</title><link href="http://mike.depalatis.net/flask-and-server-sent-events.html" rel="alternate"></link><updated>2016-04-21T12:11:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</id><summary type="html">&lt;hr /&gt;
 &lt;p&gt;I recently discovered the existence of the HTML5
 &lt;a href="https://en.wikipedia.org/wiki/Server-sent_events"&gt;server-sent events&lt;/a&gt; standard. Although it lacks the
 bidirectional communications of a websocket, SSE is perfect for the
@@ -219,7 +219,11 @@ Python side looks like this:&lt;/p&gt;
 
 
 &lt;p&gt;This can be run either using gevent's WSGI server or &lt;a href="http://gunicorn.org/"&gt;gunicorn&lt;/a&gt;
-using gevent workers.&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="javascript"></category><category term="sse"></category><category term="gevent"></category></entry><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><updated>2014-12-15T19:44:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;hr /&gt;
+using gevent workers.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update 2016-04-21&lt;/strong&gt;: There is now a very nice Flask extension called
+&lt;a href="https://flask-sse.readthedocs.org/en/latest/"&gt;Flask-SSE&lt;/a&gt; which handles all of this for you. It additionally
+supports the concept of channels in order to fine tune what
+notifications a given client receives.&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="javascript"></category><category term="sse"></category><category term="gevent"></category></entry><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><updated>2014-12-15T19:44:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;hr /&gt;
 &lt;p&gt;I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
