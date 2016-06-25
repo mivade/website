@@ -108,8 +108,7 @@ mike.depalatis.net            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <hr />
-<h2>Introduction</h2>
+                <h2>Introduction</h2>
 <p>One of the most convenient ways of communicating with experimental
 devices (such as oscilloscopes, frequency generators, pulse
 generators, etc.) is via ethernet. The advantages of this over other
@@ -144,7 +143,7 @@ you prefer).</p>
 step-by-step approach that worked for me. To get started on a 64-bit
 Linux machine, make sure you have the 32-bit libraries
 installed. <a href="https://groups.google.com/d/msg/comp.sys.raspberry-pi/ONzkoIV9ab8/E4wejOI51WwJ">On Debian and derivatives</a>:</p>
-<div class="highlight"><pre>sudo  dpkg  --add-architecture  i386 # enable multi-arch
+<div class="highlight"><pre><span></span>sudo  dpkg  --add-architecture  i386 # enable multi-arch
 sudo  apt-get  update
 sudo  apt-get  install  ia32-libs
 </pre></div>
@@ -152,7 +151,7 @@ sudo  apt-get  install  ia32-libs
 
 <p>Once this is done, the following steps will get things working:</p>
 <h3>Get the RPi kernel source:</h3>
-<div class="highlight"><pre>git init
+<div class="highlight"><pre><span></span>git init
 git clone --depth 1 git://github.com/raspberrypi/linux.git
 </pre></div>
 
@@ -194,7 +193,7 @@ sure the following line appears:</p>
 <h3>Transferring the kernel modules:</h3>
 <p>On the build machine, make a temporary directory to install modules
 to:</p>
-<div class="highlight"><pre>mkdir ~/modules
+<div class="highlight"><pre><span></span>mkdir ~/modules
 export MODULES_TEMP=~/modules
 </pre></div>
 
@@ -220,7 +219,7 @@ out of space on the RPi SD card!). Transfer these over to the RPi:</p>
 found <a href="https://gist.github.com/mivade/112ef2087238662441ab">here</a>. It
 should be run through <code>socat</code> which does the more difficult work of
 properly transferring packets. The <code>socat</code> command I use is</p>
-<div class="highlight"><pre>socat tcp-listen:5025,fork,reuseaddr,crnl,tcpwrap=script\
+<div class="highlight"><pre><span></span>socat tcp-listen:5025,fork,reuseaddr,crnl,tcpwrap=script\
     EXEC:&quot;python usbtmc_pipe.py&quot;,su-d=pi,pty,echo=0
 </pre></div>
 
@@ -254,7 +253,7 @@ needing to specify vendor and product IDs.</p>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Michael V. DePalatis
+         <div class="col-xs-10">&copy; 2016 Michael V. DePalatis
             &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

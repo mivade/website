@@ -114,8 +114,7 @@ mike.depalatis.net            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <hr />
-<p>I've been working on some projects for the lab that involve remotely
+                <p>I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with
@@ -146,7 +145,7 @@ simple
 on how to do just that.</p>
 <p>Integrating websockets into a Flask app is now pretty easy. Here's an
 example on the server side:</p>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span>
 <span class="kn">from</span> <span class="nn">tornado.wsgi</span> <span class="kn">import</span> <span class="n">WSGIContainer</span>
 <span class="kn">from</span> <span class="nn">tornado.web</span> <span class="kn">import</span> <span class="n">Application</span><span class="p">,</span> <span class="n">FallbackHandler</span>
@@ -155,26 +154,26 @@ example on the server side:</p>
 
 <span class="k">class</span> <span class="nc">WebSocket</span><span class="p">(</span><span class="n">WebSocketHandler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Socket opened.&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Socket opened.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_message</span><span class="p">(</span><span class="s">&quot;Received: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Received message: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_message</span><span class="p">(</span><span class="s2">&quot;Received: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Received message: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Socket closed.&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Socket closed.&quot;</span><span class="p">)</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="s">&#39;flasknado&#39;</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="s1">&#39;flasknado&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">container</span> <span class="o">=</span> <span class="n">WSGIContainer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">Application</span><span class="p">([</span>
-        <span class="p">(</span><span class="s">r&#39;/websocket/&#39;</span><span class="p">,</span> <span class="n">WebSocket</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">r&#39;.*&#39;</span><span class="p">,</span> <span class="n">FallbackHandler</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fallback</span><span class="o">=</span><span class="n">container</span><span class="p">))</span>
+        <span class="p">(</span><span class="s1">r&#39;/websocket/&#39;</span><span class="p">,</span> <span class="n">WebSocket</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">r&#39;.*&#39;</span><span class="p">,</span> <span class="n">FallbackHandler</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fallback</span><span class="o">=</span><span class="n">container</span><span class="p">))</span>
     <span class="p">])</span>
     <span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">8080</span><span class="p">)</span>
     <span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -182,7 +181,7 @@ example on the server side:</p>
 
 
 <p>The client-side Javascript is simple as well:</p>
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="s2">&quot;ws://&quot;</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">domain</span> <span class="o">+</span> <span class="s2">&quot;:8080/websocket/&quot;</span><span class="p">);</span>
 
@@ -229,7 +228,7 @@ requirement for some hardware drivers).</p>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Michael V. DePalatis
+         <div class="col-xs-10">&copy; 2016 Michael V. DePalatis
             &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

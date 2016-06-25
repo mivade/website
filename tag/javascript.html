@@ -106,8 +106,7 @@ mike.depalatis.net            </a>
 	<a href="../tag/gevent.html">gevent</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>I recently discovered the existence of the HTML5
+                <div class="summary"><p>I recently discovered the existence of the HTML5
 <a href="https://en.wikipedia.org/wiki/Server-sent_events">server-sent events</a> standard. Although it lacks the
 bidirectional communications of a websocket, SSE is perfect for the
 publish-subscribe networking pattern. This pattern just so happens to
@@ -116,20 +115,20 @@ that many people might want to check in on at the same time.</p>
 <p>In order to try SSE out within a <a href="http://flask.pocoo.org/">Flask</a> framework, I put together a
 simple <a href="https://github.com/mivade/flask-sse-demo">demo app</a> using <a href="http://gevent.org/">gevent</a>. The core of the demo on the
 Python side looks like this:</p>
-<div class="highlight"><pre><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">event</span><span class="p">():</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="s">&#39;data: &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span>
+        <span class="k">yield</span> <span class="s1">&#39;data: &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
         <span class="n">gevent</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/stream/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/stream/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">stream</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">event</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&quot;text/event-stream&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">event</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s2">&quot;text/event-stream&quot;</span><span class="p">)</span>
 </pre></div>
 
 
@@ -169,8 +168,7 @@ notifications a given client receives.</p>
 	<a href="../tag/websockets.html">websockets</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>I've been working on some projects for the lab that involve remotely
+                <div class="summary"><p>I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with

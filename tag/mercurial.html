@@ -98,8 +98,7 @@ mike.depalatis.net            </a>
 	<a href="../tag/mercurial.html">mercurial</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>In the
+                <div class="summary"><p>In the
 <a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/">ion trap group</a>,
 we usually use <a href="https://www.mercurial-scm.org/">Mercurial</a> for version controlling software we write
 for experimental control, data analysis, and so on. This post outlines
@@ -114,7 +113,7 @@ and filter files. As an example, say we have a repo with only the
 subdirectory of the parent repo and not include the child's
 <code>.hgignore</code>. To do this, create a file <code>filemap.txt</code> with the
 following contents:</p>
-<div class="highlight"><pre>rename . child
+<div class="highlight"><pre><span></span>rename . child
 exclude .hgignore
 </pre></div>
 
@@ -123,18 +122,18 @@ exclude .hgignore
 directory named <code>child</code>.</p>
 <p>Next, optionally create a <code>branchmap.txt</code> file for renaming the
 <code>default</code> branch to something else:</p>
-<div class="highlight"><pre>default child-repo
+<div class="highlight"><pre><span></span>default child-repo
 </pre></div>
 
 
 <p>Now convert:</p>
-<div class="highlight"><pre>hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
+<div class="highlight"><pre><span></span>hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
 </pre></div>
 
 
 <h2>Pull in the converted repository</h2>
 <p>From the parent repo:</p>
-<div class="highlight"><pre>hg pull -f ../converted ...</pre></div>
+<div class="highlight"><pre><span></span>hg pull -f ../converted ...</pre></div>
                     <a class="btn btn-default btn-xs" href="../importing-one-mercurial-repository-into-another.html">more ...</a>
                 </div>
             </article>

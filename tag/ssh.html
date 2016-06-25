@@ -104,8 +104,7 @@ mike.depalatis.net            </a>
 	<a href="../tag/linux.html">linux</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>For best security on a public system, it is generally best to disable
+                <div class="summary"><p>For best security on a public system, it is generally best to disable
 password-based logins with ssh and instead require authorized
 keys. However, this complicates things if you want to use <code>sudo</code>
 with a regular user account, since by default it uses the standard
@@ -117,7 +116,7 @@ use <code>sudo</code>.</p>
 <h2>Prerequisites</h2>
 <p>You'll want to start by ensuring you have generated ssh keys for your
 user and are using <code>ssh-agent</code>. To generate the keys:</p>
-<div class="highlight"><pre><span class="nv">$ </span>ssh-keygen
+<div class="highlight"><pre><span></span>$ ssh-keygen
 </pre></div>
 
 
@@ -127,12 +126,12 @@ your new key pair. Add the public key to
 <h2>Installation</h2>
 <p>Since the PAM module isn't in Debian, first grab the build
 dependencies:</p>
-<div class="highlight"><pre># apt-get install build-essential checkinstall libssl-dev libpam0g-dev
+<div class="highlight"><pre><span></span># apt-get install build-essential checkinstall libssl-dev libpam0g-dev
 </pre></div>
 
 
 <p>Next, grab the source and build:</p>
-<div class="highlight"><pre># wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
+<div class="highlight"><pre><span></span># wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
 # tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2
 # cd pam_ssh_agent_auth-0.10.2
 # ./configure --libexecdir=/lib/security --with-mantype=man

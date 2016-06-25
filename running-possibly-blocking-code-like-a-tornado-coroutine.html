@@ -110,8 +110,7 @@ mike.depalatis.net            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <hr />
-<p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
+                <p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
 (normally) a single-threaded, asynchronous framework that can rely on
 coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
@@ -122,7 +121,7 @@ blocking calls within a Future so as to allow the event loop to continue
 executing. Here, I demonstrate one recipe to do just this by utilizing
 <code>Executor</code> objects from the <code>concurrent.futures</code> module. We start with
 the imports:</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">tornado</span> <span class="kn">import</span> <span class="n">gen</span>
 <span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span><span class="p">,</span> <span class="n">futures</span>
@@ -137,7 +136,7 @@ class whose methods we decorate have some type of <code>Executor</code> attribut
 We'll create a class to run our asynchronous tasks and give it a
 <code>ThreadPoolExecutor</code> for executing tasks. In this contrived example, our
 long running task just sleeps for a random amount of time:</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">TaskRunner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TaskRunner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span> <span class="ow">or</span> <span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
@@ -152,7 +151,7 @@ long running task just sleeps for a random amount of time:</p>
 
 <p>Now, from within a coroutine, we can let the tasks run as if they were
 normal coroutines:</p>
-<div class="highlight"><pre><span class="n">loop</span> <span class="o">=</span> <span class="n">IOLoop</span><span class="p">()</span> <span class="c"># this is necessary if running as an ipynb!</span>
+<div class="highlight"><pre><span></span><span class="n">loop</span> <span class="o">=</span> <span class="n">IOLoop</span><span class="p">()</span> <span class="c1"># this is necessary if running as an ipynb!</span>
 <span class="n">tasks</span> <span class="o">=</span> <span class="n">TaskRunner</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
 
 <span class="nd">@gen.coroutine</span>
@@ -166,7 +165,7 @@ normal coroutines:</p>
 
 
 <p>Finally, in the main coroutine:</p>
-<div class="highlight"><pre><span class="nd">@gen.coroutine</span>
+<div class="highlight"><pre><span></span><span class="nd">@gen.coroutine</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
         <span class="n">stuff</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">do_stuff</span><span class="p">()</span>
@@ -178,7 +177,7 @@ normal coroutines:</p>
 
 
 <p>Which produces output like:</p>
-<div class="highlight"><pre>3
+<div class="highlight"><pre><span></span>3
 0.6012166386789509
 1
 0.9235652108721132
@@ -216,7 +215,7 @@ to Tornado's coroutines. Note that the example code can be found
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Michael V. DePalatis
+         <div class="col-xs-10">&copy; 2016 Michael V. DePalatis
             &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

@@ -2,7 +2,7 @@
 <html lang="en"
 >
 <head>
-    <title>Articles by Michael V. DePalatis - mike.depalatis.net</title>
+    <title>python - mike.depalatis.net</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -11,7 +11,8 @@
 
 
 
-        <meta name="author" content="Michael V. DePalatis" />
+    <meta name="author" content="Michael V. DePalatis" />
+    <meta name="keywords" content="python" />
 
     <!-- Enable latex plugin -->
 
@@ -80,123 +81,6 @@ mike.depalatis.net            </a>
         <div class="col-lg-12">
 
             <article>
-                <h2><a href="../using-websockets-with-flask-via-tornado.html">Using websockets with Flask via Tornado</a></h2>
-                    <div class="well well-sm">
-<footer class="post-info">
-    <span class="label label-default">Date</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-12-15T19:44:00+01:00"> 2014-12-15</time>
-    </span>
-
-
-
-
-
-
-<span class="label label-default">Tags</span>
-	<a href="../tag/python.html">python</a>
-        /
-	<a href="../tag/flask.html">flask</a>
-        /
-	<a href="../tag/tornado.html">tornado</a>
-        /
-	<a href="../tag/javascript.html">javascript</a>
-        /
-	<a href="../tag/websockets.html">websockets</a>
-    
-</footer><!-- /.post-info -->                    </div>
-                <div class="summary"><p>I've been working on some projects for the lab that involve remotely
-controlling hardware to perform various tasks. Since the hardware in
-question is shared between different experiments, some sort of
-asynchronous solution is needed, and a web-based client coupled with
-<a href="https://en.wikipedia.org/wiki/WebSocket">websockets</a> seemed to be the best bet (this also leaves the option
-open in the future to write a standalone client that is not
-browser-based if desired).</p>
-<p>There is no shortage of web frameworks for Python. Some of the more
-popular ones are <a href="https://www.djangoproject.com/">Django</a>, <a href="http://flask.pocoo.org/">Flask</a>, <a href="http://tornadoweb.org/">Tornado</a>, and
-<a href="http://www.pylonsproject.org/">Pyramid</a>. Of these, I greatly prefer Flask for a number of reasons:</p>
-<ul>
-<li>Very thorough and easy to read documentation, including "snippets"
-  with helpful tips and a very helpful community.</li>
-<li>Extreme ease of use for both small and large projects.</li>
-<li>Great use of decorators to further ease development.</li>
-<li>A large number of extensions to build up a complex project without
-  requiring overhead for simple projects.</li>
-</ul>
-<p>This is not to say that the other options are bad, but having looked
-at all of them, Flask suits me best. The one problem: only Tornado
-directly supports websockets since it is both an HTTP server and a web
-framework in one, whereas the others utilize ...</p>
-                    <a class="btn btn-default btn-xs" href="../using-websockets-with-flask-via-tornado.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">ssh-agent for sudo authentication with a passwordless account</a></h2>
-                    <div class="well well-sm">
-<footer class="post-info">
-    <span class="label label-default">Date</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-12-07T15:25:00+01:00"> 2014-12-07</time>
-    </span>
-
-
-
-
-
-
-<span class="label label-default">Tags</span>
-	<a href="../tag/debian.html">debian</a>
-        /
-	<a href="../tag/ssh.html">ssh</a>
-        /
-	<a href="../tag/sudo.html">sudo</a>
-        /
-	<a href="../tag/linux.html">linux</a>
-    
-</footer><!-- /.post-info -->                    </div>
-                <div class="summary"><p>For best security on a public system, it is generally best to disable
-password-based logins with ssh and instead require authorized
-keys. However, this complicates things if you want to use <code>sudo</code>
-with a regular user account, since by default it uses the standard
-system password to verify the user is authorized to run commands as
-root.</p>
-<p>Enter <code>pam_ssh_agent_auth</code>. This module allows using regular ssh keys
-and <code>ssh-agent</code> to verify the user has the proper authorization to
-use <code>sudo</code>.</p>
-<h2>Prerequisites</h2>
-<p>You'll want to start by ensuring you have generated ssh keys for your
-user and are using <code>ssh-agent</code>. To generate the keys:</p>
-<div class="highlight"><pre><span></span>$ ssh-keygen
-</pre></div>
-
-
-<p>Then just accept the defaults, but make sure to set a password for
-your new key pair. Add the public key to
-<code>$HOME/.ssh/authorized_keys</code>.</p>
-<h2>Installation</h2>
-<p>Since the PAM module isn't in Debian, first grab the build
-dependencies:</p>
-<div class="highlight"><pre><span></span># apt-get install build-essential checkinstall libssl-dev libpam0g-dev
-</pre></div>
-
-
-<p>Next, grab the source and build:</p>
-<div class="highlight"><pre><span></span># wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
-# tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2
-# cd pam_ssh_agent_auth-0.10.2
-# ./configure --libexecdir=/lib/security --with-mantype=man
-# make
-# checkinstall
-</pre></div>
-
-
-<p>Note that the <code>libexecdir</code> option to the <code>configure</code> script is ...</p>
-                    <a class="btn btn-default btn-xs" href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
                 <h2><a href="../raspberry-pi-as-a-usb-to-ethernet-gateway.html">Raspberry Pi as a USB to Ethernet Gateway</a></h2>
                     <div class="well well-sm">
 <footer class="post-info">
@@ -242,12 +126,12 @@ USBTMC devices via /dev/usbtmcNNN device files. This module, coupled ...</p>
             <hr/>
 
         <ul class="pagination">
-                <li class="prev"><a href="../author/michael-v-depalatis.html">&laquo;</a>
+                <li class="prev"><a href="../tag/python.html">&laquo;</a>
                 </li>
                     <li class=""><a
-                            href="../author/michael-v-depalatis.html">1</a></li>
+                            href="../tag/python.html">1</a></li>
                     <li class="active"><a
-                            href="../author/michael-v-depalatis2.html">2</a></li>
+                            href="../tag/python2.html">2</a></li>
                 <li class="next disabled"><a href="#">&raquo;</a></li>
         </ul>
         </div>

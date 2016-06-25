@@ -1,6 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2016-04-21T12:11:00+02:00</updated><entry><title>Importing one Mercurial repository into another</title><link href="http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html" rel="alternate"></link><updated>2015-11-04T00:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-11-04:importing-one-mercurial-repository-into-another.html</id><summary type="html">&lt;hr /&gt;
-&lt;p&gt;In the
+<feed xmlns="http://www.w3.org/2005/Atom"><title>mike.depalatis.net</title><link href="http://mike.depalatis.net/" rel="alternate"></link><link href="http://mike.depalatis.net/feeds/michael-v-depalatis.atom.xml" rel="self"></link><id>http://mike.depalatis.net/</id><updated>2016-06-25T00:00:00+02:00</updated><entry><title>Using Postgres as a time series database</title><link href="http://mike.depalatis.net/using-postgres-as-a-time-series-database.html" rel="alternate"></link><published>2016-06-25T00:00:00+02:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2016-06-25:using-postgres-as-a-time-series-database.html</id><summary type="html">&lt;p&gt;Time series databases (TSDBs) are quite popular these days. To name a
+few, there are &lt;a href="https://influxdata.com/time-series-platform/influxdb/"&gt;InfluxDB&lt;/a&gt;, &lt;a href="https://graphite.readthedocs.io/en/latest/"&gt;Graphite&lt;/a&gt;, &lt;a href="http://druid.io/"&gt;Druid&lt;/a&gt;, &lt;a href="https://kairosdb.github.io/"&gt;Kairos&lt;/a&gt;, and
+&lt;a href="https://prometheus.io/"&gt;Prometheus&lt;/a&gt;. All aim to optimize data storage and querying for
+time-based data, which is highly relevant in a physics labs where
+there are multitude of "metrics" (to borrow a phrase used frequently
+in TSDB documentation) that naturally lend themselves to time series
+representation: lab (and individual device) temperatures, vacuum
+chamber pressures, and laser powers, just to name a few. Ideally, one
+could log various data to one of these databases and then use a tool
+like &lt;a href="http://grafana.org/"&gt;Grafana&lt;/a&gt; to visualize it. Sadly, more traditional relational
+databases like &lt;a href="https://sqlite.org/"&gt;SQLite&lt;/a&gt; and &lt;a href="https://www.postgresql.org/"&gt;PostgreSQL&lt;/a&gt; are not (currently)
+supported by Grafana (although this is now being addressed by a
+datasource plugin in development).&lt;/p&gt;
+&lt;p&gt;Nevertheless, there are quite a few reasons to favor a traditional
+RDBMS over a newfangled TSDB. To name a few:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Longevity: SQL has been around since the 1970s and became
+  standardized in the 1980s.&lt;/li&gt;
+&lt;li&gt;Ubiquity: almost every server (web or otherwise) has an instance of
+  SQL installed. If not, SQLite doesn't even require a server!&lt;/li&gt;
+&lt;li&gt;Community: not to suggest there aren't good communities with TSDBs,
+  but the Postgres and SQLite communities in particular are generally
+  quite helpful.  Combined with the longevity aspect, any question one
+  may have about how to accomplish a particular task with a SQL
+  database is likely to be easily answerable with a simple web search.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this post, I will outline a few things I have learned in using SQL
+for storing time series data. In particular, I will focus on Postgres,
+but the same general principles apply to other dialects. Sample code for
+some examples can be found on &lt;a href="https://gitlab.com/mivade/postgres-timeseries"&gt;GitLab&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Schema definition&lt;/h2&gt;
+&lt;p&gt;One "disadvantage" to SQL is it traditionally requires tightly defined
+schema.  In practice when logging time series data, this is not
+usually a problem since each measurement device can neatly have its
+own column. Where this can become somewhat of nuiscance is when adding
+new devices. InfluxDB (for example) gets around this with its query
+language being quite flexible. In traditional SQL, the approach would
+require altering a table to add a new column. This is not too
+difficult in principle, but requires a (naive) program for logging
+data to frequently make &lt;code&gt;ALTER TABLE&lt;/code&gt; calls and check if columns
+already exist. (Note that if using Python, this can be easily dealt
+with by using the &lt;a href="https://dataset.readthedocs.io/en/latest/"&gt;dataset&lt;/a&gt; library.).&lt;/p&gt;
+&lt;p&gt;In real laboratories, though, we tend to know the kinds of things we
+are going to measure. So even if we add new devices that we want to
+log data from, we can still come up with a reasonable schema
+definition that fits well within the SQL paradigm. As an example,
+let's consider storing data from thermocouples in a table. We could
+get away with as few as three columns to describe the data: a
+timestamp (of course), a name or unique ID of the sensor, and a
+temperature measurement. For good measure, we should also add a
+primary key ID column to make a grand total of four columns. So far,
+our table looks like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; id |           timestamp           |  sensor   | temperature
+----+-------------------------------+-----------+-------------
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;For the &lt;code&gt;timestamp&lt;/code&gt; column, I highly recommend using &lt;code&gt;TIMESTAMP WITH
+TIME ZONE&lt;/code&gt; rather than &lt;code&gt;TIMESTAMP WITHOUT TIME ZONE&lt;/code&gt; (more on why
+later).&lt;/p&gt;
+&lt;p&gt;For efficient querying, we'll want to index the &lt;code&gt;timestamp&lt;/code&gt; and
+&lt;code&gt;sensor&lt;/code&gt; columns. Depending on the number of sensors, it may also make
+sense to make a combined index on both, but we can defer this decision
+to later if it becomes necessary. Using &lt;a href="http://www.sqlalchemy.org/"&gt;SQLAlchemy&lt;/a&gt;, we define our
+table like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;metadata&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;MetaData&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;table&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Table&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;timeseries&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;metadata&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Column&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Integer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;primary_key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Column&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;timestamp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DateTime&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timezone&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+              &lt;span class="n"&gt;nullable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Column&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;sensor&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;128&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;nullable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Column&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;temperature&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sa&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Float&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;precision&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;nullable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;metadata&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;engine&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;which results in the following SQL:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;CREATE TABLE timeseries (
+    id SERIAL NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    sensor VARCHAR(128) NOT NULL,
+    temperature FLOAT(4) NOT NULL,
+    PRIMARY KEY (id)
+);
+CREATE INDEX ix_timeseries_sensor ON timeseries (sensor);
+CREATE INDEX ix_timeseries_timestamp ON timeseries (timestamp);
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Basic querying&lt;/h2&gt;
+&lt;p&gt;Simple queries are performed as normal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;SELECT * FROM timeseries WHERE sensor = &amp;#39;sensor_01&amp;#39;;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Postgres has quite a few
+&lt;a href="https://www.postgresql.org/docs/9.1/static/functions-datetime.html"&gt;date and time functions&lt;/a&gt;
+for building more complicated queries. It understands &lt;a href="https://en.wikipedia.org/wiki/ISO_8601"&gt;ISO 8601&lt;/a&gt; out
+of the box:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;test=&amp;gt; SELECT * FROM timeseries
+test-&amp;gt; WHERE timestamp &amp;gt; &amp;#39;2016-06-13T22:00+02&amp;#39;
+test-&amp;gt; AND sensor = &amp;#39;sensor_01&amp;#39;;
+ id |           timestamp           |  sensor   | temperature
+----+-------------------------------+-----------+-------------
+  8 | 2016-06-14 23:18:16.149606+02 | sensor_01 |     22.7061
+  4 | 2016-06-14 23:18:11.985645+02 | sensor_01 |     25.4643
+(2 rows)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here we are explicit with the UTC offset of +2 hours (CEST). If
+omitted, the server locale is assumed. This brings us to why we should
+bother with time zones in the first place: internally, we want all
+timestamps stored in UTC to avoid ambiguity (Postgres already does
+this internally). Externally, (e.g., from Python scripts), we want to
+be able to use whatever time zone we're in to not have to think too
+hard.&lt;/p&gt;
+&lt;p&gt;SQLAlchemy treats naive &lt;code&gt;datetime&lt;/code&gt; objects, uh, naively. This means
+that if a new &lt;code&gt;datetime&lt;/code&gt; is created without explicitly specifying a
+time zone, that +2 hours above is lost and our time quries will start
+to get confusing. To avoid this problem, the best solution I have
+found is to &lt;strong&gt;always&lt;/strong&gt; declare columns as &lt;code&gt;TIMESTAMP WITH TIME ZONE&lt;/code&gt;
+(&lt;code&gt;DateTime(timezone=True)&lt;/code&gt; in SQLAlchemy terms) and explicitly. So
+rather than inserting new timestamps with&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;datetime&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;
+&lt;span class="c1"&gt;# ...&lt;/span&gt;
+&lt;span class="n"&gt;timestamp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;now&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;instead prefer&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;datetime&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;timezone&lt;/span&gt;
+&lt;span class="c1"&gt;# ...&lt;/span&gt;
+&lt;span class="n"&gt;timestamp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;now&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timezone&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;utc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;em&gt;Aside: why oh why doesn't &lt;code&gt;datetime.utcnow&lt;/code&gt; just do this?&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Now we can build queries in Python like this using pandas and raw SQL
+queries:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;today&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;now&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timezone&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;utc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;today&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;today&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hour&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;minute&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;second&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;microsecond&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;query&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;SELECT * FROM timeseries &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;WHERE timestamp &amp;gt;= &amp;#39;{}&amp;#39; &amp;quot;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;today&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;isoformat&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;AND sensor = &amp;#39;sensor_01&amp;#39;&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_sql_query&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;engine&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;index_col&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;timestamp&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Data aggregation&lt;/h2&gt;
+&lt;p&gt;Depending on data density, it may be useful to downsample data and look
+at aggregates such as the mean temperature in half-hour windows over the
+course of a day. We can easily accomplish this after the fact with
+pandas, but we can just as easily use Postgres &lt;a href="https://www.postgresql.org/docs/current/static/functions-aggregate.html"&gt;aggregate functions&lt;/a&gt;
+to do this for us on the server. One advantage to this approach is a
+reduction in network overhead, which is especially relevant for very
+large datasets. Another is that these queries can be cached using
+&lt;a href="https://www.postgresql.org/docs/current/static/rules-materializedviews.html"&gt;materialized views&lt;/a&gt;. (This is a more advanced topic that I will not
+cover here. Instead, see the link in the references section below for a
+good treatment).&lt;/p&gt;
+&lt;p&gt;The key here is to use the &lt;code&gt;date_trunc&lt;/code&gt; aggregate function and
+&lt;code&gt;GROUP BY&lt;/code&gt; to only look at (for example) one hour at a time. An example
+of an aggregate query:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;SELECT
+  date_trunc(&amp;#39;hour&amp;#39;, timestamp) AS timestamp,
+  avg(temperature) AS temperature
+FROM timeseries
+WHERE timestamp &amp;gt;= &amp;#39;2016-06-25&amp;#39;
+AND sensor = &amp;#39;sensor_01&amp;#39;
+GROUP BY date_trunc(&amp;#39;hour&amp;#39;, timestamp)
+ORDER BY timestamp;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;which results in something like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;timestamp        |   temperature    
+------------------------+------------------
+2016-06-25 00:00:00+02 | 22.0828623312065
+2016-06-25 01:00:00+02 | 22.0026334276975
+2016-06-25 02:00:00+02 | 21.9871146672498
+2016-06-25 03:00:00+02 | 22.0274553065207
+2016-06-25 04:00:00+02 | 21.9357200048187
+2016-06-25 05:00:00+02 | 21.9737668623899
+2016-06-25 06:00:00+02 | 22.0098525849685
+2016-06-25 07:00:00+02 | 22.0767008988982
+2016-06-25 08:00:00+02 | 22.2146511332874
+2016-06-25 09:00:00+02 | 21.9118559617263
+2016-06-25 10:00:00+02 | 22.0417969508838
+2016-06-25 11:00:00+02 | 22.0554379473676
+2016-06-25 12:00:00+02 | 22.0193907419841
+2016-06-25 13:00:00+02 | 22.0560295554413
+2016-06-25 14:00:00+02 | 21.8087244594798
+2016-06-25 15:00:00+02 | 22.0494429762518
+2016-06-25 16:00:00+02 | 21.9082782661007
+2016-06-25 17:00:00+02 | 21.4403478373652
+(18 rows)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Other strategies&lt;/h2&gt;
+&lt;p&gt;Another approach to avoid the time zone issue entirely is to simply
+store timestamps using something like UNIX time. Since pretty much every
+programming language imaginable has a built-in function to return time
+in seconds since the epoch, this is a reasonable approach (and is a bit
+more portable to other SQL dialects). The major downside to this is that
+compared to ISO 8601, UNIX time is not as readable by humans and
+therefore may require extra steps to convert to and from a human-readable
+format.&lt;/p&gt;
+&lt;p&gt;Depending on what you are doing with your data, it could also make sense
+to store, say, an hour's worth of data in a single row using the &lt;code&gt;ARRAY&lt;/code&gt;
+data type. Combining arrays with &lt;a href="https://www.postgresql.org/docs/9.1/static/functions-array.html"&gt;array functions&lt;/a&gt; could then
+effectively do aggregation (somewhat) automatically rather than by
+query. This could also mean a bit of extra work when inserting new data
+or getting data stored in the database into a form friendly to your data
+analysis tools of choice.&lt;/p&gt;
+&lt;h2&gt;References and further reading&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://no0p.github.io/postgresql/2014/05/08/timeseries-tips-pg.html"&gt;Querying Time Series in Postgresql&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://hashrocket.com/blog/posts/materialized-view-strategies-using-postgresql"&gt;Materialized View Strategies Using PostgreSQL&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="postgres"></category><category term="sql"></category><category term="pandas"></category><category term="python"></category><category term="data"></category></entry><entry><title>Importing one Mercurial repository into another</title><link href="http://mike.depalatis.net/importing-one-mercurial-repository-into-another.html" rel="alternate"></link><published>2015-11-04T00:00:00+01:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-11-04:importing-one-mercurial-repository-into-another.html</id><summary type="html">&lt;p&gt;In the
 &lt;a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/"&gt;ion trap group&lt;/a&gt;,
 we usually use &lt;a href="https://www.mercurial-scm.org/"&gt;Mercurial&lt;/a&gt; for version controlling software we write
 for experimental control, data analysis, and so on. This post outlines
@@ -15,7 +236,7 @@ and filter files. As an example, say we have a repo with only the
 subdirectory of the parent repo and not include the child's
 &lt;code&gt;.hgignore&lt;/code&gt;. To do this, create a file &lt;code&gt;filemap.txt&lt;/code&gt; with the
 following contents:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;rename . child
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rename . child
 exclude .hgignore
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -24,28 +245,28 @@ exclude .hgignore
 directory named &lt;code&gt;child&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Next, optionally create a &lt;code&gt;branchmap.txt&lt;/code&gt; file for renaming the
 &lt;code&gt;default&lt;/code&gt; branch to something else:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;default child-repo
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;default child-repo
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Now convert:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Pull in the converted repository&lt;/h2&gt;
 &lt;p&gt;From the parent repo:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;hg pull -f ../converted
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;hg pull -f ../converted
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Ensure the child commits are in the draft phase with:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;hg phase -f --draft -r &amp;lt;first&amp;gt;:&amp;lt;last&amp;gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;hg phase -f --draft -r &amp;lt;first&amp;gt;:&amp;lt;last&amp;gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Rebase as appropriate&lt;/h2&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;hg rebase -s &amp;lt;child rev&amp;gt; -d &amp;lt;parent rev&amp;gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;hg rebase -s &amp;lt;child rev&amp;gt; -d &amp;lt;parent rev&amp;gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -58,8 +279,7 @@ option.&lt;/p&gt;
 &lt;li&gt;https://mercurial.selenic.com/wiki/RebaseExtension&lt;/li&gt;
 &lt;li&gt;https://stackoverflow.com/questions/3214717/how-can-i-import-a-mercurial-repo-including-history-into-another-mercurial-rep&lt;/li&gt;
 &lt;li&gt;https://stackoverflow.com/questions/3338672/mercurial-convert-clones-to-branches&lt;/li&gt;
-&lt;/ul&gt;</summary><category term="mercurial"></category></entry><entry><title>Running (possibly) blocking code like a Tornado coroutine</title><link href="http://mike.depalatis.net/running-possibly-blocking-code-like-a-tornado-coroutine.html" rel="alternate"></link><updated>2015-08-03T19:54:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-08-03:running-possibly-blocking-code-like-a-tornado-coroutine.html</id><summary type="html">&lt;hr /&gt;
-&lt;p&gt;One of the main benefits of using the &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; web server is that it is
+&lt;/ul&gt;</summary><category term="mercurial"></category></entry><entry><title>Running (possibly) blocking code like a Tornado coroutine</title><link href="http://mike.depalatis.net/running-possibly-blocking-code-like-a-tornado-coroutine.html" rel="alternate"></link><published>2015-08-03T19:54:00+02:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-08-03:running-possibly-blocking-code-like-a-tornado-coroutine.html</id><summary type="html">&lt;p&gt;One of the main benefits of using the &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; web server is that it is
 (normally) a single-threaded, asynchronous framework that can rely on
 coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
@@ -70,7 +290,7 @@ blocking calls within a Future so as to allow the event loop to continue
 executing. Here, I demonstrate one recipe to do just this by utilizing
 &lt;code&gt;Executor&lt;/code&gt; objects from the &lt;code&gt;concurrent.futures&lt;/code&gt; module. We start with
 the imports:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado.concurrent&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;run_on_executor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;futures&lt;/span&gt;
@@ -85,7 +305,7 @@ class whose methods we decorate have some type of &lt;code&gt;Executor&lt;/code&
 We'll create a class to run our asynchronous tasks and give it a
 &lt;code&gt;ThreadPoolExecutor&lt;/code&gt; for executing tasks. In this contrived example, our
 long running task just sleeps for a random amount of time:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TaskRunner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TaskRunner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;executor&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;futures&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ThreadPoolExecutor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -100,7 +320,7 @@ long running task just sleeps for a random amount of time:&lt;/p&gt;
 
 &lt;p&gt;Now, from within a coroutine, we can let the tasks run as if they were
 normal coroutines:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c"&gt;# this is necessary if running as an ipynb!&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c1"&gt;# this is necessary if running as an ipynb!&lt;/span&gt;
 &lt;span class="n"&gt;tasks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;TaskRunner&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="nd"&gt;@gen.coroutine&lt;/span&gt;
@@ -114,7 +334,7 @@ normal coroutines:&lt;/p&gt;
 
 
 &lt;p&gt;Finally, in the main coroutine:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nd"&gt;@gen.coroutine&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nd"&gt;@gen.coroutine&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
     &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="n"&gt;stuff&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;do_stuff&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -126,7 +346,7 @@ normal coroutines:&lt;/p&gt;
 
 
 &lt;p&gt;Which produces output like:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;3
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;3
 0.6012166386789509
 1
 0.9235652108721132
@@ -151,8 +371,7 @@ normal coroutines:&lt;/p&gt;
 
 &lt;p&gt;Using this general pattern, it is rather easy to adapt blocking calls
 to Tornado's coroutines. Note that the example code can be found
-&lt;a href="https://gist.github.com/mivade/5966f1b7a995a50ecc55"&gt;here&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="async"></category></entry><entry><title>Background tasks with Tornado</title><link href="http://mike.depalatis.net/background-tasks-with-tornado.html" rel="alternate"></link><updated>2015-02-28T14:32:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-28:background-tasks-with-tornado.html</id><summary type="html">&lt;hr /&gt;
-&lt;p&gt;I have been using &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; lately for distributed control of
+&lt;a href="https://gist.github.com/mivade/5966f1b7a995a50ecc55"&gt;here&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="async"></category></entry><entry><title>Background tasks with Tornado</title><link href="http://mike.depalatis.net/background-tasks-with-tornado.html" rel="alternate"></link><published>2015-02-28T14:32:00+01:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-28:background-tasks-with-tornado.html</id><summary type="html">&lt;p&gt;I have been using &lt;a href="http://www.tornadoweb.org/en/stable/"&gt;Tornado&lt;/a&gt; lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a &lt;a href="http://www.highfinesse.com/"&gt;HighFinesse&lt;/a&gt; &lt;a href="http://www.highfinesse.com/en/wavelengthmeter/"&gt;wavelength meter&lt;/a&gt;
 which we use to monitor and stabilize several lasers (up to 14 at a
@@ -182,7 +401,7 @@ background, you instead have its final call be to add itself back as a
 callback on the IO loop. This makes shutdown trivial since only the IO
 loop needs to be stopped when the program is closed. A refresh
 function could thus look something like this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nd"&gt;@tornado.concurrent.run_on_executor&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nd"&gt;@tornado.concurrent.run_on_executor&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;refresh&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
     &lt;span class="n"&gt;do_something_that_takes_a_while&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
     &lt;span class="n"&gt;tornado&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ioloop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_callback&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;refresh&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -191,8 +410,7 @@ function could thus look something like this:&lt;/p&gt;
 
 &lt;p&gt;Now after &lt;code&gt;refresh&lt;/code&gt; is called once, it will continuously run until the
 IO loop is stopped.&lt;/p&gt;
-&lt;p&gt;For a more complete example, I have written a small &lt;a href="https://gist.github.com/mivade/421c427db75c8c5fa1d1"&gt;demo&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="lab"></category></entry><entry><title>Flask and server-sent events</title><link href="http://mike.depalatis.net/flask-and-server-sent-events.html" rel="alternate"></link><updated>2016-04-21T12:11:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</id><summary type="html">&lt;hr /&gt;
-&lt;p&gt;I recently discovered the existence of the HTML5
+&lt;p&gt;For a more complete example, I have written a small &lt;a href="https://gist.github.com/mivade/421c427db75c8c5fa1d1"&gt;demo&lt;/a&gt;.&lt;/p&gt;</summary><category term="python"></category><category term="tornado"></category><category term="lab"></category></entry><entry><title>Flask and server-sent events</title><link href="http://mike.depalatis.net/flask-and-server-sent-events.html" rel="alternate"></link><published>2016-04-21T12:11:00+02:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2015-02-14:flask-and-server-sent-events.html</id><summary type="html">&lt;p&gt;I recently discovered the existence of the HTML5
 &lt;a href="https://en.wikipedia.org/wiki/Server-sent_events"&gt;server-sent events&lt;/a&gt; standard. Although it lacks the
 bidirectional communications of a websocket, SSE is perfect for the
 publish-subscribe networking pattern. This pattern just so happens to
@@ -201,20 +419,20 @@ that many people might want to check in on at the same time.&lt;/p&gt;
 &lt;p&gt;In order to try SSE out within a &lt;a href="http://flask.pocoo.org/"&gt;Flask&lt;/a&gt; framework, I put together a
 simple &lt;a href="https://github.com/mivade/flask-sse-demo"&gt;demo app&lt;/a&gt; using &lt;a href="http://gevent.org/"&gt;gevent&lt;/a&gt;. The core of the demo on the
 Python side looks like this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;event&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
     &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;data: &amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dumps&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rand&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tolist&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;/span&gt;
+        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;data: &amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dumps&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rand&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tolist&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;
         &lt;span class="n"&gt;gevent&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;0.2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;index&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/stream/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;methods&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/stream/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;methods&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;stream&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;mimetype&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;text/event-stream&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;mimetype&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;text/event-stream&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -223,8 +441,7 @@ using gevent workers.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update 2016-04-21&lt;/strong&gt;: There is now a very nice Flask extension called
 &lt;a href="https://flask-sse.readthedocs.org/en/latest/"&gt;Flask-SSE&lt;/a&gt; which handles all of this for you. It additionally
 supports the concept of channels in order to fine tune what
-notifications a given client receives.&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="javascript"></category><category term="sse"></category><category term="gevent"></category></entry><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><updated>2014-12-15T19:44:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;hr /&gt;
-&lt;p&gt;I've been working on some projects for the lab that involve remotely
+notifications a given client receives.&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="javascript"></category><category term="sse"></category><category term="gevent"></category></entry><entry><title>Using websockets with Flask via Tornado</title><link href="http://mike.depalatis.net/using-websockets-with-flask-via-tornado.html" rel="alternate"></link><published>2014-12-15T19:44:00+01:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-15:using-websockets-with-flask-via-tornado.html</id><summary type="html">&lt;p&gt;I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with
@@ -255,7 +472,7 @@ simple
 on how to do just that.&lt;/p&gt;
 &lt;p&gt;Integrating websockets into a Flask app is now pretty easy. Here's an
 example on the server side:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;__future__&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;print_function&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;__future__&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;print_function&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;flask&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado.wsgi&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;WSGIContainer&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;tornado.web&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Application&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;FallbackHandler&lt;/span&gt;
@@ -264,26 +481,26 @@ example on the server side:&lt;/p&gt;
 
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;WebSocket&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;WebSocketHandler&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Socket opened.&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Socket opened.&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;on_message&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write_message&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Received: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Received message: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write_message&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Received: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Received message: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;on_close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Socket closed.&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Socket closed.&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;flasknado&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;flasknado&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;index&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;__main__&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;__main__&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;container&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;WSGIContainer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;server&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Application&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;
-        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;r&amp;#39;/websocket/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;WebSocket&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;r&amp;#39;.*&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;FallbackHandler&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fallback&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;r&amp;#39;/websocket/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;WebSocket&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;r&amp;#39;.*&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;FallbackHandler&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fallback&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
     &lt;span class="p"&gt;])&lt;/span&gt;
     &lt;span class="n"&gt;server&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;8080&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;IOLoop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;instance&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -291,7 +508,7 @@ example on the server side:&lt;/p&gt;
 
 
 &lt;p&gt;The client-side Javascript is simple as well:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;ready&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="nx"&gt;socket&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;WebSocket&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ws://&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;domain&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;:8080/websocket/&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 
@@ -325,8 +542,7 @@ websockets:&lt;/p&gt;
 &lt;p&gt;However, both of these are based on
 &lt;a href="http://gevent.org/"&gt;gevent&lt;/a&gt;. While gevent is nice, it still has
 limited Python 3 support and does not work on Windows (sadly, a
-requirement for some hardware drivers).&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="tornado"></category><category term="javascript"></category><category term="websockets"></category></entry><entry><title>ssh-agent for sudo authentication with a passwordless account</title><link href="http://mike.depalatis.net/ssh-agent-for-sudo-authentication-with-a-passwordless-account.html" rel="alternate"></link><updated>2015-12-06T15:00:00+01:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-07:ssh-agent-for-sudo-authentication-with-a-passwordless-account.html</id><summary type="html">&lt;hr /&gt;
-&lt;p&gt;For best security on a public system, it is generally best to disable
+requirement for some hardware drivers).&lt;/p&gt;</summary><category term="python"></category><category term="flask"></category><category term="tornado"></category><category term="javascript"></category><category term="websockets"></category></entry><entry><title>ssh-agent for sudo authentication with a passwordless account</title><link href="http://mike.depalatis.net/ssh-agent-for-sudo-authentication-with-a-passwordless-account.html" rel="alternate"></link><published>2015-12-06T15:00:00+01:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-12-07:ssh-agent-for-sudo-authentication-with-a-passwordless-account.html</id><summary type="html">&lt;p&gt;For best security on a public system, it is generally best to disable
 password-based logins with ssh and instead require authorized
 keys. However, this complicates things if you want to use &lt;code&gt;sudo&lt;/code&gt;
 with a regular user account, since by default it uses the standard
@@ -338,7 +554,7 @@ use &lt;code&gt;sudo&lt;/code&gt;.&lt;/p&gt;
 &lt;h2&gt;Prerequisites&lt;/h2&gt;
 &lt;p&gt;You'll want to start by ensuring you have generated ssh keys for your
 user and are using &lt;code&gt;ssh-agent&lt;/code&gt;. To generate the keys:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ssh-keygen
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ssh-keygen
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -348,12 +564,12 @@ your new key pair. Add the public key to
 &lt;h2&gt;Installation&lt;/h2&gt;
 &lt;p&gt;Since the PAM module isn't in Debian, first grab the build
 dependencies:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;# apt-get install build-essential checkinstall libssl-dev libpam0g-dev
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# apt-get install build-essential checkinstall libssl-dev libpam0g-dev
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Next, grab the source and build:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;# wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
 # tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2
 # cd pam_ssh_agent_auth-0.10.2
 # ./configure --libexecdir=/lib/security --with-mantype=man
@@ -368,24 +584,24 @@ since apparently Debian keeps PAM modules in a different place than
 &lt;h2&gt;Configuration&lt;/h2&gt;
 &lt;p&gt;Edit the file &lt;code&gt;/etc/pam.d/sudo&lt;/code&gt; and add the following line &lt;em&gt;before&lt;/em&gt;
 any other &lt;code&gt;auth&lt;/code&gt; or &lt;code&gt;@include&lt;/code&gt; commands:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;auth sufficient pam_ssh_agent_auth.so file&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;~/.ssh/authorized_keys&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="na"&gt;auth sufficient pam_ssh_agent_auth.so file&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;~/.ssh/authorized_keys&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Run &lt;code&gt;visudo&lt;/code&gt; to edit &lt;code&gt;/etc/sudoers&lt;/code&gt; and add this line before any
 other &lt;code&gt;Defaults&lt;/code&gt; lines:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;Defaults env_keep +&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;SSH_AUTH_SOCK&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="na"&gt;Defaults env_keep +&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;SSH_AUTH_SOCK&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Invoking &lt;code&gt;sudo&lt;/code&gt;&lt;/h2&gt;
 &lt;p&gt;To actually be able to use &lt;code&gt;sudo&lt;/code&gt; now, run &lt;code&gt;ssh-agent&lt;/code&gt; like so:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;eval&lt;/span&gt; &lt;span class="sb"&gt;`&lt;/span&gt;ssh-agent&lt;span class="sb"&gt;`&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="nb"&gt;eval&lt;/span&gt; &lt;span class="sb"&gt;`&lt;/span&gt;ssh-agent&lt;span class="sb"&gt;`&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;and add the key:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ssh-add -t 600
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ssh-add -t 600
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -398,8 +614,7 @@ checking to see if a process is already running!&lt;/p&gt;
 &lt;li&gt;&lt;a href="http://unix.stackexchange.com/a/158452"&gt;How to allow authentication with sudo using an alternate password?&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="http://www.evans.io/posts/ssh-agent-for-sudo-authentication/"&gt;Using SSH agent for sudo authentication&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="http://mah.everybody.org/docs/ssh"&gt;Using ssh-agent with ssh&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;</summary><category term="debian"></category><category term="ssh"></category><category term="sudo"></category><category term="linux"></category></entry><entry><title>Raspberry Pi as a USB to Ethernet Gateway</title><link href="http://mike.depalatis.net/raspberry-pi-as-a-usb-to-ethernet-gateway.html" rel="alternate"></link><updated>2014-06-10T10:59:00+02:00</updated><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-03-08:raspberry-pi-as-a-usb-to-ethernet-gateway.html</id><summary type="html">&lt;hr /&gt;
-&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;/ol&gt;</summary><category term="debian"></category><category term="ssh"></category><category term="sudo"></category><category term="linux"></category></entry><entry><title>Raspberry Pi as a USB to Ethernet Gateway</title><link href="http://mike.depalatis.net/raspberry-pi-as-a-usb-to-ethernet-gateway.html" rel="alternate"></link><published>2014-06-10T10:59:00+02:00</published><author><name>Michael V. DePalatis</name></author><id>tag:mike.depalatis.net,2014-03-08:raspberry-pi-as-a-usb-to-ethernet-gateway.html</id><summary type="html">&lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;One of the most convenient ways of communicating with experimental
 devices (such as oscilloscopes, frequency generators, pulse
 generators, etc.) is via ethernet. The advantages of this over other
@@ -434,7 +649,7 @@ you prefer).&lt;/p&gt;
 step-by-step approach that worked for me. To get started on a 64-bit
 Linux machine, make sure you have the 32-bit libraries
 installed. &lt;a href="https://groups.google.com/d/msg/comp.sys.raspberry-pi/ONzkoIV9ab8/E4wejOI51WwJ"&gt;On Debian and derivatives&lt;/a&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;sudo  dpkg  --add-architecture  i386 # enable multi-arch
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo  dpkg  --add-architecture  i386 # enable multi-arch
 sudo  apt-get  update
 sudo  apt-get  install  ia32-libs
 &lt;/pre&gt;&lt;/div&gt;
@@ -442,7 +657,7 @@ sudo  apt-get  install  ia32-libs
 
 &lt;p&gt;Once this is done, the following steps will get things working:&lt;/p&gt;
 &lt;h3&gt;Get the RPi kernel source:&lt;/h3&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;git init
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;git init
 git clone --depth 1 git://github.com/raspberrypi/linux.git
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -484,7 +699,7 @@ sure the following line appears:&lt;/p&gt;
 &lt;h3&gt;Transferring the kernel modules:&lt;/h3&gt;
 &lt;p&gt;On the build machine, make a temporary directory to install modules
 to:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;mkdir ~/modules
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mkdir ~/modules
 export MODULES_TEMP=~/modules
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -510,7 +725,7 @@ out of space on the RPi SD card!). Transfer these over to the RPi:&lt;/p&gt;
 found &lt;a href="https://gist.github.com/mivade/112ef2087238662441ab"&gt;here&lt;/a&gt;. It
 should be run through &lt;code&gt;socat&lt;/code&gt; which does the more difficult work of
 properly transferring packets. The &lt;code&gt;socat&lt;/code&gt; command I use is&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;socat tcp-listen:5025,fork,reuseaddr,crnl,tcpwrap=script\
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;socat tcp-listen:5025,fork,reuseaddr,crnl,tcpwrap=script\
     EXEC:&amp;quot;python usbtmc_pipe.py&amp;quot;,su-d=pi,pty,echo=0
 &lt;/pre&gt;&lt;/div&gt;
 

@@ -110,8 +110,7 @@ mike.depalatis.net            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <hr />
-<p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
+                <p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a <a href="http://www.highfinesse.com/">HighFinesse</a> <a href="http://www.highfinesse.com/en/wavelengthmeter/">wavelength meter</a>
 which we use to monitor and stabilize several lasers (up to 14 at a
@@ -141,7 +140,7 @@ background, you instead have its final call be to add itself back as a
 callback on the IO loop. This makes shutdown trivial since only the IO
 loop needs to be stopped when the program is closed. A refresh
 function could thus look something like this:</p>
-<div class="highlight"><pre><span class="nd">@tornado.concurrent.run_on_executor</span>
+<div class="highlight"><pre><span></span><span class="nd">@tornado.concurrent.run_on_executor</span>
 <span class="k">def</span> <span class="nf">refresh</span><span class="p">():</span>
     <span class="n">do_something_that_takes_a_while</span><span class="p">()</span>
     <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">)</span>
@@ -163,7 +162,7 @@ IO loop is stopped.</p>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Michael V. DePalatis
+         <div class="col-xs-10">&copy; 2016 Michael V. DePalatis
             &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

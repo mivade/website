@@ -102,8 +102,7 @@ mike.depalatis.net            </a>
 	<a href="../tag/async.html">async</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
+                <div class="summary"><p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
 (normally) a single-threaded, asynchronous framework that can rely on
 coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
@@ -114,7 +113,7 @@ blocking calls within a Future so as to allow the event loop to continue
 executing. Here, I demonstrate one recipe to do just this by utilizing
 <code>Executor</code> objects from the <code>concurrent.futures</code> module. We start with
 the imports:</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">tornado</span> <span class="kn">import</span> <span class="n">gen</span>
 <span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span><span class="p">,</span> <span class="n">futures</span>

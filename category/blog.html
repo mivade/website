@@ -81,6 +81,58 @@ mike.depalatis.net            </a>
         <div class="col-lg-12">
 
             <article>
+                <h2><a href="../using-postgres-as-a-time-series-database.html">Using Postgres as a time series database</a></h2>
+                    <div class="well well-sm">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-06-25T00:00:00+02:00"> 2016-06-25</time>
+    </span>
+
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="../tag/postgres.html">postgres</a>
+        /
+	<a href="../tag/sql.html">sql</a>
+        /
+	<a href="../tag/pandas.html">pandas</a>
+        /
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/data.html">data</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                <div class="summary"><p>Time series databases (TSDBs) are quite popular these days. To name a
+few, there are <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, <a href="https://graphite.readthedocs.io/en/latest/">Graphite</a>, <a href="http://druid.io/">Druid</a>, <a href="https://kairosdb.github.io/">Kairos</a>, and
+<a href="https://prometheus.io/">Prometheus</a>. All aim to optimize data storage and querying for
+time-based data, which is highly relevant in a physics labs where
+there are multitude of "metrics" (to borrow a phrase used frequently
+in TSDB documentation) that naturally lend themselves to time series
+representation: lab (and individual device) temperatures, vacuum
+chamber pressures, and laser powers, just to name a few. Ideally, one
+could log various data to one of these databases and then use a tool
+like <a href="http://grafana.org/">Grafana</a> to visualize it. Sadly, more traditional relational
+databases like <a href="https://sqlite.org/">SQLite</a> and <a href="https://www.postgresql.org/">PostgreSQL</a> are not (currently)
+supported by Grafana (although this is now being addressed by a
+datasource plugin in development).</p>
+<p>Nevertheless, there are quite a few reasons to favor a traditional
+RDBMS over a newfangled TSDB. To name a few:</p>
+<ul>
+<li>Longevity: SQL has been around since the 1970s and became
+  standardized in the 1980s.</li>
+<li>Ubiquity: almost every server (web or otherwise) has an instance of
+  SQL installed. If not, SQLite doesn't even require a server!</li>
+<li>Community: not to suggest there aren't good communities with TSDBs,
+  but the Postgres and SQLite communities ...</li></ul>
+                    <a class="btn btn-default btn-xs" href="../using-postgres-as-a-time-series-database.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="../importing-one-mercurial-repository-into-another.html">Importing one Mercurial repository into another</a></h2>
                     <div class="well well-sm">
 <footer class="post-info">
@@ -98,8 +150,7 @@ mike.depalatis.net            </a>
 	<a href="../tag/mercurial.html">mercurial</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>In the
+                <div class="summary"><p>In the
 <a href="http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/">ion trap group</a>,
 we usually use <a href="https://www.mercurial-scm.org/">Mercurial</a> for version controlling software we write
 for experimental control, data analysis, and so on. This post outlines
@@ -114,7 +165,7 @@ and filter files. As an example, say we have a repo with only the
 subdirectory of the parent repo and not include the child's
 <code>.hgignore</code>. To do this, create a file <code>filemap.txt</code> with the
 following contents:</p>
-<div class="highlight"><pre>rename . child
+<div class="highlight"><pre><span></span>rename . child
 exclude .hgignore
 </pre></div>
 
@@ -123,18 +174,18 @@ exclude .hgignore
 directory named <code>child</code>.</p>
 <p>Next, optionally create a <code>branchmap.txt</code> file for renaming the
 <code>default</code> branch to something else:</p>
-<div class="highlight"><pre>default child-repo
+<div class="highlight"><pre><span></span>default child-repo
 </pre></div>
 
 
 <p>Now convert:</p>
-<div class="highlight"><pre>hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
+<div class="highlight"><pre><span></span>hg convert --filemap branchmap.txt --branchmap branchmap.txt child/ converted/
 </pre></div>
 
 
 <h2>Pull in the converted repository</h2>
 <p>From the parent repo:</p>
-<div class="highlight"><pre>hg pull -f ../converted ...</pre></div>
+<div class="highlight"><pre><span></span>hg pull -f ../converted ...</pre></div>
                     <a class="btn btn-default btn-xs" href="../importing-one-mercurial-repository-into-another.html">more ...</a>
                 </div>
             </article>
@@ -161,8 +212,7 @@ directory named <code>child</code>.</p>
 	<a href="../tag/async.html">async</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
+                <div class="summary"><p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
 (normally) a single-threaded, asynchronous framework that can rely on
 coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
@@ -173,7 +223,7 @@ blocking calls within a Future so as to allow the event loop to continue
 executing. Here, I demonstrate one recipe to do just this by utilizing
 <code>Executor</code> objects from the <code>concurrent.futures</code> module. We start with
 the imports:</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">tornado</span> <span class="kn">import</span> <span class="n">gen</span>
 <span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span><span class="p">,</span> <span class="n">futures</span>
@@ -214,8 +264,7 @@ long running task just sleeps ...</p>
 	<a href="../tag/lab.html">lab</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
+                <div class="summary"><p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a <a href="http://www.highfinesse.com/">HighFinesse</a> <a href="http://www.highfinesse.com/en/wavelengthmeter/">wavelength meter</a>
 which we use to monitor and stabilize several lasers (up to 14 at a
@@ -264,8 +313,7 @@ of needing to use thread-safe communications to stop the thread when ...</p>
 	<a href="../tag/gevent.html">gevent</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>I recently discovered the existence of the HTML5
+                <div class="summary"><p>I recently discovered the existence of the HTML5
 <a href="https://en.wikipedia.org/wiki/Server-sent_events">server-sent events</a> standard. Although it lacks the
 bidirectional communications of a websocket, SSE is perfect for the
 publish-subscribe networking pattern. This pattern just so happens to
@@ -274,20 +322,20 @@ that many people might want to check in on at the same time.</p>
 <p>In order to try SSE out within a <a href="http://flask.pocoo.org/">Flask</a> framework, I put together a
 simple <a href="https://github.com/mivade/flask-sse-demo">demo app</a> using <a href="http://gevent.org/">gevent</a>. The core of the demo on the
 Python side looks like this:</p>
-<div class="highlight"><pre><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">event</span><span class="p">():</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="s">&#39;data: &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span>
+        <span class="k">yield</span> <span class="s1">&#39;data: &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
         <span class="n">gevent</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/stream/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/stream/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">stream</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">event</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&quot;text/event-stream&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">event</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s2">&quot;text/event-stream&quot;</span><span class="p">)</span>
 </pre></div>
 
 
@@ -298,59 +346,6 @@ using gevent workers.</p>
 supports the concept of channels in order to fine tune what
 notifications a given client receives.</p>
                     <a class="btn btn-default btn-xs" href="../flask-and-server-sent-events.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="../using-websockets-with-flask-via-tornado.html">Using websockets with Flask via Tornado</a></h2>
-                    <div class="well well-sm">
-<footer class="post-info">
-    <span class="label label-default">Date</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-12-15T19:44:00+01:00"> 2014-12-15</time>
-    </span>
-
-
-
-
-
-
-<span class="label label-default">Tags</span>
-	<a href="../tag/python.html">python</a>
-        /
-	<a href="../tag/flask.html">flask</a>
-        /
-	<a href="../tag/tornado.html">tornado</a>
-        /
-	<a href="../tag/javascript.html">javascript</a>
-        /
-	<a href="../tag/websockets.html">websockets</a>
-    
-</footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>I've been working on some projects for the lab that involve remotely
-controlling hardware to perform various tasks. Since the hardware in
-question is shared between different experiments, some sort of
-asynchronous solution is needed, and a web-based client coupled with
-<a href="https://en.wikipedia.org/wiki/WebSocket">websockets</a> seemed to be the best bet (this also leaves the option
-open in the future to write a standalone client that is not
-browser-based if desired).</p>
-<p>There is no shortage of web frameworks for Python. Some of the more
-popular ones are <a href="https://www.djangoproject.com/">Django</a>, <a href="http://flask.pocoo.org/">Flask</a>, <a href="http://tornadoweb.org/">Tornado</a>, and
-<a href="http://www.pylonsproject.org/">Pyramid</a>. Of these, I greatly prefer Flask for a number of reasons:</p>
-<ul>
-<li>Very thorough and easy to read documentation, including "snippets"
-  with helpful tips and a very helpful community.</li>
-<li>Extreme ease of use for both small and large projects.</li>
-<li>Great use of decorators to further ease development.</li>
-<li>A large number of extensions to build up a complex project without
-  requiring overhead for simple projects.</li>
-</ul>
-<p>This is not to say that the other options are bad, but having looked
-at all of them, Flask suits me best. The one problem: only Tornado
-directly supports websockets since it is both an HTTP server and a web
-framework in one, whereas the others utilize ...</p>
-                    <a class="btn btn-default btn-xs" href="../using-websockets-with-flask-via-tornado.html">more ...</a>
                 </div>
             </article>
             <hr/>
@@ -371,7 +366,7 @@ framework in one, whereas the others utilize ...</p>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Michael V. DePalatis
+         <div class="col-xs-10">&copy; 2016 Michael V. DePalatis
             &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

@@ -2,7 +2,7 @@
 <html lang="en"
 >
 <head>
-    <title>debian - mike.depalatis.net</title>
+    <title>sql - mike.depalatis.net</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
 
 
     <meta name="author" content="Michael V. DePalatis" />
-    <meta name="keywords" content="debian" />
+    <meta name="keywords" content="sql" />
 
     <!-- Enable latex plugin -->
 
@@ -81,12 +81,12 @@ mike.depalatis.net            </a>
         <div class="col-lg-12">
 
             <article>
-                <h2><a href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">ssh-agent for sudo authentication with a passwordless account</a></h2>
+                <h2><a href="../using-postgres-as-a-time-series-database.html">Using Postgres as a time series database</a></h2>
                     <div class="well well-sm">
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-12-07T15:25:00+01:00"> 2014-12-07</time>
+        <i class="fa fa-calendar"></i><time datetime="2016-06-25T00:00:00+02:00"> 2016-06-25</time>
     </span>
 
 
@@ -95,53 +95,40 @@ mike.depalatis.net            </a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="../tag/debian.html">debian</a>
+	<a href="../tag/postgres.html">postgres</a>
         /
-	<a href="../tag/ssh.html">ssh</a>
+	<a href="../tag/sql.html">sql</a>
         /
-	<a href="../tag/sudo.html">sudo</a>
+	<a href="../tag/pandas.html">pandas</a>
         /
-	<a href="../tag/linux.html">linux</a>
+	<a href="../tag/python.html">python</a>
+        /
+	<a href="../tag/data.html">data</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><p>For best security on a public system, it is generally best to disable
-password-based logins with ssh and instead require authorized
-keys. However, this complicates things if you want to use <code>sudo</code>
-with a regular user account, since by default it uses the standard
-system password to verify the user is authorized to run commands as
-root.</p>
-<p>Enter <code>pam_ssh_agent_auth</code>. This module allows using regular ssh keys
-and <code>ssh-agent</code> to verify the user has the proper authorization to
-use <code>sudo</code>.</p>
-<h2>Prerequisites</h2>
-<p>You'll want to start by ensuring you have generated ssh keys for your
-user and are using <code>ssh-agent</code>. To generate the keys:</p>
-<div class="highlight"><pre><span></span>$ ssh-keygen
-</pre></div>
-
-
-<p>Then just accept the defaults, but make sure to set a password for
-your new key pair. Add the public key to
-<code>$HOME/.ssh/authorized_keys</code>.</p>
-<h2>Installation</h2>
-<p>Since the PAM module isn't in Debian, first grab the build
-dependencies:</p>
-<div class="highlight"><pre><span></span># apt-get install build-essential checkinstall libssl-dev libpam0g-dev
-</pre></div>
-
-
-<p>Next, grab the source and build:</p>
-<div class="highlight"><pre><span></span># wget http://downloads.sourceforge.net/project/pamsshagentauth/pam_ssh_agent_auth/v0.10.2/pam_ssh_agent_auth-0.10.2.tar.bz2
-# tar -xvjf pam_ssh_agent_auth-0.10.2.tar.bz2
-# cd pam_ssh_agent_auth-0.10.2
-# ./configure --libexecdir=/lib/security --with-mantype=man
-# make
-# checkinstall
-</pre></div>
-
-
-<p>Note that the <code>libexecdir</code> option to the <code>configure</code> script is ...</p>
-                    <a class="btn btn-default btn-xs" href="../ssh-agent-for-sudo-authentication-with-a-passwordless-account.html">more ...</a>
+                <div class="summary"><p>Time series databases (TSDBs) are quite popular these days. To name a
+few, there are <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, <a href="https://graphite.readthedocs.io/en/latest/">Graphite</a>, <a href="http://druid.io/">Druid</a>, <a href="https://kairosdb.github.io/">Kairos</a>, and
+<a href="https://prometheus.io/">Prometheus</a>. All aim to optimize data storage and querying for
+time-based data, which is highly relevant in a physics labs where
+there are multitude of "metrics" (to borrow a phrase used frequently
+in TSDB documentation) that naturally lend themselves to time series
+representation: lab (and individual device) temperatures, vacuum
+chamber pressures, and laser powers, just to name a few. Ideally, one
+could log various data to one of these databases and then use a tool
+like <a href="http://grafana.org/">Grafana</a> to visualize it. Sadly, more traditional relational
+databases like <a href="https://sqlite.org/">SQLite</a> and <a href="https://www.postgresql.org/">PostgreSQL</a> are not (currently)
+supported by Grafana (although this is now being addressed by a
+datasource plugin in development).</p>
+<p>Nevertheless, there are quite a few reasons to favor a traditional
+RDBMS over a newfangled TSDB. To name a few:</p>
+<ul>
+<li>Longevity: SQL has been around since the 1970s and became
+  standardized in the 1980s.</li>
+<li>Ubiquity: almost every server (web or otherwise) has an instance of
+  SQL installed. If not, SQLite doesn't even require a server!</li>
+<li>Community: not to suggest there aren't good communities with TSDBs,
+  but the Postgres and SQLite communities ...</li></ul>
+                    <a class="btn btn-default btn-xs" href="../using-postgres-as-a-time-series-database.html">more ...</a>
                 </div>
             </article>
             <hr/>
@@ -153,7 +140,7 @@ dependencies:</p>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2014 Michael V. DePalatis
+         <div class="col-xs-10">&copy; 2016 Michael V. DePalatis
             &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

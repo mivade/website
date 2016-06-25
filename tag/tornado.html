@@ -102,8 +102,7 @@ mike.depalatis.net            </a>
 	<a href="../tag/async.html">async</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
+                <div class="summary"><p>One of the main benefits of using the <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> web server is that it is
 (normally) a single-threaded, asynchronous framework that can rely on
 coroutines for concurrency. Many drivers already exist to provide a
 client library utilizing the Tornado event loop and coroutines (e.g.,
@@ -114,7 +113,7 @@ blocking calls within a Future so as to allow the event loop to continue
 executing. Here, I demonstrate one recipe to do just this by utilizing
 <code>Executor</code> objects from the <code>concurrent.futures</code> module. We start with
 the imports:</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">tornado</span> <span class="kn">import</span> <span class="n">gen</span>
 <span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">run_on_executor</span><span class="p">,</span> <span class="n">futures</span>
@@ -155,8 +154,7 @@ long running task just sleeps ...</p>
 	<a href="../tag/lab.html">lab</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
+                <div class="summary"><p>I have been using <a href="http://www.tornadoweb.org/en/stable/">Tornado</a> lately for distributed control of
 devices in the lab where an asynchronous framework is advantageous. In
 particular, we have a <a href="http://www.highfinesse.com/">HighFinesse</a> <a href="http://www.highfinesse.com/en/wavelengthmeter/">wavelength meter</a>
 which we use to monitor and stabilize several lasers (up to 14 at a
@@ -205,8 +203,7 @@ of needing to use thread-safe communications to stop the thread when ...</p>
 	<a href="../tag/websockets.html">websockets</a>
     
 </footer><!-- /.post-info -->                    </div>
-                <div class="summary"><hr />
-<p>I've been working on some projects for the lab that involve remotely
+                <div class="summary"><p>I've been working on some projects for the lab that involve remotely
 controlling hardware to perform various tasks. Since the hardware in
 question is shared between different experiments, some sort of
 asynchronous solution is needed, and a web-based client coupled with
