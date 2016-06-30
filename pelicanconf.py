@@ -6,7 +6,7 @@ AUTHOR = u'Michael V. DePalatis'
 SITENAME = u'mike.depalatis.net'
 SITEURL = 'https://mike.depalatis.net'
 PATH = 'content'
-OUTPUT_PATH = '..'
+OUTPUT_PATH = './output'
 
 THEME = 'themes/mvd'
 THEME_STATIC_DIR = 'theme'
