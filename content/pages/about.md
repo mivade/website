@@ -35,7 +35,7 @@ devices via web-based interfaces. Most of my projects can be found on
 
 For fun, and as a service to the ion trapping community, I maintain
 the
-[Ion Trapping Periodic Table](http://mike.depalatis.net/ionptable/). This
+[Ion Trapping Periodic Table](https://mivade.github.io/ionptable/). This
 aims to be a handy reference for ion trappers with information on
 transition wavelengths, photoionization schemes, and more.
 
