@@ -83,7 +83,7 @@ var mathlib = (function (lib) {
   };
 
   return lib;
-}(mathlib || {}))();
+})(mathlib || {});
 ```
 
 This pattern allows for splitting various components in building a
@@ -123,9 +123,65 @@ for the following reasons:
 
 A good, (potentially) pure Python approach to bundling your Javascript
 files (for cases where it makes to split code into more than a single
-file) is the [webassets][] module.
+file) is the [webassets][] module. Webassets has a lot of available
+filters to run Javascript and CSS files through some extra steps
+(including possible transpilation from other languages), but the
+basics of it are pretty simple. Here's a sample Tornado app:
 
-**insert example here**
+```python
+import tornado.web
+import tornado.ioloop
+from webassets import Environment
+
+
+class MainHandler(tornado.web.RequestHandler):
+    def initialize(self, assets):
+        self.assets = assets
+
+    def get(self):
+        self.render("index.html", assets=assets)
+
+
+# Set up the webassets environment and make a bundle
+assets = Environment(directory=".", url="/static")
+js_files = ["mathlib.js", "thing.js", "class-example.js"]
+assets.register("bundle", *js_files,
+                output="bundled.min.js",
+                filters="rjsmin")  # webassets always includes this filter
+
+app = tornado.web.Application(
+    [(r'/', MainHandler, dict(assets=assets))],
+    static_path=".",
+    template_path=".",
+    debug=True)
+
+app.listen(8123)
+tornado.ioloop.IOLoop.current().start()
+```
+
+To include the bundled file in the template, you would do something
+like this in the template:
+
+```html
+{% for url in assets['bundle'].urls() %}
+  <script src="{{ url }}"></script>
+{% end %}
+```
+
+The careful reader may wonder why the for loop is used if all the
+Javascript files will be bundled into a single file in the end. This
+is because webassets has a helpful debug mode to make debugging
+Javascript in the browser easier. By adding ``assets.debug = True`` to
+the Python file, ``assets['bundle'].urls()`` will return a list of all
+the original, uncompressed Javascript file. This results in individual
+script tags for each Javascript source file which is typically what
+you want for debugging even if it does increase loading overhead a
+little.
+
+There are a lot of nice features in webassets, though many of the
+filters require third-party tools (often using Node.js) to be
+installed. For this reason, I discourage using most of these until and
+unless you are comfortable with the rabbit hole of the Node world.
 
 [closures]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
 [jsmath]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math
@@ -370,14 +426,167 @@ transpiling (unlike React with JSX).
 [Brush]: https://brush.readthedocs.io/en/latest/
 [Vue]: https://vuejs.org/
 
-## Things to avoid
+## Pythonic Javascript cheat sheet
 
-* Too much frontend tooling. Unless you want to go down that rabbit
-  hole.
-* Too much inheritance. Although Javascript is an object-oriented
-  language, I find it is easier to work as much as possible with
-  objects only insofar as they are used to modularize code or have
-  singleton objects.
+To summarize, what follows are a series of short snippets showing some
+common Pythonic concepts and their Javascript analogs.
+
+### Exception handling
+
+```python
+try:
+    thing()
+except Exception:
+    print("oh no!")
+
+raise ValueError("not a good value")
+```
+
+```javascript
+try {
+  thing();
+} catch (error) {
+  console.error("oh no!");
+}
+
+throw "not a good value";
+```
+
+### Iterators
+
+```python
+arr = [1, 2, 3]
+obj = {
+    "a": 1,
+    "b": 2,
+    "c": 3
+}
+
+for val in arr:
+    print(val)
+
+for key in obj:
+    print(key)
+```
+
+```javascript
+var arr = [1, 2, 3];
+var obj = {
+  a: 1,
+  b: 2,
+  c: 3
+};
+
+for (let val of arr) {
+  console.log(val);
+}
+
+// or...
+arr.forEach((value, index) => {
+  console.log(value);
+});
+
+for (let key in obj) {
+  console.log(key);
+}
+```
+
+### Generators
+
+```python
+def gen(x):
+    while True:
+        yield x
+        x = x + 1
+```
+
+```javascript
+function* gen(x) {
+  while (true) {
+    yield x;
+    x++;
+  }
+}
+```
+
+### Classes
+
+```python
+class Thing:
+    def __init__(self, a):
+        self.a = a
+
+    def add_one(self):
+        return self.a + 1
+
+class OtherThing(Thing):
+    def __init__(self, a, b):
+        super(OtherThing, self).__init__(a)
+        self.b = b
+
+    def add_things(self):
+        return self.a + self.b
+```
+
+```javascript
+class Thing {
+  constructor(a) {
+    this.a = a;
+  }
+
+  addOne() {
+    return this.a + 1;
+  }
+}
+
+class OtherThing extends Thing {
+  constructor(a, b) {
+    super(a);
+    this.b = b;
+  }
+
+  addThings() {
+    return this.a + this.b;
+  }
+}
+```
+
+### Functional programming
+
+#### Lambdas
+
+```python
+expression = lambda a, b: a + b
+```
+
+```javascript
+// Arrow functions are more powerful than Python lambdas, but not in
+// this example!
+let expression = (a, b) => a + b;
+
+// or...
+let sameThing = function (a, b) {
+  return a + b;
+}
+```
+
+#### MapReduce
+
+```python
+from functools import reduce
+
+mapped = map(lambda a: a + 1, range(10))
+print(reduce(lambda a, b: a + b, mapped))
+```
+
+```javascript
+let arr = [];
+for (let i = 0; i < 10; i++) {
+  arr.push(i);
+}
+let mapped = arr.map((a) => a + 1);
+console.log(arr.reduce((a, b) => a + b));
+```
 
 [^1]: Not that modern Javascript tooling is really so good at reducing
 complexity... More on this later.
