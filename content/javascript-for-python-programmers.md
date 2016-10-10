@@ -183,6 +183,12 @@ filters require third-party tools (often using Node.js) to be
 installed. For this reason, I discourage using most of these until and
 unless you are comfortable with the rabbit hole of the Node world.
 
+(**Aside**: Recently, I learned of the
+[DukPy](https://github.com/amol-/dukpy) interpreter. While it's still
+early, it looks like a promising way of being able to include things
+that currently require Node-based tools while keeping everything
+purely Pythonic.)
+
 [closures]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
 [jsmath]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math
 [browserify]: http://browserify.org/
@@ -271,7 +277,6 @@ function:
 ```javascript
 function MyClass(value) {
   this.value = value;
-  return this;
 }
 
 var instance = new MyClass(10);
@@ -281,7 +286,43 @@ Implementing inheritance was cumbersome and required the use of the
 `prototype` attribute:
 
 ```javascript
-// Example to go here.
+function Programmer(language) {
+  this.language = language;
+}
+
+// Add a method to the Programmer prototype
+Programmer.prototype.programThings = function () {
+  console.log("Favorite language: " + this.language);
+  console.log(this instanceof Programmer);
+};
+
+// Create child classes
+function PythonProgrammer() {
+  Programmer.call(this);
+  this.language = "Python";
+}
+
+PythonProgrammer.prototype = Object.create(Programmer.prototype);
+
+function JavascriptProgrammer() {
+  Programmer.call(this);
+  this.language = "Javascript";
+}
+
+JavascriptProgrammer.prototype = Object.create(Programmer.prototype);
+
+var pythonProgrammer = new PythonProgrammer();
+var jsProgrammer = new JavascriptProgrammer();
+
+pythonProgrammer.programThings();
+jsProgrammer.programThings();
+
+/* Output:
+
+Favorite language: Python
+true
+Favorite language: Javascript
+true */
 ```
 
 With ES2015, classes can be defined in a more Pythonic way:
@@ -362,7 +403,30 @@ function to act on each value in the array. Javascript now has the
 more Pythonic `for ... in` and `for ... of` statements:
 
 ```javascript
-// Examples of both for...of and for...in here
+var list = [1, 2, 3, 4, 5];
+var obj = {
+  a: 1,
+  b: 2,
+  c: 3
+};
+
+// for ... in on list makes x take on the *indeces* of list
+console.log("for (x in list)");
+for (let x in list) {
+  console.log(x);
+}
+
+// for ... of on list makes x take on the *values* of list
+console.log("for (x of list)");
+for (let x of list) {
+  console.log(x);
+}
+
+// for ... in on obj makes x take on the *keys* of obj
+console.log("for (x in obj)");
+for (let x in obj) {
+  console.log(x);
+}
 ```
 
 Generators are used frequently in Python to efficiently iterate over
@@ -372,17 +436,18 @@ declared a generator by denoting it a `function*` and using the
 familiar `yield` keyword:
 
 ```javascript
-// generator example here
-```
+function* itsATrap() {
+  while (true) {
+    yield "What is it?";
+    yield "It's a trap!";
+  }
+}
 
-Promises are a useful abstraction for avoiding the infamous "callback
-hell" of Javascript. Although a bit more verbose than doing
-asynchronous programming with coroutines in Python (e.g., via
-[asyncio][] or [Tornado][] event loops), Javascript promises mark a
-huge improvement in readability of asynchronous code.
-
-```javascript
-// Promise example here, first without, then with
+var isItATrap = itsATrap();
+console.log(isItATrap.next().value);
+console.log(isItATrap.next().value);
+console.log(isItATrap.next().value);
+console.log(isItATrap.next().value);
 ```
 
 ### Other newer features
@@ -396,8 +461,6 @@ features, see [this][babeles2015], for example.
 [arrow functions]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
 [Zen of Python]: https://www.python.org/dev/peps/pep-0020/
 [PEP 498]: https://www.python.org/dev/peps/pep-0498/
-[asyncio]: https://docs.python.org/3/library/asyncio.html
-[Tornado]: http://www.tornadoweb.org/en/stable/
 [babeles2015]: https://babeljs.io/docs/learn-es2015/
 
 ## Frameworks
