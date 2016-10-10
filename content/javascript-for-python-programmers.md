@@ -1,10 +1,9 @@
 title: Javascript for Python programmers
-date: 2016-09-21
-status: draft
+date: 2016-10-10
 tags: python, javascript, web, programming
 
 Unless you're just writing a simple HTTP API server, any amount of web
-programming in Python will likely require a little bit of
+programming in Python will likely require at least a little bit of
 Javascript. Like it or not (and I will try to argue in this post that
 you should like it for what it's good at), Javascript is really the
 only game in town when it comes to client-side scripting on a web
@@ -12,14 +11,16 @@ page. Sure, there are a [number][1] of [Python-to-Javascript][2]
 [transpilers][3] [out][4] [there][5], but using these just tends to
 limit the ability to use new Javascript features as they are rolled
 out to browsers and may limit the ability to use third-party
-Javascript libraries, and at the very least, it introduces some bit of
-added complexity to deploying a web app[^1].
+Javascript libraries. At the very least, using one these transpilers
+introduces added complexity to deploying a web app[^1].
 
 In this post, I will describe some things I've learned about
 Javascript from the perspective of someone who prefers to use Python
-as much as possible. It is assumed that the reader is at least
-moderately familiar with Javascript (Mozilla has [a nice tutorial][jstut]
-to get you up to speed if not).
+as much as possible. This guide is mainly aimed at scientists and
+others who are not primarily programmers but who may find it useful to
+make a web app for their main work. It is assumed that the reader is
+at least moderately familiar with Javascript (Mozilla has
+[a nice tutorial][jstut] to get you up to speed if not).
 
 [1]: http://pyjs.org/
 [2]: https://github.com/chrivers/pyjaco
@@ -86,10 +87,10 @@ var mathlib = (function (lib) {
 })(mathlib || {});
 ```
 
-This pattern allows for splitting various components in building a
-larger module into different files if necessary (a good idea when
-things get complex enough to justify it). Rather than go into further
-details, I'll refer you to an excellent article on the
+This pattern allows for splitting components for a larger module into
+different files, which is often a good idea from the perspective of
+readability when things start getting more complex. Rather than go
+into further detail, I'll refer you to an excellent article on the
 [module pattern in Javascript](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html)
 by Ben Cherry.
 
@@ -99,16 +100,17 @@ HTTP/1.1 requires a new connection for every requested Javascript
 file. While this problem is rectified in HTTP/2, not many web servers
 and hosting providers support it yet as of late 2016. This has led to
 [many][browserify] [different][webpack] [options][rollup] for bundling
-multiple Javascript files into one file which can be included in a web
-page with a single `script` tag. While these tools can be highly
-tempting to use, I highly recommend avoiding them in almost all cases
-for the following reasons:
+multiple Javascript files into a single file which can be included in
+a web page with just one `script` tag. While these tools can be
+tempting to use, I strongly recommend avoiding them as much as
+possible (at least until you become more comfortable with the state of
+modern Javascript) for the following reasons:
 
 1. They require having [Node.js][] installed. If you've read this far,
    you can probably handle that, but if your scientist colleagues
    aren't as experienced as you are with software development, asking
    them to have two entirely different language runtimes installed
-   just to run the latest version of your helpful web interface is
+   just to run the latest version of your helpful web interface may be
    asking a bit too much.
 2. The churn in Javascriptland is too fast-paced for those of us who
    have other things to spend our time on (although from my outsider's
@@ -122,11 +124,10 @@ for the following reasons:
    Javascript file from a server on your LAN?
 
 A good, (potentially) pure Python approach to bundling your Javascript
-files (for cases where it makes to split code into more than a single
-file) is the [webassets][] module. Webassets has a lot of available
-filters to run Javascript and CSS files through some extra steps
-(including possible transpilation from other languages), but the
-basics of it are pretty simple. Here's a sample Tornado app:
+files (for cases where it makes sense to split code into more than a
+single file) is the [webassets][] module. Webassets offers a number of
+filters to run Javascript and CSS files through to accomplish tasks
+such as as minification and bundling. Here's a sample Tornado app:
 
 ```python
 import tornado.web
@@ -147,7 +148,7 @@ assets = Environment(directory=".", url="/static")
 js_files = ["mathlib.js", "thing.js", "class-example.js"]
 assets.register("bundle", *js_files,
                 output="bundled.min.js",
-                filters="rjsmin")  # webassets always includes this filter
+                filters="rjsmin")  # webassets ships with this filter included
 
 app = tornado.web.Application(
     [(r'/', MainHandler, dict(assets=assets))],
@@ -170,13 +171,13 @@ like this in the template:
 
 The careful reader may wonder why the for loop is used if all the
 Javascript files will be bundled into a single file in the end. This
-is because webassets has a helpful debug mode to make debugging
-Javascript in the browser easier. By adding ``assets.debug = True`` to
-the Python file, ``assets['bundle'].urls()`` will return a list of all
-the original, uncompressed Javascript file. This results in individual
-script tags for each Javascript source file which is typically what
-you want for debugging even if it does increase loading overhead a
-little.
+is because webassets has a helpful debug mode which eliminates the
+need for source mapping. By adding ``assets.debug = True`` to the
+Python file, ``assets['bundle'].urls()`` will return a list of all the
+original, uncompressed Javascript files. This results in individual
+script tags for each Javascript source file which makes debugging in
+the browser considerably easier at the expense of a (likely) small
+increase in startup time.
 
 There are a lot of nice features in webassets, though many of the
 filters require third-party tools (often using Node.js) to be
@@ -463,32 +464,6 @@ features, see [this][babeles2015], for example.
 [PEP 498]: https://www.python.org/dev/peps/pep-0498/
 [babeles2015]: https://babeljs.io/docs/learn-es2015/
 
-## Frameworks
-
-There is a ridiculous number of frontend Javascript frameworks
-available. Luckily, as with tooling, things seem to be calming a bit,
-with [React][] and a few others being the most popular. With the
-exception of web apps that are updating more than a few elements (or
-updating more frequently than every few minutes) to reflect changes in
-conditions in real time, I would avoid any of these and instead stick
-to built-in functions like `document.querySelector` to update elements
-on a web page which is rendered with server-side templates as much as
-possible. Not only are server-side templates easy to write and
-understand, but they are often much faster to render on slow devices
-such as ARM-based smartphones compared to client-side rendering
-approaches of many Javascript frameworks.
-
-However, there are plenty of times when you might want to write a
-simple web interface to present real-time updates (e.g.,
-[Brush][]). For these cases, I recommend [Vue][]. Vue takes a
-template-based approach to updating views while having a simple and
-easy-to-learn API that works well in the browser without requiring
-transpiling (unlike React with JSX).
-
-[React]: https://facebook.github.io/react/
-[Brush]: https://brush.readthedocs.io/en/latest/
-[Vue]: https://vuejs.org/
-
 ## Pythonic Javascript cheat sheet
 
 To summarize, what follows are a series of short snippets showing some
@@ -650,6 +625,14 @@ for (let i = 0; i < 10; i++) {
 let mapped = arr.map((a) => a + 1);
 console.log(arr.reduce((a, b) => a + b));
 ```
+
+## Final thoughts
+
+These days, Javascript the language is much improved and potentially
+more Pythonic than ever before. Approaching a little Javascript from
+the perspective of a Python programmer, you can write good, clear code
+while avoiding many of the (mostly outdated) common pitfalls often
+brought up by Javascript detractors.
 
 [^1]: Not that modern Javascript tooling is really so good at reducing
 complexity... More on this later.
