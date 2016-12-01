@@ -5,19 +5,19 @@ tags: about
 author: Michael V. DePalatis
 ---
 
-I am a postdoc in physics at [Aarhus University][AU] working in
-[the ion trap group][group] of Prof. [Michael Drewsen][Drewsen]. My
-current research activities involve state preparation and precision
-spectroscopy of cold molecular ions as part of the [COMIQ][]
-network. Previously, I was a graduate student in
-[Mike Chapman's lab][ChapmanLab] at [Georgia Tech][GT] working with
-trapped Th<sup>3+</sup> and Ba<sup>+</sup> ions. More details on my
-research can be found [here](research.html).
+I am a scientific software developer in the
+[Computational Memory Lab][CML] at the University of Pennsylvania
+where I am a part of the DARPA [RAM][] team. Previously, I was an
+experimental atomic physicist. I was a postdoc in
+[the ion trap group][group] of Prof. [Michael Drewsen][Drewsen] at
+[Aarhus University][AU] and earned my PhD in
+[Mike Chapman's lab][ChapmanLab] at [Georgia Tech][GT].
 
+[CML]: http://memory.psych.upenn.edu/Main_Page
+[RAM]: http://memory.psych.upenn.edu/RAM
 [AU]: http://www.au.dk/en
 [group]: http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/
 [Drewsen]: http://pure.au.dk/portal/da/persons/id(871a704b-943d-4f99-b29d-07bea1bbab80).html
-[COMIQ]: http://itn-comiq.eu/welcome-to-comiq/
 [GT]: http://www.gatech.edu
 [ChapmanLab]: http://chapmanlabs.gatech.edu
 
