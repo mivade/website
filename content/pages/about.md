@@ -1,6 +1,4 @@
 title: About
-url:
-save_as: index.html
 tags: about
 author: Michael V. DePalatis
 ---

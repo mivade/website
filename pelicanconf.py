@@ -9,21 +9,31 @@ PATH = 'content'
 STATIC_PATHS = ["img", "notebooks"]
 OUTPUT_PATH = './output'
 
+# Menu settings
+DISPLAY_PAGES_ON_MENU = True
+DISPLAY_CATEGORIES_ON_MENU = False
+
+# Theme settings
 THEME = 'themes/mvd'
 THEME_STATIC_DIR = 'theme'
 THEME_STATIC_PATHS = ['theme', 'static']
-
-# pelican-bootstrap3 theme options
 BOOTSTRAP_THEME = 'yeti'
 BOOTSTRAP_NAVBAR_INVERSE = False
 PYGMENTS_STYLE = 'default'
 HIDE_SIDEBAR = True
 DISPLAY_ARTICLE_INFO_ON_INDEX = True
 
-TIMEZONE = 'Europe/Copenhagen'
+# Date settings
+TIMEZONE = 'US/Eastern'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_LANG = u'en'
 
+# URL settings
+ARTICLE_URL = "blog/{slug}.html"
+ARTICLE_SAVE_AS = "blog/{slug}.html"
+SLUGIFY_SOURCE = "basename"
+
+# Markdown extensions and options
 MARKDOWN = {
     "extension_configs": {
         "markdown.extensions.codehilite": {"css_class": "highlight"},
@@ -33,6 +43,7 @@ MARKDOWN = {
     "output_format": "html5"
 }
 
+# Blog settings
 DEFAULT_CATEGORY = "Blog"
 
 # Feed generation is usually not desired when developing
@@ -48,7 +59,7 @@ TRANSLATION_FEED_ATOM = None
 
 DEFAULT_PAGINATION = 5
 
-SUMMARY_MAX_LENGTH = 200
+SUMMARY_MAX_LENGTH = 250
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
