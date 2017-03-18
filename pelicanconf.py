@@ -7,11 +7,14 @@ SITENAME = u'mike.depalatis.net'
 SITEURL = 'https://mike.depalatis.net'
 PATH = 'content'
 STATIC_PATHS = ["img", "notebooks"]
+PAGE_PATHS = ["pages"]
 OUTPUT_PATH = './output'
 
 # Menu settings
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False
+# I shouldn't have to do this!!!
+MENUITEMS = [("About", "about.html"), ("Resources", "resources.html")]
 
 # Theme settings
 THEME = 'themes/mvd'
@@ -31,6 +34,8 @@ DEFAULT_LANG = u'en'
 # URL settings
 ARTICLE_URL = "blog/{slug}.html"
 ARTICLE_SAVE_AS = "blog/{slug}.html"
+PAGE_URL = "{slug}.html"
+PAGE_SAVE_AS = "{slug}.html"
 SLUGIFY_SOURCE = "basename"
 
 # Markdown extensions and options
