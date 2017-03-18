@@ -24,11 +24,14 @@ TIMEZONE = 'Europe/Copenhagen'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_LANG = u'en'
 
-MD_EXTENSIONS = [
-    'codehilite(css_class=highlight)',
-    'extra',
-    'footnotes'
-]
+MARKDOWN = {
+    "extension_configs": {
+        "markdown.extensions.codehilite": {"css_class": "highlight"},
+        "markdown.extensions.extra": {},
+        "markdown.extensions.footnotes": {}
+    },
+    "output_format": "html5"
+}
 
 DEFAULT_CATEGORY = "Blog"
 
