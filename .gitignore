@@ -1,4 +1,5 @@
 *~
+mkdocs.yml
 .ipynb_checkpoints/
 *.pyc
 *.pid

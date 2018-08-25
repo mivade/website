@@ -1,0 +1,17 @@
+site_name: mike.depalatis.net
+site_author: Michael V. DePalatis
+site_description: Personal website and blog of Michael V. DePalatis
+docs_dir: content
+use_directory_urls: false
+theme: readthedocs
+
+nav:
+  - About: index.md
+  - Resources: resources.md
+  - Blog:
+  {%- for year in years %}
+    - {{ year }}:
+    {%- for title, path in entries[year] %}
+      - "{{ title }}": "{{ path }}"
+    {%- endfor %}
+  {%- endfor %}
