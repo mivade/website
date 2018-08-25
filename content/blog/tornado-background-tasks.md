@@ -1,6 +1,6 @@
 ---
 title: Background tasks with Tornado
-date: 2015-02-28 14:32
+date: 2015-02-28
 tags: python, tornado, lab
 ---
 

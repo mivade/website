@@ -1,7 +1,7 @@
 ---
 title: Raspberry Pi as a USB to Ethernet Gateway
-date: 2014-03-08 15:32
-modified: 2014-06-10 10:59
+date: 2014-03-08
+modified: 2014-06-10
 tags: raspberrypi, python
 ---
 

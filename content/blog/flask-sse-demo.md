@@ -1,7 +1,7 @@
 ---
 title: Flask and server-sent events
-date: 2015-02-14 13:34
-modified: 2016-04-21 12:11
+date: 2015-02-14
+modified: 2016-04-21
 tags: python, flask, javascript, sse, gevent
 ---
 

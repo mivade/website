@@ -1,7 +1,7 @@
 ---
 title: ssh-agent for sudo authentication with a passwordless account
-date: 2014-12-07 15:25
-modified: 2015-12-06 15:00
+date: 2014-12-07
+modified: 2015-12-06
 tags: debian, ssh, sudo, linux
 ---
 

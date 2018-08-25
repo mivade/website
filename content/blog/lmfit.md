@@ -1,6 +1,6 @@
 ---
 title: Fitting with lmfit
-date: 2016-07-03 15:23
+date: 2016-07-03
 tags: python, data, science, scipy, numpy, lmfit, pandas
 ---
 
