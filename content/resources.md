@@ -1,9 +1,8 @@
-title: Links
-URL: resources.html
-save_as: resources.html
-tags: links
-author: Michael V. DePalatis
 ---
+tags: links
+---
+
+# Resources
 
 ## Physics and Math ##
 

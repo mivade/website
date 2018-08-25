@@ -1,3 +1,4 @@
+---
 title: Getting Matplotlib's colors in order
 date: 2016-07-21
 tags: matplotlib, python

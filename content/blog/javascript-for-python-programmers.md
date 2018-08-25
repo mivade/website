@@ -1,6 +1,8 @@
+---
 title: Javascript for Python programmers
 date: 2016-10-10
 tags: python, javascript, web, programming
+---
 
 Unless you're just writing a simple HTTP API server, any amount of web
 programming in Python will likely require at least a little bit of

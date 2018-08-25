@@ -1,3 +1,4 @@
+---
 title: Sharing data between processes with SQLite
 date: 2017-03-19
 tags: sqlite, python, multiprocessing

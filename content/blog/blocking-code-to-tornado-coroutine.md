@@ -1,3 +1,4 @@
+---
 title: Running (possibly) blocking code like a Tornado coroutine
 date: 2015-08-03 19:54
 tags: python, tornado, async

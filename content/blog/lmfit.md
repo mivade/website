@@ -1,3 +1,4 @@
+---
 title: Fitting with lmfit
 date: 2016-07-03 15:23
 tags: python, data, science, scipy, numpy, lmfit, pandas
@@ -126,7 +127,7 @@ class DecayingSineModel(lmfit.Model):
             return ampl * np.sin((x - x0)*freq) * np.exp(-x/tau) + offset
         super(DecayingSineModel, self).__init__(decaying_sine, *args, **kwargs)
 
-    def guess(self, data, **kwargs):         
+    def guess(self, data, **kwargs):
         params = self.make_params()
         def pset(param, value):
             params["%s%s" % (self.prefix, param)].set(value=value)

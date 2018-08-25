@@ -1,3 +1,4 @@
+---
 title: Using Postgres as a time series database
 date: 2016-06-25
 tags: postgres, sql, pandas, python, data
@@ -216,7 +217,7 @@ ORDER BY timestamp;
 which results in something like:
 
 ```
-timestamp        |   temperature    
+timestamp        |   temperature
 ------------------------+------------------
 2016-06-25 00:00:00+02 | 22.0828623312065
 2016-06-25 01:00:00+02 | 22.0026334276975

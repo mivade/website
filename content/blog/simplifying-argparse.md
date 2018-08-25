@@ -1,3 +1,4 @@
+---
 title: Simplifying argparse usage with subcommands
 date: 2016-10-12
 tags: python

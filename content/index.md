@@ -1,7 +1,8 @@
-title: About
-tags: about
-author: Michael V. DePalatis
 ---
+tags: about
+---
+
+# About
 
 I am a scientific software developer in the
 [Computational Memory Lab][CML] at the University of Pennsylvania

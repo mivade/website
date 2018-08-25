@@ -1,3 +1,4 @@
+---
 title: Jupyter integration with conda environments
 date: 2018-05-10 11:24
 tags: python, jupyter, conda, notes
