@@ -44,7 +44,7 @@ def mkdocs_yml(ctx):
         "path": paths,
         "title": [metadata[key]["title"] for key in paths],
         "date": [metadata[key]["date"] for key in paths],
-    })
+    }).sort_values(by="date", ascending=False)
 
     years = list(
         df.date.apply(lambda row: row.split("-")[0])
