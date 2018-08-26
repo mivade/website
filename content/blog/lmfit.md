@@ -47,7 +47,7 @@ y += npr.choice([-1, 1], size=y.shape)*npr.random(size=y.shape)/5
 
 The resulting data:
 
-![Decaying sine generated data]({filename}/img/lmfit/data.svg)
+![Decaying sine generated data](../img/lmfit/data.svg)
 
 ## Using models
 
@@ -84,7 +84,7 @@ To visually check if the fit is good, lmfit provides both `plot_fit` and
 `plot_residuals` methods for model instances. The former shows the data,
 the initial guess, and its found best fit:
 
-![Result of the ExpressionModel fit]({filename}/img/lmfit/fit-expression-model.svg)
+![Result of the ExpressionModel fit](../img/lmfit/fit-expression-model.svg)
 
 We can also see the found parameters with standard errors and goodness
 of fit data with a fit report (`print(model.fit_report())`):
@@ -151,7 +151,7 @@ fit = model.fit(y, params, x=x)
 
 which results in a similar fit as before:
 
-![Result of the DecayingSineModel fit]({filename}/img/lmfit/fit-decaying-sine-model.svg)
+![Result of the DecayingSineModel fit](../img/lmfit/fit-decaying-sine-model.svg)
 
 ## Extracting data from the fit
 
@@ -182,7 +182,7 @@ instead recommend the [statsmodels][] package. Using the power of
 with `lmfit`'s `ExpressionModel`s.
 
 A Jupyter notebook containing the above examples can be found
-[here]({filename}/notebooks/lmfit_20160703.ipynb).
+[here](../notebooks/lmfit_20160703.ipynb).
 
 [built-in models]: https://lmfit.github.io/lmfit-py/builtin_models.html#builtin-models-chapter
 [statsmodels]: http://statsmodels.sourceforge.net/
