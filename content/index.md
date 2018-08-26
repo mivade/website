@@ -20,12 +20,11 @@ experimental atomic physicist. I was a postdoc in
 [GT]: http://www.gatech.edu
 [ChapmanLab]: http://chapmanlabs.gatech.edu
 
-In my spare time, I enjoy [photography](photography.html), various
-outdoor activities, reading, and working on various projects related
-to [Arduino][], [Raspberry Pi][RPi], and open source software. Lately
-I have been particularly interested in interacting with physical
-devices via web-based interfaces. Most of my projects can be found on
-[GitHub][] (see also [my Gists][]).
+In my spare time, I enjoy photography, various outdoor activities, reading, and
+working on various projects related to [Arduino][], [Raspberry Pi][RPi], and
+open source software. Lately I have been particularly interested in interacting
+with physical devices via web-based interfaces. Most of my projects can be found
+on [GitHub][] (see also [my Gists][]).
 
 [Arduino]: http://arduino.cc/
 [RPi]: http://www.raspberrypi.org/
@@ -49,7 +48,7 @@ transition wavelengths, photoionization schemes, and more.
 * [DebianScience][]
 * [Emacs][]
 
-More [here](resources.html).
+More [here](resources.md).
 
 [Debian]: http://www.debian.org
 [DebianScience]: http://wiki.debian.org/DebianScience/
