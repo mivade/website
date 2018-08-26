@@ -3,7 +3,10 @@ site_author: Michael V. DePalatis
 site_description: Personal website and blog of Michael V. DePalatis
 docs_dir: content
 use_directory_urls: false
-theme: readthedocs
+
+theme:
+  name: yeti
+  custom_dir: custom_theme/
 
 nav:
   - About: index.md
