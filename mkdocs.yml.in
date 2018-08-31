@@ -12,6 +12,7 @@ nav:
   - About: index.md
   - Resources: resources.md
   - Blog:
+    - Archives: archives.md
   {%- for year in years %}
     - {{ year }}:
     {%- for title, path in entries[year] %}
