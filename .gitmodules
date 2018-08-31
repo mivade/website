@@ -1,0 +1,3 @@
+[submodule "mivade.github.io"]
+	path = mivade.github.io
+	url = git@github.com:mivade/mivade.github.io.git

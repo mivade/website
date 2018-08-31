@@ -7,3 +7,4 @@ mkdocs.yml
 cache
 output
 archives.md
+site/
