@@ -42,18 +42,6 @@ transition wavelengths, photoionization schemes, and more.
 * **Email**: mike at (my last name in lower case) dot net
 * **GPG**: 9C6E 918F 885D 19AA EC7E  FB76 25A6 CDBF C58D 27A5
 
-## Quick links ##
-
-* [Debian][]
-* [DebianScience][]
-* [Emacs][]
-
-More [here](resources.md).
-
-[Debian]: http://www.debian.org
-[DebianScience]: http://wiki.debian.org/DebianScience/
-[Emacs]: http://www.gnu.org/software/emacs/
-
 ## Friends ##
 
 This is not an exhaustive list. It only lists people who have web
