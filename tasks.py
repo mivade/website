@@ -1,7 +1,6 @@
 import datetime
 import json
 from pathlib import Path
-import shutil
 
 from invoke import task
 from jinja2 import Environment, FileSystemLoader
@@ -112,12 +111,14 @@ def update_submodules(ctx):
     """Update all git submodules."""
     ctx.run("git submodule init")
     ctx.run("git submodule update")
+
     with ctx.cd("mivade.github.io"):
+        ctx.run("git checkout master")
         ctx.run("git pull")
 
 
 @task(pre=[build, update_submodules], aliases=["gh-deploy"])
-def github_deploy(ctx, commit=True, push=True, message=None):
+def github_deploy(ctx, commit=True, push=False, message=None):
     """Publish the site to GitHub Pages."""
     ctx.run("cp -R site/* mivade.github.io/")
 
@@ -129,3 +130,5 @@ def github_deploy(ctx, commit=True, push=True, message=None):
             ctx.run(f'git commit -m "{msg}"')
             if push:
                 ctx.run(f'git push')
+            else:
+                print("Now manually push the changes!")
