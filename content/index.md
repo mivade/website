@@ -4,14 +4,15 @@ tags: about
 
 # About
 
-I am a scientific software developer in the
-[Computational Memory Lab][CML] at the University of Pennsylvania
-where I am a part of the DARPA [RAM][] team. Previously, I was an
-experimental atomic physicist. I was a postdoc in
-[the ion trap group][group] of Prof. [Michael Drewsen][Drewsen] at
-[Aarhus University][AU] and earned my PhD in
-[Mike Chapman's lab][ChapmanLab] at [Georgia Tech][GT].
+I am a computational scientist at [Inscripta][], a gene editing technology
+company located in Boulder, Colorado. Previously I was a part of the DARPA
+[RAM][] team in the [Computational Memory Lab][CML] at the University of
+Pennsylvania. Before entering the world of professional scientific software
+development, I was an experimental atomic physicist. I was a postdoc in [the ion
+trap group][group] of Prof. [Michael Drewsen][Drewsen] at [Aarhus University][AU]
+and earned my PhD in [Mike Chapman's lab][ChapmanLab] at [Georgia Tech][GT].
 
+[Inscripta]: https://www.inscripta.com/
 [CML]: http://memory.psych.upenn.edu/Main_Page
 [RAM]: http://memory.psych.upenn.edu/RAM
 [AU]: http://www.au.dk/en
