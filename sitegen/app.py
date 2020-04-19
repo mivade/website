@@ -4,7 +4,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 
 from .config import config
-from .handlers import BaseHandler
+from .handlers import make_handler, BlogIndexHandler
 from .pages import get_all_pages
 
 logger = logging.getLogger(__name__)
@@ -12,16 +12,20 @@ logger = logging.getLogger(__name__)
 
 class _Application(Application):
     def __init__(self):
-        handlers = [(handler.route, handler) for handler in BaseHandler.subclasses]
-        handler_string = "\n".join(
-            [
-                f"{handler.route}\t{handler.__class__}"
-                for handler in BaseHandler.subclasses
-            ]
-        )
-        logger.debug(f"Handlers: {handler_string}")
+        pages = get_all_pages()
+        handlers = [("/blog", BlogIndexHandler)]
+
+        for name, document in pages.documents.items():
+            route = "/" if name == "index" else "/{name}"
+            handlers.append((route, make_handler(document)))
+
+        for name, entry in pages.entries.items():
+            handlers.append((f"/blog/{name}", make_handler(entry)))
+
+        print(handlers)
+
         super().__init__(handlers, debug=config.debug)
-        self.pages = get_all_pages()
+        self.pages = pages
 
 
 def main():
