@@ -3,9 +3,13 @@ from typing import List
 
 from tornado.web import RequestHandler
 
-from .pages import Page, PageIndex, get_all_pages
+from .pages import Page, PageIndex
 
 logger = logging.getLogger(__name__)
+
+# TODO: rework so we have a function that constructs a handler; get list of pages
+#       on app startup and generates all necessary handlers; this will get rid of
+#       a bunch of regex corner cases
 
 
 class BaseHandler(RequestHandler):
@@ -14,11 +18,14 @@ class BaseHandler(RequestHandler):
     route: str
     dynamic: bool = False
     subclasses: List["BaseHandler"] = []
-    pages: PageIndex
 
     def __init_subclass__(cls, **kwargs):
         if cls not in BaseHandler.subclasses:
             BaseHandler.subclasses.append(cls)
+
+    @property
+    def pages(self) -> PageIndex:
+        return self.application.pages
 
     def get_page(self, *args) -> Page:
         raise NotImplementedError
@@ -35,10 +42,6 @@ class BaseHandler(RequestHandler):
         logger.info(f"Rendering {page.name}")
         html = page.to_html()
         return html
-
-    def prepare(self):
-        self.pages = get_all_pages()
-        logger.debug("%r", self.pages)
 
     def get(self, *args):
         if not self.dynamic:
@@ -62,6 +65,7 @@ class IndexHandler(BaseHandler):
 class DocumentHandler(BaseHandler):
     """Handle documents."""
 
+    # FIXME: needs to exclude /blog
     route = r"/(.*)"
 
     def get_page(self, name):
