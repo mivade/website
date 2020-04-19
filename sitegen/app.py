@@ -15,7 +15,13 @@ def main():
     handlers = [(handler.route, handler) for handler in BaseHandler.subclasses]
     app = Application(handlers, debug=config.debug)
     app.listen(config.port)
-    logger.debug(f"Handlers: {handlers}")
+    handler_string = "\n".join(
+        [
+            f"{handler.route}\t{handler.__class__}"
+            for handler in BaseHandler.subclasses
+        ]
+    )
+    logger.debug(f"Handlers: {handler_string}")
     logger.info(f"Listening on port {config.port}")
     IOLoop.current().start()
 
