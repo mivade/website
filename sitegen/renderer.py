@@ -7,6 +7,6 @@ class Renderer(Markdown):
     @classmethod
     def instance(cls):
         if cls._instance is None:
-            cls._instance = Markdown()
+            cls._instance = cls()
 
         return cls._instance

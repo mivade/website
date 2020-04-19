@@ -5,32 +5,40 @@ from typing import List
 from tornado.web import RequestHandler
 
 from .config import config
+from .pages import Page, PageIndex, get_all_pages
 from .renderer import Renderer
 
 logger = logging.getLogger(__name__)
 
 
 class BaseHandler(RequestHandler):
+    """Base handler class."""
     route: str
     subclasses: List["BaseHandler"] = []
+    pages: PageIndex
 
     def __init_subclass__(cls, **kwargs):
         if cls not in BaseHandler.subclasses:
             BaseHandler.subclasses.append(cls)
 
-    def get_path(self, name: str) -> Path:
+    def get_page(self, *args) -> Page:
         raise NotImplementedError
 
-    def render_markdown(self, path: Path) -> str:
+    def render_markdown(self, page: Page) -> str:
         """Read a markdown file and render it."""
-        text = path.read_text()
-        logger.info(f"Rendering {path}")
-        html = Renderer.instance().convert(text)
+        logger.info(f"Rendering {page.name}")
+        html = page.to_html()
         return html
 
-    def get(self, name: str):  # FIXME: need to not pass in name directly
-        path = self.get_path(name)
-        html = self.render_markdown(path)
+    def prepare(self):
+        self.pages = get_all_pages()
+        logger.debug(self.pages)
+        logger.debug("%r", dir(Renderer.instance()))
+
+    def get(self, *args):
+        page = self.get_page(*args)
+        # TODO: implement templates and add rendered markdown to base
+        html = f"{page.to_html()}"
         self.write(html)
 
 
@@ -39,17 +47,18 @@ class IndexHandler(BaseHandler):
 
     route = r"/"
 
-    def get_path(self, name):
-        return Path(config.root, "index.md")
+    def get_page(self):
+        return self.pages.documents["index"]
 
 
+# FIXME: rename to DocumentHandler
 class PageHandler(BaseHandler):
     """Handle fixed, non-blog pages."""
 
     route = r"/(.*)"
 
-    def get_path(self, name):
-        return Path(config.root, f"{name}.md")
+    def get_page(self, name):
+        return self.pages.documents[name]
 
 
 class BlogHandler(BaseHandler):
@@ -57,5 +66,5 @@ class BlogHandler(BaseHandler):
 
     route = r"/blog/(.*)"
 
-    def get_path(self, name):
-        return Path(config.root, "blog", f"{name}.md")
+    def get_page(self, name):
+        return self.pages.blog[name]
