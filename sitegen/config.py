@@ -24,6 +24,10 @@ class Config:
         default_factory=lambda: str(Path(__file__).parent.joinpath("templates")),
         metadata={"help": "path to directory containing templates"},
     )
+    static_dir: str = dc.field(
+        default_factory=lambda: str(Path(__file__).parent.joinpath("static")),
+        metadata={"help": "path to static content (e.g., CSS, JS)"},
+    )
     # FIXME: make debug False by default
     debug: bool = dc.field(default=True, metadata={"help": "enable debug mode"})
 

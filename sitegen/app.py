@@ -23,7 +23,10 @@ class _Application(Application):
             handlers.append((f"/blog/{name}\\.html", PageHandler, {"page": entry}))
 
         super().__init__(
-            handlers, template_path=config.template_dir, debug=config.debug
+            handlers,
+            template_path=config.template_dir,
+            static_path=config.static_dir,
+            debug=config.debug,
         )
 
 
