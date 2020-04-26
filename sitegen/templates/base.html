@@ -2,11 +2,15 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css">
         <title>{{ page.title }}</title>
     </head>
     <body>
         {% block pre_content %}{% end %}
-        {% raw page.to_html() %}
+        <div class="container">
+            {% raw page.to_html() %}
+        </div>
         {% block post_content %}{% end %}
     </body>
 </html>
