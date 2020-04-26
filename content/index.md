@@ -1,5 +1,5 @@
 ---
-title: about
+title: Home - mike.depalatis.net
 tags: about
 ---
 

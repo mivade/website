@@ -31,6 +31,15 @@ class Page:
     def date(self) -> date:
         return datetime.strptime(self.metadata["date"][0], "%Y-%m-%d").date()
 
+    @property
+    def title(self) -> str:
+        meta_title = self.metadata.get("title")
+
+        if meta_title is not None:
+            return meta_title[0]
+        else:
+            return self.source.stem
+
     def to_html(self) -> str:
         """Render the page as HTML."""
         return self.renderer.convert(self.source.read_text())

@@ -20,6 +20,10 @@ class Config:
         default_factory=lambda: ["extra", "meta", "toc"],
         metadata={"help": "list of Markdown extensions to use"},
     )
+    template_dir: str = dc.field(
+        default_factory=lambda: str(Path(__file__).parent.joinpath("templates")),
+        metadata={"help": "path to directory containing templates"},
+    )
     # FIXME: make debug False by default
     debug: bool = dc.field(default=True, metadata={"help": "enable debug mode"})
 

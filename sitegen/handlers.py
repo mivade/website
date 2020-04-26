@@ -28,10 +28,7 @@ class PageHandler(BaseHandler):
 
     def get(self):
         logger.info(f"Rendering {self.page.name}")
-        markdown = self.page.to_html()
-        # TODO: template rendering
-        html = f"{markdown}"
-        self.write(html)
+        self.render("base.html", page=self.page)
 
 
 class BlogIndexHandler(BaseHandler):

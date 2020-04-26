@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{{ page.title }}</title>
+    </head>
+    <body>
+        {% block pre_content %}{% end %}
+        {% raw page.to_html() %}
+        {% block post_content %}{% end %}
+    </body>
+</html>
