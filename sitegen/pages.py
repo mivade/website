@@ -1,4 +1,4 @@
-import dataclasses as dc
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
 
@@ -6,7 +6,7 @@ from .config import config
 from .renderer import Renderer
 
 
-@dc.dataclass
+@dataclass
 class Page:
     """Base class for all page types."""
 
@@ -29,7 +29,7 @@ class Entry(Page):
     """A page that is a blog entry."""
 
 
-@dc.dataclass
+@dataclass
 class PageIndex:
     """A container holding all pages.
 
