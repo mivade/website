@@ -16,6 +16,7 @@ class Page:
     def __post_init__(self):
         mtime = self.source.stat().st_mtime
         self.timestamp = datetime.fromtimestamp(mtime, tz=timezone.utc)
+        self.renderer = Renderer()
 
     @property
     def name(self) -> str:
@@ -24,7 +25,7 @@ class Page:
     @property
     def metadata(self) -> Dict[str, Any]:
         self.to_html()  # have to do this to populate the ``Meta`` attribute
-        return Renderer.instance().Meta
+        return self.renderer.Meta
 
     @property
     def date(self) -> date:
@@ -32,7 +33,7 @@ class Page:
 
     def to_html(self) -> str:
         """Render the page as HTML."""
-        return Renderer.instance().convert(self.source.read_text())
+        return self.renderer.convert(self.source.read_text())
 
 
 class Document(Page):
