@@ -22,10 +22,7 @@ class _Application(Application):
         for name, entry in pages.entries.items():
             handlers.append((f"/blog/{name}\\.html", PageHandler, {"page": entry}))
 
-        print(handlers)
-
         super().__init__(handlers, debug=config.debug)
-        self.pages = pages
 
 
 def main():

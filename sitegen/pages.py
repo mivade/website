@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from datetime import date, datetime, timezone
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict
 
 from .config import config
 from .renderer import Renderer
@@ -12,9 +13,22 @@ class Page:
 
     source: Path
 
+    def __post_init__(self):
+        mtime = self.source.stat().st_mtime
+        self.timestamp = datetime.fromtimestamp(mtime, tz=timezone.utc)
+
     @property
     def name(self) -> str:
         return self.source.stem
+
+    @property
+    def metadata(self) -> Dict[str, Any]:
+        self.to_html()  # have to do this to populate the ``Meta`` attribute
+        return Renderer.instance().Meta
+
+    @property
+    def date(self) -> date:
+        return datetime.strptime(self.metadata["date"][0], "%Y-%m-%d").date()
 
     def to_html(self) -> str:
         """Render the page as HTML."""

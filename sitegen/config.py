@@ -1,9 +1,11 @@
+from dataclasses import dataclass
 import dataclasses as dc
 import os
 from pathlib import Path
+from typing import List
 
 
-@dc.dataclass
+@dataclass
 class Config:
     root: str = dc.field(
         default_factory=lambda: os.path.join(os.getcwd(), "content"),
@@ -14,6 +16,10 @@ class Config:
         metadata={"help": "subdirectory of root which contains blog entries"},
     )
     port: int = dc.field(default=9000, metadata={"help": "port to serve on"})
+    markdown_extensions: List[str] = dc.field(
+        default_factory=lambda: ["extra", "meta", "toc"],
+        metadata={"help": "list of Markdown extensions to use"},
+    )
     # FIXME: make debug False by default
     debug: bool = dc.field(default=True, metadata={"help": "enable debug mode"})
 

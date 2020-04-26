@@ -41,6 +41,8 @@ class BlogIndexHandler(BaseHandler):
         self.pages = pages
 
     def get(self):
-        for key, entry in self.pages.entries.items():
+        for key, entry in sorted(
+            self.pages.entries.items(), key=lambda item: item[1].date
+        ):
             link = self.path_for(entry)
-            self.write(f'<p><a href="{link}">{entry.name}</a></p>')
+            self.write(f'<p><a href="{link}">{entry.date} - {entry.name}</a></p>')
