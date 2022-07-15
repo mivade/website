@@ -1,3 +1,5 @@
+black
+flake8
 markdown
 tornado>=6.2
 # Old requirements below, to be pruned
