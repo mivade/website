@@ -34,9 +34,8 @@ class MarkdownHandler(RequestHandler):
         if not path.is_file():
             self.send_error(404)
         else:
-            # TODO: render template
             html = self.markdown.convert(path.read_text())
-            self.write(html)
+            self.render("markdown_page.html", html=html)
 
 
 class BlogIndexHandler(RequestHandler):
@@ -79,10 +78,10 @@ async def main() -> None:
                 BlogIndexHandler,
                 {"markdown_kwargs": markdown_kwargs, "directory": "blog"},
             ),
-            ("/", MarkdownHandler),
+            ("/", MarkdownHandler, {"markdown_kwargs": markdown_kwargs}),
             (r"/(.*\.html)", MarkdownHandler, {"markdown_kwargs": markdown_kwargs}),
             ("/(.*)/", RedirectHandler, {"url": "{0}/index.html"}),
-            ("/.+", StaticFileHandler, {"path": "src"}),
+            ("/(.+)", StaticFileHandler, {"path": "src"}),
         ],
         template_path="templates",
         debug=True,
