@@ -1,5 +1,7 @@
 import asyncio
+from datetime import date
 from pathlib import Path
+from typing import NewType
 
 from markdown import Markdown
 
@@ -7,6 +9,9 @@ from tornado.log import enable_pretty_logging
 from tornado.web import Application, RequestHandler, RedirectHandler, StaticFileHandler
 
 SOURCE_DIR = Path(__file__).parent / "src"
+
+Link = NewType("Link", str)
+BlogEntry = tuple[date, str, Link]
 
 
 class MarkdownHandler(RequestHandler):
@@ -34,6 +39,32 @@ class MarkdownHandler(RequestHandler):
             self.write(html)
 
 
+class BlogIndexHandler(RequestHandler):
+    def initialize(self, markdown: Markdown, directory: str) -> None:
+        self.markdown = markdown
+        self.directory = SOURCE_DIR / directory
+
+    def get(self) -> None:
+        """Render an index of blog pages."""
+        self.render("blog_index.html", entries=self._get_entries())
+
+    def _get_entries(self) -> list[BlogEntry]:
+        entries: list[BlogEntry] = []
+
+        for path in self.directory.glob("*.md"):
+            self.markdown.convert(path.read_text())
+            metadata: dict[str, list[str]] = self.markdown.Meta
+            entries.append(
+                (
+                    date.fromisoformat(metadata["date"][0]),
+                    metadata["title"][0],
+                    f"{path.with_suffix('.html').name}",
+                )
+            )
+
+        return sorted(entries, key=lambda entry: entry[0], reverse=True)
+
+
 async def main() -> None:
     """Run the development server."""
     markdown = Markdown(
@@ -42,11 +73,17 @@ async def main() -> None:
     enable_pretty_logging()
     app = Application(
         [
+            (
+                "/blog/index.html",
+                BlogIndexHandler,
+                {"markdown": markdown, "directory": "blog"},
+            ),
             ("/", MarkdownHandler),
             (r"/(.*\.html)", MarkdownHandler, {"markdown": markdown}),
             ("/(.*)/", RedirectHandler, {"url": "{0}/index.html"}),
             ("/.+", StaticFileHandler, {"path": "src"}),
         ],
+        template_path="templates",
         debug=True,
     )
     app.listen(4444, "127.0.0.1")

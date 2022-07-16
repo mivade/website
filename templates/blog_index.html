@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Blog Index</title>
+</head>
+
+<body>
+  <ul>
+    {% for date, title, link in entries %}
+    <li>{{ date }} - <a href="{{ link }}">{{ title }}</a></li>
+    {% end %}
+  </ul>
+</body>
+
+</html>
