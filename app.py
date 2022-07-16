@@ -44,7 +44,9 @@ class MarkdownHandler(BaseHandler):
             html = self.markdown.convert(path.read_text())
             title = self.markdown.Meta.get("title")
             pre_title = f"{title[0]} - " if title is not None else ""
-            self.render("markdown_page.html", html=html, pre_title=pre_title)
+            self.render(
+                "markdown_page.html", html=html, title=title[0], pre_title=pre_title
+            )
 
 
 class BlogIndexHandler(BaseHandler):

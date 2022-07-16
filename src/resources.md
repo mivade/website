@@ -3,8 +3,6 @@ tags: links
 title: Resources
 ---
 
-# Resources
-
 ## Physics and Math ##
 
 * [MathWorld][] - An excellent resource for looking up math concepts.
