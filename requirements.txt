@@ -1,6 +1,7 @@
 black
 flake8
 markdown
+Pygments
 tornado>=6.2
 # Old requirements below, to be pruned
 invoke>=1.1,<1.2

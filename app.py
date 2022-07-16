@@ -4,31 +4,23 @@ from pathlib import Path
 from markdown import Markdown
 
 from tornado.log import enable_pretty_logging
-from tornado.web import Application, RequestHandler
+from tornado.web import Application, RequestHandler, RedirectHandler, StaticFileHandler
 
 SOURCE_DIR = Path(__file__).parent / "src"
 
 
-class PageHandler(RequestHandler):
+class MarkdownHandler(RequestHandler):
     def initialize(self, markdown: Markdown) -> None:
         self.markdown = markdown
 
     def get(self, path: str) -> None:
         """Translate the input path into a filesystem path; find and write the
-        file, rendering Markdown as appropriate.
+        file, rendering Markdown.
 
         """
-        if path.endswith("/"):
-            path = f"{path}index.html"
-
         path = path.lstrip("/")
-
-        if path.endswith(".html"):
-            filename = path.replace(".html", ".md")
-            self._render_markdown(filename)
-        else:
-            # TODO: guess content-type
-            self.write(Path(SOURCE_DIR, path).read_bytes())
+        filename = path.replace(".html", ".md")
+        self._render_markdown(filename)
 
     def _render_markdown(self, filename: str) -> None:
         """Render the markdown file ``filename``."""
@@ -48,9 +40,15 @@ async def main() -> None:
         extensions=["extra", "codehilite", "meta"], output_format="html5"
     )
     enable_pretty_logging()
-    # FIXME: update regex to only accept .html or ending in /,
-    #        use static handler for everything else
-    app = Application([("(.*)", PageHandler, {"markdown": markdown})], debug=True)
+    app = Application(
+        [
+            ("/", MarkdownHandler),
+            (r"/(.*\.html)", MarkdownHandler, {"markdown": markdown}),
+            ("/(.*)/", RedirectHandler, {"url": "{0}/index.html"}),
+            ("/.+", StaticFileHandler, {"path": "src"}),
+        ],
+        debug=True,
+    )
     app.listen(4444, "127.0.0.1")
     await asyncio.Event().wait()
 
