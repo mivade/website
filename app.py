@@ -1,7 +1,7 @@
 import asyncio
 from datetime import date
 from pathlib import Path
-from typing import NewType
+from typing import Any, NewType
 
 from markdown import Markdown
 
@@ -15,8 +15,8 @@ BlogEntry = tuple[date, str, Link]
 
 
 class MarkdownHandler(RequestHandler):
-    def initialize(self, markdown: Markdown) -> None:
-        self.markdown = markdown
+    def initialize(self, markdown_kwargs: dict[str, Any]) -> None:
+        self.markdown = Markdown(**markdown_kwargs)
 
     def get(self, path: str) -> None:
         """Translate the input path into a filesystem path; find and write the
@@ -40,8 +40,8 @@ class MarkdownHandler(RequestHandler):
 
 
 class BlogIndexHandler(RequestHandler):
-    def initialize(self, markdown: Markdown, directory: str) -> None:
-        self.markdown = markdown
+    def initialize(self, markdown_kwargs: dict[str, Any], directory: str) -> None:
+        self.markdown = Markdown(**markdown_kwargs)
         self.directory = SOURCE_DIR / directory
 
     def get(self) -> None:
@@ -67,19 +67,20 @@ class BlogIndexHandler(RequestHandler):
 
 async def main() -> None:
     """Run the development server."""
-    markdown = Markdown(
-        extensions=["extra", "codehilite", "meta"], output_format="html5"
-    )
+    markdown_kwargs = {
+        "extensions": ["extra", "codehilite", "meta"],
+        "output_format": "html5",
+    }
     enable_pretty_logging()
     app = Application(
         [
             (
                 "/blog/index.html",
                 BlogIndexHandler,
-                {"markdown": markdown, "directory": "blog"},
+                {"markdown_kwargs": markdown_kwargs, "directory": "blog"},
             ),
             ("/", MarkdownHandler),
-            (r"/(.*\.html)", MarkdownHandler, {"markdown": markdown}),
+            (r"/(.*\.html)", MarkdownHandler, {"markdown_kwargs": markdown_kwargs}),
             ("/(.*)/", RedirectHandler, {"url": "{0}/index.html"}),
             ("/.+", StaticFileHandler, {"path": "src"}),
         ],
