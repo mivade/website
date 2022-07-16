@@ -1,5 +1,6 @@
 ---
 tags: links
+title: Resources
 ---
 
 # Resources

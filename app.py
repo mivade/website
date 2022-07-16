@@ -14,7 +14,14 @@ Link = NewType("Link", str)
 BlogEntry = tuple[date, str, Link]
 
 
-class MarkdownHandler(RequestHandler):
+class BaseHandler(RequestHandler):
+    def get_template_namespace(self) -> dict[str, Any]:
+        namespace = super().get_template_namespace()
+        namespace["pre_title"] = ""
+        return namespace
+
+
+class MarkdownHandler(BaseHandler):
     def initialize(self, markdown_kwargs: dict[str, Any]) -> None:
         self.markdown = Markdown(**markdown_kwargs)
 
@@ -35,17 +42,21 @@ class MarkdownHandler(RequestHandler):
             self.send_error(404)
         else:
             html = self.markdown.convert(path.read_text())
-            self.render("markdown_page.html", html=html)
+            title = self.markdown.Meta.get("title")
+            pre_title = f"{title[0]} - " if title is not None else ""
+            self.render("markdown_page.html", html=html, pre_title=pre_title)
 
 
-class BlogIndexHandler(RequestHandler):
+class BlogIndexHandler(BaseHandler):
     def initialize(self, markdown_kwargs: dict[str, Any], directory: str) -> None:
         self.markdown = Markdown(**markdown_kwargs)
         self.directory = SOURCE_DIR / directory
 
     def get(self) -> None:
         """Render an index of blog pages."""
-        self.render("blog_index.html", entries=self._get_entries())
+        self.render(
+            "blog_index.html", entries=self._get_entries(), pre_title="Articles - "
+        )
 
     def _get_entries(self) -> list[BlogEntry]:
         entries: list[BlogEntry] = []
