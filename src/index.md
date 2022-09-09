@@ -3,8 +3,6 @@ title: About
 tags: about
 ---
 
-# About
-
 I am a computational scientist at [Inscripta][], a gene editing technology
 company located in Boulder, Colorado. Previously I was a part of the DARPA
 [RAM][] team in the [Computational Memory Lab][CML] at the University of
