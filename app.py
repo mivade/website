@@ -25,11 +25,14 @@ class MarkdownHandler(BaseHandler):
     def initialize(self, markdown_kwargs: dict[str, Any]) -> None:
         self.markdown = Markdown(**markdown_kwargs)
 
-    def get(self, path: str) -> None:
+    def get(self, path: str | None = None) -> None:
         """Translate the input path into a filesystem path; find and write the
         file, rendering Markdown.
 
         """
+        if path is None:
+            path = "index.html"
+
         path = path.lstrip("/")
         filename = path.replace(".html", ".md")
         self._render_markdown(filename)
