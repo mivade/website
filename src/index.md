@@ -50,10 +50,6 @@ transition wavelengths, photoionization schemes, and more.
 This is not an exhaustive list. It only lists people who have web
 sites that I know about.
 
-* [Richard Darst][]
-* [John Dowdle][]
-* [Ana Guerrero][]
-
-[Richard Darst]:  http://rkd.zgib.net/
-[John Dowdle]: http://jrd.spinodal.org/
-[Ana Guerrero]: http://ekaia.org/
+* [Richard Darst](http://rkd.zgib.net/)
+* [John Dowdle](http://jrd.spinodal.org/)
+* [Ana Guerrero](http://ekaia.org/)
