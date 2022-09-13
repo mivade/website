@@ -20,7 +20,7 @@ def publish(session: nox.Session) -> None:
     shell("git submodule update --init")
 
     with session.chdir("mivade.github.io"):
-        shell("git checkout master")
+        shell("git checkout main")
         shell("git pull")
 
     shell("cp -R $BUILD_DIR mivade.github.io/", env={"BUILD_DIR": "build/*"})
