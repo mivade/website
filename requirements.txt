@@ -1,5 +1,6 @@
-invoke>=1.1,<1.2
-Jinja2>=2.10
-mkdocs>=1.0,<1.1
-mkdocs-bootswatch==1.0
-pandas>=0.23.4,<0.24
+black
+flake8
+markdown
+nox
+Pygments
+tornado>=6.2

@@ -1,16 +1,17 @@
 ---
+title: About
 tags: about
 ---
 
-# About
-
-I am a computational scientist at [Inscripta][], a gene editing technology
+I am a scientific software developer, data engineer, and physicist. Most
+recently I was a staff scientist at [Inscripta][], a gene editing technology
 company located in Boulder, Colorado. Previously I was a part of the DARPA
 [RAM][] team in the [Computational Memory Lab][CML] at the University of
 Pennsylvania. Before entering the world of professional scientific software
 development, I was an experimental atomic physicist. I was a postdoc in [the ion
-trap group][group] of Prof. [Michael Drewsen][Drewsen] at [Aarhus University][AU]
-and earned my PhD in [Mike Chapman's lab][ChapmanLab] at [Georgia Tech][GT].
+trap group][group] of Prof. [Michael Drewsen][Drewsen] at [Aarhus
+University][AU] and earned my PhD in [Mike Chapman's lab][ChapmanLab] at
+[Georgia Tech][GT].
 
 [Inscripta]: https://www.inscripta.com/
 [CML]: http://memory.psych.upenn.edu/Main_Page
@@ -41,19 +42,14 @@ transition wavelengths, photoionization schemes, and more.
 ## Contact ##
 
 * **Email**: mike at (my last name in lower case) dot net
-* **GPG**: 9C6E 918F 885D 19AA EC7E  FB76 25A6 CDBF C58D 27A5
+* **LinkedIn**: [michael-v-depalatis](https://www.linkedin.com/in/michael-v-depalatis/)
+* **GitHub**: [mivade](https://github.com/mivade)
 
 ## Friends ##
 
 This is not an exhaustive list. It only lists people who have web
 sites that I know about.
 
-* [Richard Darst][]
-* [John Dowdle][]
-* [Ana Guerrero][]
-* [Ryan Reece][]
-
-[Richard Darst]:  http://rkd.zgib.net/
-[John Dowdle]: http://jrd.spinodal.org/
-[Ana Guerrero]: http://ekaia.org/
-[Ryan Reece]: http://www.hep.upenn.edu/~rreece/
+* [Richard Darst](http://rkd.zgib.net/)
+* [John Dowdle](http://jrd.spinodal.org/)
+* [Ana Guerrero](http://ekaia.org/)

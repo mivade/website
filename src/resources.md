@@ -1,8 +1,7 @@
 ---
 tags: links
+title: Resources
 ---
-
-# Resources
 
 ## Physics and Math ##
 

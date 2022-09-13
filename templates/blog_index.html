@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Articles</h1>
+<ul>
+  {% for date, title, link in entries %}
+  <li>{{ date }} - <a href="{{ link }}">{{ title }}</a></li>
+  {% end %}
+</ul>
+{% end %}
