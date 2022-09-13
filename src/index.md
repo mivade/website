@@ -52,9 +52,7 @@ sites that I know about.
 * [Richard Darst][]
 * [John Dowdle][]
 * [Ana Guerrero][]
-* [Ryan Reece][]
 
 [Richard Darst]:  http://rkd.zgib.net/
 [John Dowdle]: http://jrd.spinodal.org/
 [Ana Guerrero]: http://ekaia.org/
-[Ryan Reece]: http://www.hep.upenn.edu/~rreece/
