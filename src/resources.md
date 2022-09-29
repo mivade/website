@@ -43,31 +43,24 @@ heavily for Pythonic documentation, it's still good to know.
 * [A ReStructuredText Primer][rst primer]
 * [Quick reStructuredText][quick rst]
 * [Directives][rst directives]
-* [reStructuredText tips and tricks][rst tips]
 
 [markdown]: http://daringfireball.net/projects/markdown/
 [rst primer]: http://docutils.sourceforge.net/docs/user/rst/quickstart.html
 [quick rst]: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 [rst directives]: http://docutils.sourceforge.net/docs/ref/rst/directives.html
-[rst tips]: http://www.programmerq.net/rsttricks.html
 
 ## LaTeX ##
 
 * [Getting to grips with Latex][latex1] - An excellent introduction to
   LaTeX.
-* [Online Tutorials for LaTeX][latex2] - Some more LaTeX tutorials.
 * [LaTeX Beamer][latex3] - A LaTeX style class for creating
   presentations. Check out the [themes gallery](/beamerthemes).
 * [LaTeX Letter Format][latex4] - For those times when you need to
   actually send a letter, this is how you do it with LaTeX.
-* [James Bray's Latex Help][latex5] - Various useful tips with
-  selected topics in LaTeX.
 
 [latex1]: http://www.andy-roberts.net/misc/latex/
-[latex2]: http://www.tug.org.in/tutorials.html
-[latex3]: https://bitbucket.org/rivanvx/beamer/wiki/Home
+[latex3]: https://ctan.org/pkg/beamer
 [latex4]: http://www.personal.ceu.hu/tex/letters.htm
-[latex5]: http://www.biochem.ucl.ac.uk/~james/latex/
 
 ## Linux ##
 
@@ -83,7 +76,7 @@ heavily for Pythonic documentation, it's still good to know.
 
 [Debian]: http://www.debian.org
 [autotut]: http://seul.org/docs/autotut/
-[gpnfaq]: http://t16web.lanl.gov/Kawano/gnuplot/index-e.html
+[gpnfaq]: http://lowrank.net/gnuplot/index-e.html
 [bash]: http://www.tldp.org/LDP/abs/html
 [fhs]: http://www.pathname.com/fhs/pub/fhs-2.3.html
 
@@ -100,11 +93,6 @@ heavily for Pythonic documentation, it's still good to know.
 [Seeed Studio]: http://www.seeedstudio.com
 
 ### KiCAD ###
-
-#### Libraries and modules ####
-
-* [kicadlib.org](http://kicadlib.org/)
-* [KiCAD libraries converted from Eagle](http://library.oshec.org/)
 
 #### HOWTOs ####
 
