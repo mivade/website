@@ -3,24 +3,17 @@ title: About
 tags: about
 ---
 
-I am a scientific software developer, data engineer, and physicist. Most
-recently I was a staff scientist at [Inscripta][], a gene editing technology
-company located in Boulder, Colorado. Previously I was a part of the DARPA
-[RAM][] team in the [Computational Memory Lab][CML] at the University of
-Pennsylvania. Before entering the world of professional scientific software
-development, I was an experimental atomic physicist. I was a postdoc in [the ion
-trap group][group] of Prof. [Michael Drewsen][Drewsen] at [Aarhus
-University][AU] and earned my PhD in [Mike Chapman's lab][ChapmanLab] at
+I am a scientific software developer, data engineer, and physicist. I
+currently work as a Senior Software Engineer at [Ascend Analytics][] in
+Boulder, Colorado. In a past life I was an experimental atomic
+physicist in [the ion trap group][group] after earning my PhD at
 [Georgia Tech][GT].
 
-[Inscripta]: https://www.inscripta.com/
-[CML]: http://memory.psych.upenn.edu/Main_Page
-[RAM]: http://memory.psych.upenn.edu/RAM
+
+[Ascend Analytics]: https://www.ascendanalytics.com/
 [AU]: http://www.au.dk/en
-[group]: http://phys.au.dk/forskning/forskningsomraader/amo/the-ion-trap-group/
-[Drewsen]: http://pure.au.dk/portal/da/persons/id(871a704b-943d-4f99-b29d-07bea1bbab80).html
+[group]: https://phys.au.dk/forskning/forskningsomraader/atomar-molekylaer-og-optisk-fysik/the-ion-trap-group/
 [GT]: http://www.gatech.edu
-[ChapmanLab]: http://chapmanlabs.gatech.edu
 
 In my spare time, I enjoy photography, various outdoor activities, reading, and
 working on various projects related to [Arduino][], [Raspberry Pi][RPi], and
