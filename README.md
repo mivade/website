@@ -1,6 +1,7 @@
 # Website source
 
-Source code for my personal website. This iteration uses custom code based on
+Source code for my [personal website](https://mike.depalatis.net). This
+iteration uses custom code based on
 [Tornado](https://github.com/tornadoweb/tornado).
 
 ## Installing requirements
