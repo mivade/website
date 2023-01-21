@@ -1,0 +1,17 @@
+name: Deploy website
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
+      # FIXME
+      - name: Publish website
+        run: "echo 'Would do: nox -s publish'
