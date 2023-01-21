@@ -1,19 +1,31 @@
 # Website source
 
-Source code for my personal website. This iteration uses [mkdocs][].
+Source code for my personal website. This iteration uses custom code based on
+[Tornado](https://github.com/tornadoweb/tornado).
 
-[mkdocs]: https://www.mkdocs.org/
+## Installing requirements
+
+```
+$ pip install -r requirements.txt
+```
+
+## Serving
+
+```
+$ python app.py serve
+```
 
 ## Building
 
 ```
-$ pip install -r requirements.txt
-$ invoke build
+$ python app.py generate
 ```
 
-The `build` and `serve` commands will first generate `mkdocs.yml` from the
-template `mkdocs.yml.in` by extracting metadata from all blog entries.
-Non-static pages currently have to be added to the navigation by hand.
+or
+
+```
+$ nox -s build
+```
 
 ## License
 
