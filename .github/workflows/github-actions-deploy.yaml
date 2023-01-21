@@ -14,4 +14,5 @@ jobs:
 
       # FIXME
       - name: Publish website
-        run: "echo 'Would do: nox -s publish'
+        run: |
+          echo "Would do: nox -s publish"
