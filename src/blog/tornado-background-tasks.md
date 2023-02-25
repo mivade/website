@@ -1,7 +1,10 @@
 ---
 title: Background tasks with Tornado
 date: 2015-02-28
-tags: python, tornado, lab
+tags:
+  - python
+  - tornado
+  - lab
 ---
 
 I have been using [Tornado][] lately for distributed control of

@@ -1,7 +1,8 @@
 ---
 title: Multiline lambdas
 date: 2018-01-15
-tags: python
+tags:
+  - python
 ---
 
 Although Python has anonymous lambda functions, they lack the flexibility that

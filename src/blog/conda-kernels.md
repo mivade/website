@@ -1,7 +1,11 @@
 ---
 title: Jupyter integration with conda environments
 date: 2018-05-10
-tags: python, jupyter, conda, notes
+tags:
+  - python
+  - jupyter
+  - conda
+  - notes
 ---
 
 How to create new Jupyter notebooks with different conda environments:

@@ -2,7 +2,11 @@
 title: ssh-agent for sudo authentication with a passwordless account
 date: 2014-12-07
 modified: 2015-12-06
-tags: debian, ssh, sudo, linux
+tags:
+  - debian
+  - ssh
+  - sudo
+  - linux
 ---
 
 For best security on a public system, it is generally best to disable

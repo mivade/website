@@ -1,7 +1,10 @@
 ---
 title: Sharing data between processes with SQLite
 date: 2017-03-19
-tags: sqlite, python, multiprocessing
+tags:
+  - sqlite
+  - python
+  - multiprocessing
 ---
 
 Because of the global interpreter lock in CPython, it is sometimes beneficial to

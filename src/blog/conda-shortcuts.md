@@ -1,7 +1,10 @@
 ---
 title: Useful BASH shortcuts for conda
 date: 2018-10-24
-tags: python, conda, notes
+tags:
+  - python
+  - conda
+  - notes
 ---
 
 Anaconda's [conda](https://conda.io/docs/) has become the de facto environment

@@ -1,7 +1,11 @@
 ---
 title: Ensuring timestamp storage in UTC with SQLAlchemy
 date: 2019-03-29
-tags: python, sql, sqlalchemy, notes
+tags:
+  - python
+  - sql
+  - sqlalchemy
+  - notes
 ---
 
 Naively one might think that using defining a column with

@@ -2,7 +2,12 @@
 title: Flask and server-sent events
 date: 2015-02-14
 modified: 2016-04-21
-tags: python, flask, javascript, sse, gevent
+tags:
+  - python,
+  - flask
+  - javascript
+  - sse
+  - gevent
 ---
 
 I recently discovered the existence of the HTML5

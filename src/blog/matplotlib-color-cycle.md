@@ -1,7 +1,9 @@
 ---
 title: Getting Matplotlib's colors in order
 date: 2016-07-21
-tags: matplotlib, python
+tags:
+  - matplotlib
+  - python
 ---
 
 [Matplotlib][] can be very easy to use at times, especially if you
