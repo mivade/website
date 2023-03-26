@@ -1,6 +1,4 @@
 black
 flake8
-markdown
 nox
 Pygments
-tornado>=6.2

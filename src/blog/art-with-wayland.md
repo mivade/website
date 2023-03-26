@@ -1,7 +1,12 @@
 ---
 title: Using ART with Wayland
 date: 2022-09-19
-tags: linux, photography, art, rawtherapee, photo-editing
+tags:
+  - linux
+  - photography
+  - art
+  - rawtherapee
+  - photo-editing
 ---
 
 Lately I've been experimenting with using

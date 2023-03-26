@@ -1,7 +1,12 @@
 ---
 title: Using Postgres as a time series database
 date: 2016-06-25
-tags: postgres, sql, pandas, python, data
+tags:
+  - postgres
+  - sql
+  - pandas
+  - python
+  - data
 ---
 
 Time series databases (TSDBs) are quite popular these days. To name a

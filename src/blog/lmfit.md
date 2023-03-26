@@ -1,7 +1,14 @@
 ---
 title: Fitting with lmfit
 date: 2016-07-03
-tags: python, data, science, scipy, numpy, lmfit, pandas
+tags:
+  - python
+  - data
+  - science
+  - scipy
+  - numpy
+  - lmfit
+  - pandas
 ---
 
 General-purpose fitting in Python can sometimes be a bit more

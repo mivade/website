@@ -1,7 +1,8 @@
 ---
 title: Simplifying argparse usage with subcommands
 date: 2016-10-12
-tags: python
+tags:
+  - python
 ---
 
 One of the best things about Python is its standard library: it's

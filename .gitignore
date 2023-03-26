@@ -1,3 +1,6 @@
+.quarto/
+_site/
+
 *~
 mkdocs.yml
 .ipynb_checkpoints/

@@ -1,7 +1,10 @@
 ---
 title: Running (possibly) blocking code like a Tornado coroutine
 date: 2015-08-03
-tags: python, tornado, async
+tags:
+  - python
+  - tornado
+  - async
 ---
 
 One of the main benefits of using the [Tornado] web server is that it is

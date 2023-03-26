@@ -1,6 +1,7 @@
 ---
 title: About
-tags: about
+tags:
+  - about
 ---
 
 I am a scientific software developer, data engineer, and physicist. I

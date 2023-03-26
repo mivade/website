@@ -1,7 +1,12 @@
 ---
 title: Using websockets with Flask via Tornado
 date: 2014-12-15
-tags: python, flask, tornado, javascript, websockets
+tags:
+  - python
+  - flask
+  - tornado
+  - javascript
+  - websockets
 ---
 
 I've been working on some projects for the lab that involve remotely

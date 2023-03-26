@@ -1,0 +1,19 @@
+project:
+  type: website
+  output-dir: ../mivade.github.io
+
+website:
+  title: "mike.depalatis.net"
+  navbar:
+    right:
+      - index.md
+      - blog/index.qmd
+      - resources.md
+      - icon: github
+        href: https://github.com/mivade
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    # css: styles.css
