@@ -12,5 +12,7 @@ website:
         href: https://github.com/mivade
 format:
   html:
-    theme: cosmo
-    css: styles.css
+    theme:
+      light: flatly
+      dark: darkly
+    # css: styles.css
