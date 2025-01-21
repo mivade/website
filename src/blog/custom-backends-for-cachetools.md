@@ -1,7 +1,6 @@
 ---
 title: Custom backends for cachetools
 date: 2024-06-20
-draft: true
 tags:
   - python
   - caching
@@ -51,7 +50,5 @@ foo
 bar
 MyCache(hi there, I'm a custom backend, maxsize=10, currsize=2)
 ```
-
-
 
 [cachetools]: https://pypi.org/project/cachetools/
