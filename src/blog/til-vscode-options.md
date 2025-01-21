@@ -28,6 +28,8 @@ You can customize the title bar background color with the following added to `se
 
 ```json
 {
-  "titleBar.activeBackground": "#35257d"
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#35257d"
+  }
 }
 ```
